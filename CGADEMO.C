@@ -61,7 +61,7 @@ int cga_first_intercept_horiz(int * D, int x0, int y0, int dx, int dy, long int 
    return x0 + (int) a;
 }
 
-int cga_last_intercept_horiz(int x0, int y0, int dx, int dy, int y)
+int cga_last_intercept_horiz(int x0, int y0, int dx, int dy, long int y)
 {
    long int b = (dx*(1 + ((y - y0) << 1)))/(dy << 1);
    
@@ -82,7 +82,7 @@ int cga_line_cmp(int x0, int y0, int dx, int dy, long int x, long int y)
 {
    long int diff = (((x - x0)*dy) << 1) - (((y - y0)*dx) << 1) - dx;
    int dh = (diff >> 16);
-   return dh == 0 ? (diff && -1L) : dh;
+   return dh == 0 ? (diff != 0L) : dh;
 }
 
 void cga_draw_pixel_clipped(int x, int y, unsigned char colour)
@@ -891,7 +891,7 @@ int main(void)
       cx0 = 220;
       cy0 = 20;
       cx1 = 300;
-      cy1 = 50;
+      cy1 = 100;
 
       for (i = 0; i < 200; i++)
          cga_draw_line_clipped(0, 0, 319, i, k);
@@ -899,20 +899,20 @@ int main(void)
       cx0 = 20;
       cy0 = 20;
       cx1 = 100;
-      cy1 = 50;
+      cy1 = 100;
 
       for (i = 0; i < 200; i++)
          cga_draw_line_clipped(319, 0, 0, i, k);
 
       cx0 = 20;
       cy0 = 100;
-      cx1 = 70;
+      cx1 = 120;
       cy1 = 180;
 
       for (i = 0; i < 200; i++)
          cga_draw_line_clipped(0, 0, i, 199, k);
 
-      cx0 = 250;
+      cx0 = 200;
       cy0 = 100;
       cx1 = 300;
       cy1 = 180;

@@ -480,7 +480,7 @@ _cga_draw_line2 PROC
 
         pop bp
         cmp bp, 0
-        je line1_end2
+        je line2_end2
 
 line2_begin2:
         add si, dx
