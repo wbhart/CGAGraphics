@@ -42,7 +42,6 @@ _cga_draw_line1 PROC
    cmp dx, 0       
    jge line1_yinc
    add [yinc], 80
-   add [ycorr], 160
    neg dx
 line1_yinc:
 
