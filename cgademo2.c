@@ -842,11 +842,6 @@ int main(void)
 
    draw_tetrahedron(icoords, 2);
 
-   cx0 = 50;
-   cx1 = 209;
-   cy0 = 20;
-   cy1 = 119;
-
    getchar();
 
    for (i = 0; i < 10000; i++)
