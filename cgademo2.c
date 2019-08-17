@@ -822,12 +822,14 @@ int main(void)
    double coords[12]; /* rotated coordinates */
    double rot1 = 0.05, rot2 = 0.01;
    int icoords[8];
+   int icoords1[8];
+   int * oldcoords, * newcoords, * tmp;
 
    cx0 = 50;
    cx1 = 209;
    cy0 = 20;
    cy1 = 119;
-   
+
    randomize();
 
    coords[0] =  30.0;  coords[1] =   0.0;  coords[2] = -21.213203;
@@ -840,7 +842,15 @@ int main(void)
 
    set_video_mode(4);
 
+   cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 1);
+   cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 1);
+   cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 1);
+   cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 1);
+
    draw_tetrahedron(icoords, 2);
+
+   oldcoords = icoords;
+   newcoords = icoords1;
 
    getchar();
 
@@ -850,33 +860,30 @@ int main(void)
       rotate_point(coords + 3, -30.0,   0.0, -21.213203, rot1, rot2);
       rotate_point(coords + 6,   0.0,  30.0,  21.213203, rot1, rot2);
       rotate_point(coords + 9,   0.0, -30.0,  21.213203, rot1, rot2);
-      
-      draw_tetrahedron(icoords, 0);
+
+      for (j = 0, k = 0; j < 12; j += 3, k += 2)
+        xyz2xy(newcoords + k, coords + j);
 
       cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 0);
       cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 0);
       cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 0);
       cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 0);
 
-/*
-      cga_draw_line(cx0 - 2, cy0 - 2, cx1 + 2, cy0 - 2, 0);
-      cga_draw_line(cx0 - 2, cy1 + 2, cx1 + 2, cy1 + 2, 0);
-      cga_draw_line(cx0 - 2, cy0 - 2, cx0 - 2, cy1 + 2, 0);
-      cga_draw_line(cx1 + 2, cy0 - 2, cx1 + 2, cy1 + 2, 0);
-*/
+      draw_tetrahedron(oldcoords, 0);
 
       move_clipbox();
 
+      draw_tetrahedron(newcoords, 2);
+
       cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 1);
-      cga_draw_line(cx0 - 1, cy1 - 1, cx1 + 1, cy1 - 1, 1);
+      cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 1);
       cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 1);
       cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 1);
-
-      for (j = 0, k = 0; j < 12; j += 3, k += 2)
-         xyz2xy(icoords + k, coords + j);
-
-      draw_tetrahedron(icoords, 2);
          
+      tmp = oldcoords;
+      oldcoords = newcoords;
+      newcoords = tmp;
+
       rot1 += 0.05;
       rot2 += 0.01;
    }
