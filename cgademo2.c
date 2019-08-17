@@ -777,6 +777,16 @@ void xyz2xy(int * icoords, double * coords)
    icoords[1] = (int) (100.5 + (coords[1]*256.0)/(100.0 + coords[2]));
 }
 
+void draw_tetrahedron(int * icoords, unsigned char colour)
+{
+   cga_draw_line(icoords[0], icoords[1], icoords[2], iccoods[3], colour);
+   cga_draw_line(icoords[0], icoords[1], icoords[4], iccoods[5], colour);
+   cga_draw_line(icoords[0], icoords[1], icoords[6], iccoods[7], colour);
+   cga_draw_line(icoords[2], icoords[3], icoords[4], iccoods[5], colour);
+   cga_draw_line(icoords[2], icoords[3], icoords[6], iccoods[7], colour);
+   cga_draw_line(icoords[4], icoords[5], icoords[6], iccoods[7], colour);
+}
+
 int main(void)
 {
    int i, j, k;
@@ -805,22 +815,12 @@ int main(void)
       rotate_point(coords + 6,    0.0,  100.0,  70.710678, rot1, rot2);
       rotate_point(coords + 9,    0.0, -100.0,  70.710678, rot1, rot2);
       
-      cga_draw_line(icoords + 0, icoords + 1, icoords + 2, iccoods + 3, 0);
-      cga_draw_line(icoords + 0, icoords + 1, icoords + 4, iccoods + 5, 0);
-      cga_draw_line(icoords + 0, icoords + 1, icoords + 6, iccoods + 7, 0);
-      cga_draw_line(icoords + 2, icoords + 3, icoords + 4, iccoods + 5, 0);
-      cga_draw_line(icoords + 2, icoords + 3, icoords + 6, iccoods + 7, 0);
-      cga_draw_line(icoords + 4, icoords + 5, icoords + 6, iccoods + 7, 0);
+      draw_tetrahedron(icoords, 0);
          
       for (j = 0, k = 0; j < 12; j += 3, k += 2)
          xyz2xy(icoords + k, coords + j);
 
-      cga_draw_line(icoords + 0, icoords + 1, icoords + 2, iccoods + 3, 2);
-      cga_draw_line(icoords + 0, icoords + 1, icoords + 4, iccoods + 5, 2);
-      cga_draw_line(icoords + 0, icoords + 1, icoords + 6, iccoods + 7, 2);
-      cga_draw_line(icoords + 2, icoords + 3, icoords + 4, iccoods + 5, 2);
-      cga_draw_line(icoords + 2, icoords + 3, icoords + 6, iccoods + 7, 2);
-      cga_draw_line(icoords + 4, icoords + 5, icoords + 6, iccoods + 7, 2);
+      draw_tetrahedron(icoords, 2);
          
       rot1 += 0.05;
       rot2 += 0.01;
