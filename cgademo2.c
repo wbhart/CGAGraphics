@@ -805,7 +805,7 @@ void move_clipbox()
          break;
       case 1:
          cy0 += 1; cy1 += 1;
-         if (cy1 == 80)
+         if (cy0 == 80)
             mode = 2;
          break;
       case 2:
@@ -854,14 +854,16 @@ int main(void)
       draw_tetrahedron(icoords, 0);
 
       cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 0);
-      cga_draw_line(cx0 - 1, cy1 - 1, cx1 + 1, cy1 - 1, 0);
+      cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 0);
       cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 0);
       cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 0);
 
+/*
       cga_draw_line(cx0 - 2, cy0 - 2, cx1 + 2, cy0 - 2, 0);
-      cga_draw_line(cx0 - 2, cy1 - 2, cx1 + 2, cy1 - 2, 0);
+      cga_draw_line(cx0 - 2, cy1 + 2, cx1 + 2, cy1 + 2, 0);
       cga_draw_line(cx0 - 2, cy0 - 2, cx0 - 2, cy1 + 2, 0);
       cga_draw_line(cx1 + 2, cy0 - 2, cx1 + 2, cy1 + 2, 0);
+*/
 
       move_clipbox();
 
