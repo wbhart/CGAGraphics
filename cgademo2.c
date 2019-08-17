@@ -806,6 +806,8 @@ int main(void)
 
    set_video_mode(4);
 
+   draw_tetrahedron(icoords, 2);
+
    getchar();
 
    for (i = 0; i < 100; i++)
