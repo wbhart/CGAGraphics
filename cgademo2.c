@@ -787,11 +787,6 @@ void draw_tetrahedron(int * icoords, unsigned char colour)
    cga_draw_line_clipped(icoords[4], icoords[5], icoords[6], icoords[7], colour);
 }
 
-   cx0 = 50;
-   cx1 = 209;
-   cy0 = 20;
-   cy1 = 119;
-
 void move_clipbox()
 {
    static int mode = 0;
