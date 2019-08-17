@@ -31,10 +31,10 @@ _cga_draw_line1 PROC
    shl ax, 1
    add di, ax
 
-   mov bx, xdiff        ; compute 2*dx
+   mov bx, [xdiff]      ; compute 2*dx
    shl bx, 1
 
-   mov dx, ydiff        ; compute 2*dy
+   mov dx, [ydiff]      ; compute 2*dy
    shl dx, 1
 
    mov [yinc], 8112     ; set up y increment
