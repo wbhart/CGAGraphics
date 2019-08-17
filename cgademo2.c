@@ -779,12 +779,46 @@ void xyz2xy(int * icoords, double * coords)
 
 void draw_tetrahedron(int * icoords, unsigned char colour)
 {
-   cga_draw_line(icoords[0], icoords[1], icoords[2], icoords[3], colour);
-   cga_draw_line(icoords[0], icoords[1], icoords[4], icoords[5], colour);
-   cga_draw_line(icoords[0], icoords[1], icoords[6], icoords[7], colour);
-   cga_draw_line(icoords[2], icoords[3], icoords[4], icoords[5], colour);
-   cga_draw_line(icoords[2], icoords[3], icoords[6], icoords[7], colour);
-   cga_draw_line(icoords[4], icoords[5], icoords[6], icoords[7], colour);
+   cga_draw_line_clipped(icoords[0], icoords[1], icoords[2], icoords[3], colour);
+   cga_draw_line_clipped(icoords[0], icoords[1], icoords[4], icoords[5], colour);
+   cga_draw_line_clipped(icoords[0], icoords[1], icoords[6], icoords[7], colour);
+   cga_draw_line_clipped(icoords[2], icoords[3], icoords[4], icoords[5], colour);
+   cga_draw_line_clipped(icoords[2], icoords[3], icoords[6], icoords[7], colour);
+   cga_draw_line_clipped(icoords[4], icoords[5], icoords[6], icoords[7], colour);
+}
+
+   cx0 = 50;
+   cx1 = 209;
+   cy0 = 20;
+   cy1 = 119;
+
+void move_clipbox()
+{
+   static int mode = 0;
+
+   switch (mode)
+   {
+      case 0:
+         cx0 += 1; cx1 += 1;
+         if (cx0 == 110)
+            mode = 1;
+         break;
+      case 1:
+         cy0 += 1; cy1 += 1;
+         if (cy1 == 80)
+            mode = 2;
+         break;
+      case 2:
+         cx0 -= 1; cx1 -= 1;
+         if (cx0 == 50)
+            mode = 3;
+         break;
+      case 3:
+         cy0 -= 1; cy1 -= 1;
+         if (cy0 == 20)
+            mode = 0;
+         break; 
+   }
 }
 
 int main(void)
@@ -808,9 +842,14 @@ int main(void)
 
    draw_tetrahedron(icoords, 2);
 
+   cx0 = 50;
+   cx1 = 209;
+   cy0 = 20;
+   cy1 = 119;
+
    getchar();
 
-   for (i = 0; i < 100; i++)
+   for (i = 0; i < 10000; i++)
    {
       rotate_point(coords + 0,  30.0,   0.0, -21.213203, rot1, rot2);
       rotate_point(coords + 3, -30.0,   0.0, -21.213203, rot1, rot2);
@@ -818,7 +857,24 @@ int main(void)
       rotate_point(coords + 9,   0.0, -30.0,  21.213203, rot1, rot2);
       
       draw_tetrahedron(icoords, 0);
-         
+
+      cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 0);
+      cga_draw_line(cx0 - 1, cy1 - 1, cx1 + 1, cy1 - 1, 0);
+      cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 0);
+      cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 0);
+
+      cga_draw_line(cx0 - 2, cy0 - 2, cx1 + 2, cy0 - 2, 0);
+      cga_draw_line(cx0 - 2, cy1 - 2, cx1 + 2, cy1 - 2, 0);
+      cga_draw_line(cx0 - 2, cy0 - 2, cx0 - 2, cy1 + 2, 0);
+      cga_draw_line(cx1 + 2, cy0 - 2, cx1 + 2, cy1 + 2, 0);
+
+      move_clipbox();
+
+      cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 1);
+      cga_draw_line(cx0 - 1, cy1 - 1, cx1 + 1, cy1 - 1, 1);
+      cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 1);
+      cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 1);
+
       for (j = 0, k = 0; j < 12; j += 3, k += 2)
          xyz2xy(icoords + k, coords + j);
 
