@@ -81,9 +81,9 @@ line1_loop:
    jle line1_skip_inc_y
 
    xor ax, ax           ; increment y
-   sub di, yinc
+   sub di, [yinc]
    sbb ax, ax
-   and ax, ycorr
+   and ax, [ycorr]
    add di, ax
 
    sub si, bx           ; D -= 2*dx
