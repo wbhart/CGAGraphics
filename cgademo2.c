@@ -823,6 +823,11 @@ int main(void)
    double rot1 = 0.05, rot2 = 0.01;
    int icoords[8];
 
+   cx0 = 50;
+   cx1 = 209;
+   cy0 = 20;
+   cy1 = 119;
+   
    randomize();
 
    coords[0] =  30.0;  coords[1] =   0.0;  coords[2] = -21.213203;
