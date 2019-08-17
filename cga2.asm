@@ -87,7 +87,7 @@ line1_loop:
    add di, ax
 
    sub si, bx           ; D -= 2*dx
-line1_skip_inc_y   
+line1_skip_inc_y:   
    mov ax, ds           ; increment x
    ror ah, 1
    ror ah, 1
