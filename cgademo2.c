@@ -796,10 +796,10 @@ int main(void)
 
    randomize();
 
-   coords[0] =  100.0;  coords[1] =    0.0;  coords[2] = -70.710678;
-   coords[3] = -100.0;  coords[4] =    0.0;  coords[5] = -70.710678;
-   coords[6] =    0.0;  coords[7] =  100.0;  coords[8] =  70.710678;
-   coords[9] =    0.0; coords[10] = -100.0; coords[11] =  70.710678;
+   coords[0] =  30.0;  coords[1] =   0.0;  coords[2] = -21.213203;
+   coords[3] = -30.0;  coords[4] =   0.0;  coords[5] = -21.213203;
+   coords[6] =   0.0;  coords[7] =  30.0;  coords[8] =  21.213203;
+   coords[9] =   0.0; coords[10] = -30.0; coords[11] =  21.213203;
 
    for (j = 0, k = 0; j < 12; j += 3, k += 2)
       xyz2xy(icoords + k, coords + j);
@@ -812,10 +812,10 @@ int main(void)
 
    for (i = 0; i < 100; i++)
    {
-      rotate_point(coords + 0,  100.0,    0.0, -70.710678, rot1, rot2);
-      rotate_point(coords + 3, -100.0,    0.0, -70.710678, rot1, rot2);
-      rotate_point(coords + 6,    0.0,  100.0,  70.710678, rot1, rot2);
-      rotate_point(coords + 9,    0.0, -100.0,  70.710678, rot1, rot2);
+      rotate_point(coords + 0,  30.0,   0.0, -21.213203, rot1, rot2);
+      rotate_point(coords + 3, -30.0,   0.0, -21.213203, rot1, rot2);
+      rotate_point(coords + 6,   0.0,  30.0,  21.213203, rot1, rot2);
+      rotate_point(coords + 9,   0.0, -30.0,  21.213203, rot1, rot2);
       
       draw_tetrahedron(icoords, 0);
          
