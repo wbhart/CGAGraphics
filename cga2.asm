@@ -1,12 +1,12 @@
-	DOSSEG
-	.MODEL small
-	.CODE
+   DOSSEG
+   .MODEL small
+   .CODE
    
    PUBLIC _cga_draw_line1
 _cga_draw_line1 PROC
    LOCAL yinc:WORD, ycorr:WORD=AUTO_SIZE
-	ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
-	; line from (x0, y0) - (xend, ?) including endpoints
+   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
+   ; line from (x0, y0) - (xend, ?) including endpoints
    ; AX: Acc, BX: 2*dx, DX: 2*dy, CX: Loop,
    ; SI: D, DI: Offset, DS: Colour/Mask, ES: B800
    push bp
