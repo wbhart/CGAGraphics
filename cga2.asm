@@ -10,7 +10,7 @@ _cga_draw_line1 PROC
    ; AX: Acc, BX: 2*dx, DX: 2*dy, CX: Loop,
    ; SI: D, DI: Offset, DS: Colour/Mask, ES: B800
    push bp
-	mov bp, sp
+   mov bp, sp
    sub sp, AUTO_SIZE
    push di
    push si
