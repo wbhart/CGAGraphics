@@ -779,12 +779,12 @@ void xyz2xy(int * icoords, double * coords)
 
 void draw_tetrahedron(int * icoords, unsigned char colour)
 {
-   cga_draw_line(icoords[0], icoords[1], icoords[2], iccoords[3], colour);
-   cga_draw_line(icoords[0], icoords[1], icoords[4], iccoords[5], colour);
-   cga_draw_line(icoords[0], icoords[1], icoords[6], iccoords[7], colour);
-   cga_draw_line(icoords[2], icoords[3], icoords[4], iccoords[5], colour);
-   cga_draw_line(icoords[2], icoords[3], icoords[6], iccoords[7], colour);
-   cga_draw_line(icoords[4], icoords[5], icoords[6], iccoords[7], colour);
+   cga_draw_line(icoords[0], icoords[1], icoords[2], icoords[3], colour);
+   cga_draw_line(icoords[0], icoords[1], icoords[4], icoords[5], colour);
+   cga_draw_line(icoords[0], icoords[1], icoords[6], icoords[7], colour);
+   cga_draw_line(icoords[2], icoords[3], icoords[4], icoords[5], colour);
+   cga_draw_line(icoords[2], icoords[3], icoords[6], icoords[7], colour);
+   cga_draw_line(icoords[4], icoords[5], icoords[6], icoords[7], colour);
 }
 
 int main(void)
