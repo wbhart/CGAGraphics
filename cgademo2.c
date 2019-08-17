@@ -760,11 +760,11 @@ void cga_starfield(int clipped)
    cga_blank_screen();   
 }
 
-void rotate_point(float * coords, float x, float y, float z, float rot1, float rot2)
+void rotate_point(double * coords, double x, double y, double z, double rot1, double rot2)
 {
-   float c1 = cos(rot1), s1 = sin(rot1);
-   float c2 = cos(rot2), s2 = sin(rot2);
-   float sc1 = s1*x + c1*y;
+   double c1 = cos(rot1), s1 = sin(rot1);
+   double c2 = cos(rot2), s2 = sin(rot2);
+   double sc1 = s1*x + c1*y;
 
    coords[0] = c1*x - s1*y;
    coords[1] = c2*sc1 - s2*z;
@@ -779,12 +779,12 @@ void xyz2xy(int * icoords, double * coords)
 
 void draw_tetrahedron(int * icoords, unsigned char colour)
 {
-   cga_draw_line(icoords[0], icoords[1], icoords[2], iccoods[3], colour);
-   cga_draw_line(icoords[0], icoords[1], icoords[4], iccoods[5], colour);
-   cga_draw_line(icoords[0], icoords[1], icoords[6], iccoods[7], colour);
-   cga_draw_line(icoords[2], icoords[3], icoords[4], iccoods[5], colour);
-   cga_draw_line(icoords[2], icoords[3], icoords[6], iccoods[7], colour);
-   cga_draw_line(icoords[4], icoords[5], icoords[6], iccoods[7], colour);
+   cga_draw_line(icoords[0], icoords[1], icoords[2], iccoords[3], colour);
+   cga_draw_line(icoords[0], icoords[1], icoords[4], iccoords[5], colour);
+   cga_draw_line(icoords[0], icoords[1], icoords[6], iccoords[7], colour);
+   cga_draw_line(icoords[2], icoords[3], icoords[4], iccoords[5], colour);
+   cga_draw_line(icoords[2], icoords[3], icoords[6], iccoords[7], colour);
+   cga_draw_line(icoords[4], icoords[5], icoords[6], iccoords[7], colour);
 }
 
 int main(void)
