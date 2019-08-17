@@ -43,6 +43,7 @@ extern void cga_draw_ellipse_array4(unsigned char far * buff,
                               unsigned char far * end3, unsigned char colour); 
 
 long int cx0, cy0, cx1, cy1;
+int mode;
 
 int set_video_mode(int n)
 {
@@ -789,8 +790,6 @@ void draw_tetrahedron(int * icoords, unsigned char colour)
 
 void move_clipbox()
 {
-   static int mode = 0;
-
    switch (mode)
    {
       case 0:
@@ -824,6 +823,8 @@ int main(void)
    int icoords[8];
    int icoords1[8];
    int * oldcoords, * newcoords, * tmp;
+
+   mode = 0;
 
    cx0 = 50;
    cx1 = 209;
@@ -864,21 +865,43 @@ int main(void)
       for (j = 0, k = 0; j < 12; j += 3, k += 2)
         xyz2xy(newcoords + k, coords + j);
 
-      cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 0);
-      cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 0);
-      cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 0);
-      cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 0);
+      if (mode == 0)
+      {
+
+         cga_draw_line(cx0, cy0 - 1, cx0, cy1 + 1, 1);
+         cga_draw_line(cx1 + 2, cy0 - 1, cx1 + 2, cy1 + 1, 1);
+         cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 0);
+         cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 0);
+      } else if (mode == 1)
+      {
+         cga_draw_line(cx0 - 1, cy0, cx1 + 1, cy0, 1);
+         cga_draw_line(cx0 - 1, cy1 + 2, cx1 + 1, cy1 + 2, 1);
+         cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 0);
+         cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 0);
+      } else if (mode == 2)
+      {
+         cga_draw_line(cx0 - 2, cy0 - 1, cx0 - 2, cy1 + 1, 1);
+         cga_draw_line(cx1, cy0 - 1, cx1, cy1 + 1, 1);
+         cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 0);
+         cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 0);
+      }  else
+      {
+         cga_draw_line(cx0 - 1, cy0 - 2, cx1 + 1, cy0 - 2, 1);
+         cga_draw_line(cx0 - 1, cy1, cx1 + 1, cy1, 1);
+         cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 0);
+         cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 0);
+      } 
 
       draw_tetrahedron(oldcoords, 0);
 
       move_clipbox();
 
-      draw_tetrahedron(newcoords, 2);
-
       cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 1);
       cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 1);
       cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 1);
       cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 1);
+
+      draw_tetrahedron(newcoords, 2);
          
       tmp = oldcoords;
       oldcoords = newcoords;
