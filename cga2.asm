@@ -68,7 +68,7 @@ line1_yinc:
    shr ax, 1
    add di, ax
 
-   sub di, dx           ; compensate for first addition of 2*dy
+   sub si, dx           ; compensate for first addition of 2*dy
 
    mov ax, ds           ; get colour and mask information
 
