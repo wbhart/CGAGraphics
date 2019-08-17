@@ -771,7 +771,7 @@ void rotate_point(float * coords, float x, float y, float z, float rot1, float r
    coords[2] = s2*sc1 + c2*z;
 }
 
-void xyz2xy(int icoords, double coords)
+void xyz2xy(int * icoords, double * coords)
 {
    icoords[0] = (int) (160.5 + (coords[0]*256.0)/(150.0 + coords[2]));
    icoords[1] = (int) (100.5 + (coords[1]*256.0)/(100.0 + coords[2]));
