@@ -105,3 +105,6 @@ line1_skip_inc_y:
    pop bp
    ret
 _cga_draw_line1 ENDP
+
+   END
+
