@@ -42,14 +42,6 @@ line1_y_even:
    mov dx, [ydiff]      ; compute 2*dy
    shl dx, 1
 
-   mov [yinc], 8112     ; set up y increment
-   mov [ycorr], 16304
-   cmp dx, 0       
-   jge line1_yinc
-   add [yinc], 80
-   neg dx
-
-   pop bp               ; ydelta
 line1_yinc:
 
    mov si, D            ; store D
@@ -78,6 +70,7 @@ line1_yinc:
 
    mov ax, ds           ; get colour and mask information
 
+   pop bp               ; ydelta
 line1_loop:          
    and al, es:[di]      ; draw pixel at x, y
    or al, ah
