@@ -410,6 +410,7 @@ line1_no_inc:
         jnz line1_begin2
 line1_end2:
         mov sp, 1234
+        sti
         pop bp
 
         pop ax
