@@ -44,7 +44,7 @@ line1_y_even:
 
 line1_yinc:
 
-   mov si, D            ; store D
+   mov si, [D]            ; store D
 
    mov cx, [x0]         ; set up colour and mask
    mov ah, [colour] 
@@ -71,29 +71,36 @@ line1_yinc:
    mov ax, ds           ; get colour and mask information
 
    pop bp               ; ydelta
+
+   cli
+   mov [line1_patch1 + 1], sp
+   mov sp, dx
+   mov dx, ax
 line1_loop:          
    and al, es:[di]      ; draw pixel at x, y
-   or al, ah
+   or al, dh
    stosb
 
-   add si, dx           ; D += 2*dy
+   add si, sp           ; D += 2*dy
    jle line1_skip_inc_y
 
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, -16304       ; adjust ydelta
 
    sub si, bx           ; D -= 2*dx
-line1_skip_inc_y:   
-   mov ax, ds           ; increment x
-   ror ah, 1
-   ror ah, 1
-   ror al, 1
-   ror al, 1
+line1_skip_inc_y:             
+   ror dh, 1            ; increment x
+   ror dh, 1
+   ror dl, 1
+   ror dl, 1
    sbb di, 0            ; adjust offset
-   mov ds, ax           ; store updated colour and mask
+   mov al, dl           ; store updated colour and mask
 
    loop line1_loop
 
+line1_patch1:
+   mov sp, 0FFFF
+   sti
    pop ds
    pop si
    pop di
