@@ -293,6 +293,7 @@ _cga_draw_line1 PROC
 	; line from (x0, y0) - (xend, ?) including endpoints
         push bp
 	mov bp, sp
+        push ds
         push di
         push si
         mov ax, 0b800h
@@ -301,6 +302,12 @@ _cga_draw_line1 PROC
         xor di, di
         mov ax, [y0]
         shr ax, 1
+        mov bx, 8192
+        jnc line1_y_even
+        mov bx, -8112
+line1_y_even:
+        push bx
+        pop ds
         sbb di, 0
         and di, 8192
         shl ax, 1
@@ -344,6 +351,10 @@ _cga_draw_line1 PROC
         cmp bp, 0
         je line1_end2
 
+        cli
+        mov WORD PTR cs:[line1_end2+1], sp
+        mov ax, ds
+        mov sp, ax
 line1_begin2:
         add si, dx
         jg line1_Dgt0_1
@@ -371,11 +382,8 @@ line1_Dgt0_1:
         and al, es:[di]
         or al, ch
         stosb
-        xor ax, ax
-        sub di, 8112
-        sbb ax, ax
-        and ax, 16304
-        add di, ax
+        add di, sp
+        xor sp, -16304
         ror ch, 1
         ror ch, 1
         ror cl, 1
@@ -389,11 +397,8 @@ line1_Dcmp_end_1:
         stosb
         add si, dx
         jle line1_no_inc
-        xor ax, ax
-        sub di, 8112
-        sbb ax, ax
-        and ax, 16304
-        add di, ax
+        add di, sp
+        xor sp, -16304
         sub si, bx        
 line1_no_inc:
         ror ch, 1
@@ -404,6 +409,7 @@ line1_no_inc:
         dec bp
         jnz line1_begin2
 line1_end2:
+        mov sp, 1234
         pop bp
 
         pop ax
@@ -418,6 +424,7 @@ line1_done:
 
         pop si
         pop di
+        pop ds
         pop bp
         ret
 _cga_draw_line1 ENDP
