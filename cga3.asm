@@ -73,9 +73,10 @@ line1_yinc:
    pop bp               ; ydelta
 
    cli
-   mov [line1_patch1 + 1], sp
+   mov WORD PTR cs:[line1_patch1 + 1], sp
    mov sp, dx
    mov dx, ax
+
 line1_loop:          
    and al, es:[di]      ; draw pixel at x, y
    or al, dh
@@ -88,7 +89,9 @@ line1_loop:
    xor bp, -16304       ; adjust ydelta
 
    sub si, bx           ; D -= 2*dx
-line1_skip_inc_y:             
+
+line1_skip_inc_y:
+
    ror dh, 1            ; increment x
    ror dh, 1
    ror dl, 1
@@ -99,7 +102,7 @@ line1_skip_inc_y:
    loop line1_loop
 
 line1_patch1:
-   mov sp, 0FFFF
+   mov sp, 1234
    sti
    pop ds
    pop si
