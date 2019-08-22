@@ -91,7 +91,7 @@ line1_yinc:
    sub dx, si           ; compensate for first addition of 2*dy
 
    cli                  ; save and free up sp
-   mov WORD PTR cs:[line1_patch1 + 1], sp
+   mov WORD PTR cs:[line1_patch5 + 1], sp
    mov sp, si
 
    mov ax, ds           ; get jump offset   
@@ -168,7 +168,7 @@ line1_skip_incy4:
 
    loop line1_loop
 
-line1_patch1:
+line1_patch5:
    mov sp, 1234
    sti
 
