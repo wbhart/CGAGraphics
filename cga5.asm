@@ -115,7 +115,7 @@ line1_patch1:
    stosb                ; draw pixel
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
+   xor bp,  01fb0h      ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -132,7 +132,7 @@ line1_patch2:
    stosb                ; draw pixel(s)
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
+   xor bp, 01fb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -149,7 +149,7 @@ line1_patch3:
    stosb                ; draw pixel(s)
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
+   xor bp, 01fb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -165,9 +165,10 @@ line1_patch4:
    jle line1_skip_incy4
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
+   xor bp, 01fb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
+   inc di
 line1_skip_incy4:             
    mov al, es:[di]
 
