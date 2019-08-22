@@ -44,7 +44,7 @@ line1_y_even:
 
 line1_yinc:
 
-   mov si, [D]            ; store D
+   mov si, [D]          ; store D
 
    mov cx, [x0]         ; set up colour and mask
    mov ah, [colour] 
