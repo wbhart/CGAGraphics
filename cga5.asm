@@ -21,9 +21,9 @@ _cga_draw_line1 PROC
    mov ax, [y0]
    shr ax, 1
 
-   mov bx, 8192         ; also compute ydelta
+   mov bx, 8191         ; also compute ydelta
    jnc line1_y_even
-   mov bx, -8112
+   mov bx, -8113
 line1_y_even:
    push bx
 
@@ -115,7 +115,7 @@ line1_patch1:
    stosb                ; draw pixel
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp,  01fb0h      ; adjust ydelta
+   xor bp,  0ffb0h      ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -132,7 +132,7 @@ line1_patch2:
    stosb                ; draw pixel(s)
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, 01fb0h       ; adjust ydelta
+   xor bp, 0ffb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -149,7 +149,7 @@ line1_patch3:
    stosb                ; draw pixel(s)
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, 01fb0h       ; adjust ydelta
+   xor bp, 0ffb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -165,7 +165,7 @@ line1_patch4:
    jle line1_skip_incy4
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, 01fb0h       ; adjust ydelta
+   xor bp, 0ffb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
    inc di
