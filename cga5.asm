@@ -19,48 +19,36 @@ _cga_draw_line1 PROC
 
    xor di, di           ; compute offset for line y0
    mov ax, [y0]
-   
+
+   shr ax, 1
+   mov bx, 8191         ; also compute ydelta
+   jnc line1_y_even
+   mov bx, -8113
+line1_y_even:
+   mov cx, 0ffb0h
+   sbb di, 0
+
    mov si, [ydiff]      ; fixups for +ve/-ve slope
    cmp si, 0
    jge line1_pos
 
-   neg si
-   shr ax, 1
-   mov bx, -8193        ; also compute ydelta
-   jnc line1_neg_even
-   mov bx, 8111
-line1_yneg_even:
+   sub bx, 80
+   mov cx, 0c050h
 
-   mov WORD PTR cs:[line1_patch10 + 1], 0c050h
-   mov WORD PTR cs:[line1_patch11 + 1], 0c050h
-   mov WORD PTR cs:[line1_patch12 + 1], 0c050h
-   mov WORD PTR cs:[line1_patch13 + 1], 0c050h
-   mov WORD PTR cs:[line1_patch14 + 1], 0c050h
-   mov WORD PTR cs:[line1_patch15 + 1], 0c050h
-   
-   jmp line1_neg_done
 line1_pos:
-
-   shr ax, 1
-   mov bx, 8191         ; also compute ydelta
-   jnc line1_ypos_even
-   mov bx, -8113
-line1_ypos_even:
-
-   mov WORD PTR cs:[line1_patch10 + 1], 0ffb0h
-   mov WORD PTR cs:[line1_patch11 + 1], 0ffb0h
-   mov WORD PTR cs:[line1_patch12 + 1], 0ffb0h
-   mov WORD PTR cs:[line1_patch13 + 1], 0ffb0h
-   mov WORD PTR cs:[line1_patch14 + 1], 0ffb0h
-   mov WORD PTR cs:[line1_patch15 + 1], 0ffb0h
-
-line1_neg_done:
 
    push bx
 
-   sbb di, 0            ; continue computing offset for line y0
-   and di, 8192
-   mov cl, 4        
+   mov WORD PTR cs:[line1_patch10 + 1], cx
+   mov WORD PTR cs:[line1_patch11 + 1], cx
+   mov WORD PTR cs:[line1_patch12 + 1], cx
+   mov WORD PTR cs:[line1_patch13 + 1], cx
+   mov WORD PTR cs:[line1_patch14 + 1], cx
+   mov WORD PTR cs:[line1_patch15 + 1], cx
+            
+   and di, 8192         ; continue computing offset for line y0
+   mov cl, 4
+   xor ah, ah        
    shl ax, cl
    add di, ax
    shl ax, 1
@@ -77,15 +65,13 @@ line1_yinc:
    mov dx, [D]          ; store D
 
    mov cx, [x0]         ; compute jump offset
-   and cl, 3            ; multiply x mod 4 by 19
-   mov ah, cl
+   and cl, 3            ; multiply x mod 4 by 20
    shl cl, 1
    shl cl, 1
    mov al, cl
    shl cl, 1
    shl cl, 1
    add al, cl
-   sub al, ah
    xor ah, ah
    mov ds, ax
 
@@ -152,7 +138,7 @@ line1_patch1:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch10:
-   xor bp, 0ffb0h       ; adjust ydelta
+   xor bp, 1234         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -170,7 +156,7 @@ line1_patch2:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch11:
-   xor bp, 0ffb0h       ; adjust ydelta
+   xor bp, 1234         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -188,7 +174,7 @@ line1_patch3:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch12:
-   xor bp, 0ffb0h       ; adjust ydelta
+   xor bp, 1234         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -205,7 +191,7 @@ line1_patch4:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch13:
-   xor bp, 0ffb0h       ; adjust ydelta
+   xor bp, 1234         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
    inc di
@@ -234,7 +220,7 @@ line1_patch7:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch14:
-   xor bp,  0ffb0h      ; adjust ydelta
+   xor bp, 1234         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -258,7 +244,7 @@ line1_patch8:
  
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch15:
-   xor bp,  0ffb0h      ; adjust ydelta
+   xor bp, 1234        ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
