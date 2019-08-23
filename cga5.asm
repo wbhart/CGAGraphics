@@ -533,8 +533,7 @@ linex1_patch5:
    pop di
    pop bp
    ret
-_cga_draw_line_xor1
-   ENDP
+_cga_draw_line_xor1 ENDP
 
    END
 
