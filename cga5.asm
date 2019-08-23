@@ -63,12 +63,15 @@ line1_yinc:
    ror ah, 1
    ror ah, 1
    mov BYTE PTR cs:[line1_patch1 + 1], ah
+   mov BYTE PTR cs:[line1_patch7 + 1], ah
    ror ah, 1
    ror ah, 1
    mov BYTE PTR cs:[line1_patch2 + 1], ah
+   mov BYTE PTR cs:[line1_patch8 + 1], ah
    ror ah, 1
    ror ah, 1
    mov BYTE PTR cs:[line1_patch3 + 1], ah
+   mov BYTE PTR cs:[line1_patch9 + 1], ah
    ror ah, 1
    ror ah, 1
    mov BYTE PTR cs:[line1_patch4 + 1], ah
@@ -83,24 +86,27 @@ line1_yinc:
    shl ax, 1
    
    mov cx, [xend]       ; compute loop iterations
-   pop bp               ; (get ydelta here so we can push below)
    sub cx, ax
    inc cx
-   push cx              ; save iterations for prologue
+   mov BYTE PTR cs:[line1_patch6 + 1], cl ; save iterations for prologue
    shr cx, 1
    shr cx, 1            ; we will unroll by 4 so divide by 4
 
+   pop bp               ; get ydelta
+   
    sub dx, si           ; compensate for first addition of 2*dy
 
    cli                  ; save and free up sp
    mov WORD PTR cs:[line1_patch5 + 1], sp
    mov sp, si
 
-                        ; TODO handle iterations = 0
-
    mov ax, ds           ; get jump offset   
    mov si, ax
    mov al, es:[di]      ; get first word
+
+   cmp cl, 0            ; check for iterations = 0
+   je line1_no_iter
+
    lea si, si + line1_loop
    jmp si
 
@@ -174,12 +180,72 @@ line1_skip_incy4:
 
    loop line1_loop
 
+line1_no_iter:
+
+line1_patch6:
+   mov cl, 123          ; do remaining iterations (0-3)
+   and cl, 03h
+
+   cmp cl, 0
+   je line1_done                   
+
+   and al, 03fh         
+line1_patch7:
+   or al, 040h
+   add dx, sp           ; D += 2*dy
+
+   stosb                ; draw pixel
+
+   jle line1_skip_incy5
+
+   add di, bp           ; odd <-> even line (reenigne's trick)
+   xor bp,  0ffb0h      ; adjust ydelta
+
+   sub dx, bx           ; D -= 2*dx
+
+   mov al, es:[di]
+   inc di
+line1_skip_incy5:
+   dec di
+
+   dec cl
+   jz line1_done
+
+
+   and al, 0cfh         
+line1_patch8:
+   or al, 010h
+   add dx, sp           ; D += 2*dy
+
+   stosb                ; draw pixel
+
+   jle line1_skip_incy6
+ 
+   add di, bp           ; odd <-> even line (reenigne's trick)
+   xor bp,  0ffb0h      ; adjust ydelta
+
+   sub dx, bx           ; D -= 2*dx
+
+   mov al, es:[di]
+   inc di
+line1_skip_incy6:
+   dec di
+
+   dec cl
+   jz line1_done
+
+
+   and al, 0f3h         
+line1_patch9:
+   or al, 04h
+
+   stosb                ; draw pixel
+
+line1_done:
+
 line1_patch5:
    mov sp, 1234
    sti
-
-   pop cx               ; do remaining iterations (0-3)
-                        ; TODO
    
    pop ds
    pop si
