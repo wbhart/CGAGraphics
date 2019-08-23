@@ -39,12 +39,12 @@ line1_pos:
 
    push bx
 
-   mov WORD PTR cs:[line1_patch10 + 1], cx
-   mov WORD PTR cs:[line1_patch11 + 1], cx
-   mov WORD PTR cs:[line1_patch12 + 1], cx
-   mov WORD PTR cs:[line1_patch13 + 1], cx
-   mov WORD PTR cs:[line1_patch14 + 1], cx
-   mov WORD PTR cs:[line1_patch15 + 1], cx
+   mov WORD PTR cs:[line1_patch10 + 2], cx
+   mov WORD PTR cs:[line1_patch11 + 2], cx
+   mov WORD PTR cs:[line1_patch12 + 2], cx
+   mov WORD PTR cs:[line1_patch13 + 2], cx
+   mov WORD PTR cs:[line1_patch14 + 2], cx
+   mov WORD PTR cs:[line1_patch15 + 2], cx
             
    and di, 8192         ; continue computing offset for line y0
    mov cl, 4
