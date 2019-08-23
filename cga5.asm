@@ -19,12 +19,43 @@ _cga_draw_line1 PROC
 
    xor di, di           ; compute offset for line y0
    mov ax, [y0]
-   shr ax, 1
+   
+   mov si, [ydiff]      ; fixups for +ve/-ve slope
+   cmp si, 0
+   jge line1_pos
 
+   neg si
+   shr ax, 1
+   mov bx, -8193        ; also compute ydelta
+   jnc line1_neg_even
+   mov bx, 8111
+line1_yneg_even:
+
+   mov WORD PTR cs:[line1_patch10 + 1], 0c050h
+   mov WORD PTR cs:[line1_patch11 + 1], 0c050h
+   mov WORD PTR cs:[line1_patch12 + 1], 0c050h
+   mov WORD PTR cs:[line1_patch13 + 1], 0c050h
+   mov WORD PTR cs:[line1_patch14 + 1], 0c050h
+   mov WORD PTR cs:[line1_patch15 + 1], 0c050h
+   
+   jmp line1_neg_done
+line1_pos:
+
+   shr ax, 1
    mov bx, 8191         ; also compute ydelta
-   jnc line1_y_even
+   jnc line1_ypos_even
    mov bx, -8113
-line1_y_even:
+line1_ypos_even:
+
+   mov WORD PTR cs:[line1_patch10 + 1], 0ffb0h
+   mov WORD PTR cs:[line1_patch11 + 1], 0ffb0h
+   mov WORD PTR cs:[line1_patch12 + 1], 0ffb0h
+   mov WORD PTR cs:[line1_patch13 + 1], 0ffb0h
+   mov WORD PTR cs:[line1_patch14 + 1], 0ffb0h
+   mov WORD PTR cs:[line1_patch15 + 1], 0ffb0h
+
+line1_neg_done:
+
    push bx
 
    sbb di, 0            ; continue computing offset for line y0
@@ -38,9 +69,8 @@ line1_y_even:
 
    mov bx, [xdiff]      ; compute 2*dx
    shl bx, 1
-
-   mov si, [ydiff]      ; compute 2*dy
-   shl si, 1
+         
+   shl si, 1            ; compute 2*dy
 
 line1_yinc:
 
@@ -121,7 +151,8 @@ line1_patch1:
    stosb                ; draw pixel
 
    add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp,  0ffb0h      ; adjust ydelta
+line1_patch10:
+   xor bp, 0ffb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -138,6 +169,7 @@ line1_patch2:
    stosb                ; draw pixel(s)
 
    add di, bp           ; odd <-> even line (reenigne's trick)
+line1_patch11:
    xor bp, 0ffb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
@@ -155,6 +187,7 @@ line1_patch3:
    stosb                ; draw pixel(s)
 
    add di, bp           ; odd <-> even line (reenigne's trick)
+line1_patch12:
    xor bp, 0ffb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
@@ -171,6 +204,7 @@ line1_patch4:
    jle line1_skip_incy4
 
    add di, bp           ; odd <-> even line (reenigne's trick)
+line1_patch13:
    xor bp, 0ffb0h       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
@@ -199,6 +233,7 @@ line1_patch7:
    jle line1_skip_incy5
 
    add di, bp           ; odd <-> even line (reenigne's trick)
+line1_patch14:
    xor bp,  0ffb0h      ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
@@ -222,6 +257,7 @@ line1_patch8:
    jle line1_skip_incy6
  
    add di, bp           ; odd <-> even line (reenigne's trick)
+line1_patch15:
    xor bp,  0ffb0h      ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
