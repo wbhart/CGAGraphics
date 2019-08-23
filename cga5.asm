@@ -32,6 +32,7 @@ line1_y_even:
    cmp si, 0
    jge line1_pos
 
+   neg si
    sub bx, 80
    mov cx, 0c050h
 
