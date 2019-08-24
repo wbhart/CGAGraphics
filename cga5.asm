@@ -738,8 +738,6 @@ linew1_patch6:
 
    cmp cl, 0
    je linew1_done 
-
-   dec bp               ; revert to reading and writing pixels                  
         
    mov al, es:[di]
    
@@ -748,7 +746,7 @@ linew1_patch7:
    or al, 040h
    add dx, sp           ; D += 2*dy
 
-   stosb                ; draw pixel
+   mov es:[di], al      ; draw pixel
 
    jle linew1_skip_incy5
 
@@ -772,20 +770,18 @@ linew1_patch8:
    or al, 010h
    add dx, sp           ; D += 2*dy
 
-   stosb                ; draw pixel
+   mov es:[di], al      ; draw pixel
 
    jle linew1_skip_incy6
  
    add di, bp           ; odd <-> even line (reenigne's trick)
 linew1_patch15:
-   xor bp, 1234        ; adjust ydelta
+   xor bp, 1234         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
    mov al, es:[di]
-   inc di
 linew1_skip_incy6:
-   dec di
 
    dec cl
    jz linew1_done
@@ -795,7 +791,7 @@ linew1_skip_incy6:
 linew1_patch9:
    or al, 04h
 
-   stosb                ; draw pixel
+   mov es:[di], al      ; draw pixel
 
 linew1_done:
 
