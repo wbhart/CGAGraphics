@@ -453,8 +453,8 @@ linex1_skip_incy3:
 
 linex1_patch4:
    or al, 01h
-   add dx, sp           ; D += 2*dy
    xor es:[di], al
+   add dx, sp           ; D += 2*dy
    
    jle linex1_skip_incy4
 
@@ -463,7 +463,6 @@ linex1_patch13:
    xor bp, 1234         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
-   xor al, al
 linex1_skip_incy4:
    inc di
 
@@ -481,9 +480,8 @@ linex1_patch6:
         
 linex1_patch7:
    mov al, 040h
-   add dx, sp           ; D += 2*dy
-
    xor es:[di], al      ; draw pixel
+   add dx, sp           ; D += 2*dy
 
    jle linex1_skip_incy5
 
@@ -500,9 +498,8 @@ linex1_skip_incy5:
        
 linex1_patch8:
    mov al, 010h
-   add dx, sp           ; D += 2*dy
-
    xor es:[di], al      ; draw pixel
+   add dx, sp           ; D += 2*dy
 
    jle linex1_skip_incy6
  
