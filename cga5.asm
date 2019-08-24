@@ -396,6 +396,8 @@ linex1_yinc:
    mov ax, ds           ; get jump offset   
    mov si, ax
 
+   xor al, al           ; initialise al before jump
+
    cmp cl, 0            ; check for iterations = 0
    je linex1_no_iter
 
@@ -651,6 +653,8 @@ linew1_yinc:
 
    mov ax, ds           ; get jump offset   
    mov si, ax
+
+   xor al, al           ; initialise al before jump
 
    cmp cl, 0            ; check for iterations = 0
    je linew1_no_iter
