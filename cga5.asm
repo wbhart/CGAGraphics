@@ -865,12 +865,12 @@ linez1_yinc:
    mov dx, [D]          ; store D
 
    mov cx, [x0]         ; compute jump offset
-   and cl, 3            ; multiply x mod 4 by 12
+   and cl, 3            ; multiply x mod 4 by 16
+   shl cl, 1
+   shl cl, 1
    shl cl, 1
    shl cl, 1
    mov al, cl
-   shl cl, 1
-   add al, cl
    xor ah, ah
    mov ds, ax
 
