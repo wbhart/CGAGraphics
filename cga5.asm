@@ -845,6 +845,8 @@ linez1_pos:
    mov WORD PTR cs:[linez1_patch11 + 2], cx
    mov WORD PTR cs:[linez1_patch12 + 2], cx
    mov WORD PTR cs:[linez1_patch13 + 2], cx
+   mov WORD PTR cs:[linez1_patch14 + 2], cx
+   mov WORD PTR cs:[linez1_patch15 + 2], cx
             
    and di, 8192         ; continue computing offset for line y0
    mov cl, 4
@@ -891,6 +893,8 @@ linez1_yinc:
    mov BYTE PTR cs:[linez1_patch3 + 3], ah
    mov BYTE PTR cs:[linez1_patch4 + 3], ah
    mov BYTE PTR cs:[linez1_patch7 + 3], ah
+   mov BYTE PTR cs:[linez1_patch8 + 3], ah
+   mov BYTE PTR cs:[linez1_patch9 + 3], ah
 
    mov ax, [x0]         ; get x0
 
@@ -991,8 +995,47 @@ linez1_patch6:
    cmp cl, 0
    je linez1_done                   
         
+   add dx, sp           ; D += 2*dy
+
 linez1_patch7:
    mov BYTE PTR es:[di], 123      ; draw pixel
+
+   jle linez1_skip_incy5
+
+   add di, bp           ; odd <-> even line (reenigne's trick)
+linez1_patch14:
+   xor bp, 1234         ; adjust ydelta
+
+   sub dx, bx           ; D -= 2*dx
+
+linez1_skip_incy5:
+
+   dec cl
+   jz linez1_done
+
+
+linez1_patch8:
+   mov BYTE PTR es:[di], 123      ; draw pixel
+
+   add dx, sp           ; D += 2*dy
+
+   jle linez1_skip_incy6
+ 
+   add di, bp           ; odd <-> even line (reenigne's trick)
+linez1_patch15:
+   xor bp, 1234         ; adjust ydelta
+
+   sub dx, bx           ; D -= 2*dx
+
+linez1_skip_incy6:
+
+   dec cl
+   jz linez1_done
+
+
+linez1_patch9:
+   mov BYTE PTR es:[di], 123      ; draw pixel
+
 
 linez1_done:
 
