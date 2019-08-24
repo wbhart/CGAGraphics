@@ -933,7 +933,7 @@ linez1_loop:
    add dx, sp           ; D += 2*dy
 
    jle linez1_skip_incy1
-linez1_patch2:
+linez1_patch1:
    mov BYTE PTR es:[di], 123
  
    add di, bp           ; odd <-> even line (reenigne's trick)
