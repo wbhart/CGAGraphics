@@ -577,6 +577,7 @@ linew1_pos:
    mov WORD PTR cs:[linew1_patch11 + 2], cx
    mov WORD PTR cs:[linew1_patch12 + 2], cx
    mov WORD PTR cs:[linew1_patch13 + 2], cx
+   xor cx, 03fe0h
    mov WORD PTR cs:[linew1_patch14 + 2], cx
    mov WORD PTR cs:[linew1_patch15 + 2], cx
             
