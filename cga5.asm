@@ -578,7 +578,6 @@ linew1_pos:
    mov WORD PTR cs:[linew1_patch11 + 2], cx
    mov WORD PTR cs:[linew1_patch12 + 2], cx
    mov WORD PTR cs:[linew1_patch13 + 2], cx
-   xor cx, 03fe0h
    mov WORD PTR cs:[linew1_patch14 + 2], cx
    mov WORD PTR cs:[linew1_patch15 + 2], cx
             
@@ -887,6 +886,9 @@ linez1_yinc:
    ror al, 1
    add ah, al
    
+   mov BYTE PTR cs:[linez1_patch1 + 3], ah
+   mov BYTE PTR cs:[linez1_patch2 + 3], ah
+   mov BYTE PTR cs:[linez1_patch3 + 3], ah
    mov BYTE PTR cs:[linez1_patch4 + 3], ah
    mov BYTE PTR cs:[linez1_patch7 + 3], ah
 
@@ -927,6 +929,8 @@ linez1_loop:
    add dx, sp           ; D += 2*dy
 
    jle linez1_skip_incy1
+linez1_patch2:
+   mov BYTE PTR es:[di], 123
  
    add di, bp           ; odd <-> even line (reenigne's trick)
 linez1_patch10:
@@ -935,10 +939,11 @@ linez1_patch10:
    sub dx, bx           ; D -= 2*dx
 linez1_skip_incy1:
 
-linez1_patch2:
    add dx, sp           ; D += 2*dy
 
    jle linez1_skip_incy2
+linez1_patch2:
+   mov BYTE PTR es:[di], 123
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 linez1_patch11:
@@ -947,10 +952,11 @@ linez1_patch11:
    sub dx, bx           ; D -= 2*dx
 linez1_skip_incy2:             
 
-linez1_patch3:
    add dx, sp           ; D += 2*dy
 
    jle linez1_skip_incy3
+linez1_patch3:
+   mov BYTE PTR es:[di], 123
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 linez1_patch12:
