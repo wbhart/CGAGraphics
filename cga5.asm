@@ -868,12 +868,13 @@ linez1_yinc:
    mov dx, [D]          ; store D
 
    mov cx, [x0]         ; compute jump offset
-   and cl, 3            ; multiply x mod 4 by 16
-   shl cl, 1
-   shl cl, 1
-   shl cl, 1
+   and cl, 3            ; multiply x mod 4 by 14
    shl cl, 1
    mov al, cl
+   shl cl, 1
+   add al, cl
+   shl cl, 1
+   add al, cl
    xor ah, ah
    mov ds, ax
 
@@ -889,13 +890,7 @@ linez1_yinc:
    ror al, 1
    add ah, al
    
-   mov BYTE PTR cs:[linez1_patch1 + 3], ah
-   mov BYTE PTR cs:[linez1_patch2 + 3], ah
-   mov BYTE PTR cs:[linez1_patch3 + 3], ah
-   mov BYTE PTR cs:[linez1_patch4 + 3], ah
-   mov BYTE PTR cs:[linez1_patch7 + 3], ah
-   mov BYTE PTR cs:[linez1_patch8 + 3], ah
-   mov BYTE PTR cs:[linez1_patch9 + 3], ah
+   mov BYTE PTR cs:[linez1_patch1 + 1], ah
 
    mov ax, [x0]         ; get x0
 
@@ -924,6 +919,9 @@ linez1_yinc:
    mov ax, ds           ; get jump offset   
    mov si, ax
 
+linez1_patch1:
+   mov al, 123
+
    cmp cl, 0            ; check for iterations = 0
    je linez1_no_iter
 
@@ -934,8 +932,8 @@ linez1_loop:
    add dx, sp           ; D += 2*dy
 
    jle linez1_skip_incy1
-linez1_patch1:
-   mov BYTE PTR es:[di], 123
+   stosb
+   dec di
  
    add di, bp           ; odd <-> even line (reenigne's trick)
 linez1_patch10:
@@ -947,8 +945,8 @@ linez1_skip_incy1:
    add dx, sp           ; D += 2*dy
 
    jle linez1_skip_incy2
-linez1_patch2:
-   mov BYTE PTR es:[di], 123
+   stosb
+   dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 linez1_patch11:
@@ -960,8 +958,8 @@ linez1_skip_incy2:
    add dx, sp           ; D += 2*dy
 
    jle linez1_skip_incy3
-linez1_patch3:
-   mov BYTE PTR es:[di], 123
+   stosb
+   dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 linez1_patch12:
@@ -971,8 +969,7 @@ linez1_patch12:
 linez1_skip_incy3:             
 
    add dx, sp           ; D += 2*dy
-linez1_patch4:
-   mov BYTE PTR es:[di], 123
+   stosb
    
    jle linez1_skip_incy4
 
@@ -982,7 +979,6 @@ linez1_patch13:
 
    sub dx, bx           ; D -= 2*dx
 linez1_skip_incy4:
-   inc di
 
    loop linez1_loop
    
@@ -999,7 +995,8 @@ linez1_patch6:
    add dx, sp           ; D += 2*dy
 
 linez1_patch7:
-   mov BYTE PTR es:[di], 123      ; draw pixel
+   stosb                ; draw pixel
+   dec di
 
    jle linez1_skip_incy5
 
@@ -1016,7 +1013,8 @@ linez1_skip_incy5:
 
 
 linez1_patch8:
-   mov BYTE PTR es:[di], 123      ; draw pixel
+   stosb                ; draw pixel
+   dec di
 
    add dx, sp           ; D += 2*dy
 
@@ -1035,7 +1033,7 @@ linez1_skip_incy6:
 
 
 linez1_patch9:
-   mov BYTE PTR es:[di], 123      ; draw pixel
+   stosb                ; draw pixel
 
 
 linez1_done:
