@@ -757,9 +757,7 @@ linew1_patch14:
    sub dx, bx           ; D -= 2*dx
 
    mov al, es:[di]
-   inc di
 linew1_skip_incy5:
-   dec di
 
    dec cl
    jz linew1_done
@@ -963,7 +961,7 @@ linez1_skip_incy3:
 
    add dx, sp           ; D += 2*dy
 linez1_patch4:
-   mov es:[di], 123
+   mov BYTE PTR es:[di], 123
    
    jle linez1_skip_incy4
 
@@ -988,7 +986,7 @@ linez1_patch6:
    je linez1_done                   
         
 linez1_patch7:
-   mov es:[di], 123      ; draw pixel
+   mov BYTE PTR es:[di], 123      ; draw pixel
 
 linez1_done:
 
