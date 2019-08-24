@@ -40,10 +40,10 @@ _cga_draw_line1_old PROC
    mov [yinc], 8112     ; set up y increment
    mov [ycorr], 16304
    cmp dx, 0       
-   jge line1_yinc
+   jge line1_old_yinc
    add [yinc], 80
    neg dx
-line1_yinc:
+line1_old_yinc:
 
    mov si, D            ; store D
 
@@ -71,13 +71,13 @@ line1_yinc:
 
    mov ax, ds           ; get colour and mask information
 
-line1_loop:          
+line1_old_loop:          
    and al, es:[di]      ; draw pixel at x, y
    or al, ah
    stosb
 
    add si, dx           ; D += 2*dy
-   jle line1_skip_inc_y
+   jle line1_old_skip_inc_y
 
    xor ax, ax           ; increment y
    sub di, [yinc]
@@ -86,7 +86,7 @@ line1_loop:
    add di, ax
 
    sub si, bx           ; D -= 2*dx
-line1_skip_inc_y:   
+line1_old_skip_inc_y:   
    mov ax, ds           ; increment x
    ror ah, 1
    ror ah, 1
@@ -95,7 +95,7 @@ line1_skip_inc_y:
    sbb di, 0            ; adjust offset
    mov ds, ax           ; store updated colour and mask
 
-   loop line1_loop
+   loop line1_old_loop
 
    pop ds
    pop si
@@ -125,9 +125,9 @@ _cga_draw_line1_reenxor PROC
    shr ax, 1
 
    mov bx, 8192         ; also compute ydelta
-   jnc line1_y_even
+   jnc line1_reen_y_even
    mov bx, -8112
-line1_y_even:
+line1_reen_y_even:
    push bx
 
    sbb di, 0            ; continue computing offset for line y0
@@ -145,7 +145,7 @@ line1_y_even:
    mov dx, [ydiff]      ; compute 2*dy
    shl dx, 1
 
-line1_yinc:
+line1_reen_yinc:
 
    mov si, [D]          ; store D
 
@@ -176,24 +176,24 @@ line1_yinc:
    pop bp               ; ydelta
 
    cli
-   mov WORD PTR cs:[line1_patch1 + 1], sp
+   mov WORD PTR cs:[line1_reen_patch1 + 1], sp
    mov sp, dx
    mov dx, ax
 
-line1_loop:          
+line1_reen_loop:          
    and al, es:[di]      ; draw pixel at x, y
    or al, dh
    stosb
 
    add si, sp           ; D += 2*dy
-   jle line1_skip_inc_y
+   jle line1_reen_skip_inc_y
 
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, -16304       ; adjust ydelta
 
    sub si, bx           ; D -= 2*dx
 
-line1_skip_inc_y:
+line1_reen_skip_inc_y:
 
    ror dh, 1            ; increment x
    ror dh, 1
@@ -202,9 +202,9 @@ line1_skip_inc_y:
    sbb di, 0            ; adjust offset
    mov al, dl           ; store updated colour and mask
 
-   loop line1_loop
+   loop line1_reen_loop
 
-line1_patch1:
+line1_reen_patch1:
    mov sp, 1234
    sti
    pop ds
@@ -234,9 +234,9 @@ _cga_draw_line1_unroll PROC
    shr ax, 1
 
    mov bx, 8192         ; also compute ydelta
-   jnc line1_y_even
+   jnc line1_unroll_y_even
    mov bx, -8112
-line1_y_even:
+line1_unroll_y_even:
    push bx
 
    sbb di, 0            ; continue computing offset for line y0
@@ -254,7 +254,7 @@ line1_y_even:
    mov si, [ydiff]      ; compute 2*dy
    shl si, 1
 
-line1_yinc:
+line1_unroll_yinc:
 
    mov dx, [D]          ; store D
 
@@ -272,16 +272,16 @@ line1_yinc:
    mov ah, [colour]     ; patch colours in
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[line1_patch1 + 1], ah
+   mov BYTE PTR cs:[line1_unroll_patch1 + 1], ah
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[line1_patch2 + 1], ah
+   mov BYTE PTR cs:[line1_unroll_patch2 + 1], ah
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[line1_patch3 + 1], ah
+   mov BYTE PTR cs:[line1_unroll_patch3 + 1], ah
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[line1_patch4 + 1], ah
+   mov BYTE PTR cs:[line1_unroll_patch4 + 1], ah
 
    mov ax, [x0]         ; get x0
 
@@ -303,84 +303,84 @@ line1_yinc:
    sub dx, si           ; compensate for first addition of 2*dy
 
    cli                  ; save and free up sp
-   mov WORD PTR cs:[line1_patch5 + 1], sp
+   mov WORD PTR cs:[line1_unroll_patch5 + 1], sp
    mov sp, si
 
    mov ax, ds           ; get jump offset   
    mov si, ax
-   lea si, si + line1_loop
+   lea si, si + line1_unroll_loop
    jmp si
 
-line1_loop:
+line1_unroll_loop:
    mov al, 03fh         
    and al, es:[di]      ; draw pixel at x, y
-line1_patch1:
+line1_unroll_patch1:
    or al, 040h
    add dx, sp           ; D += 2*dy
    stosb
 
-   jle line1_skip_incy1
+   jle line1_unroll_skip_incy1
 
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, -16304       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
-line1_skip_incy1:             
+line1_unroll_skip_incy1:             
    dec di               ; adjust offset
 
 
    mov al, 0cfh
    and al, es:[di]      ; draw pixel at x, y
-line1_patch2:
+line1_unroll_patch2:
    or al, 010h
    add dx, sp           ; D += 2*dy
    stosb
 
-   jle line1_skip_incy2
+   jle line1_unroll_skip_incy2
 
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, -16304       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
-line1_skip_incy2:             
+line1_unroll_skip_incy2:             
    dec di               ; adjust offset
 
 
    mov al, 0f3h
    and al, es:[di]      ; draw pixel at x, y
-line1_patch3:
+line1_unroll_patch3:
    or al, 04h
    add dx, sp           ; D += 2*dy
    stosb
 
-   jle line1_skip_incy3
+   jle line1_unroll_skip_incy3
 
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, -16304       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
-line1_skip_incy3:             
+line1_unroll_skip_incy3:             
    dec di               ; adjust offset
 
 
    mov al, 0fch
    and al, es:[di]      ; draw pixel at x, y
-line1_patch4:
+line1_unroll_patch4:
    or al, 01h
    add dx, sp           ; D += 2*dy
    stosb
 
-   jle line1_skip_incy4
+   jle line1_unroll_skip_incy4
 
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, -16304       ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
-line1_skip_incy4:             
+line1_unroll_skip_incy4:             
 
-   loop line1_loop
+   loop line1_unroll_loop
 
-line1_patch5:
+line1_unroll_patch5:
    mov sp, 1234
    sti
 
