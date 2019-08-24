@@ -727,6 +727,7 @@ linew1_skip_incy4:
 
    loop linew1_loop
 
+
 linew1_no_iter:
 
 linew1_patch6:
@@ -734,7 +735,9 @@ linew1_patch6:
    and cl, 03h
 
    cmp cl, 0
-   je linew1_done                   
+   je linew1_done 
+
+   dec bp               ; revert to reading and writing pixels                  
         
    mov al, es:[di]
    
