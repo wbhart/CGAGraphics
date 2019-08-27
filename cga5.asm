@@ -117,6 +117,8 @@ line1_yinc:
 
    mov ax, ds           ; get jump offset   
    mov si, ax
+   mov ax, es
+   mov ds, ax
    mov al, es:[di]      ; get first word
 
    cmp cl, 0            ; check for iterations = 0
@@ -145,7 +147,7 @@ line1_patch10:
 
    sub dx, bx           ; D -= 2*dx
 
-   mov al, es:[di]
+   mov al, [di]
 line1_skip_incy1:
 
    and al, 0cfh
@@ -163,7 +165,7 @@ line1_patch11:
 
    sub dx, bx           ; D -= 2*dx
 
-   mov al, es:[di]
+   mov al, [di]
 line1_skip_incy2:             
 
    and al, 0f3h
@@ -181,7 +183,7 @@ line1_patch12:
 
    sub dx, bx           ; D -= 2*dx
 
-   mov al, es:[di]
+   mov al, [di]
 line1_skip_incy3:             
 
    and al, 0fch
@@ -199,7 +201,7 @@ line1_patch13:
    sub dx, bx           ; D -= 2*dx
    inc di
 line1_skip_incy4:             
-   mov al, es:[di]
+   mov al, [di]
 
    loop line1_loop
 
@@ -227,7 +229,7 @@ line1_patch14:
 
    sub dx, bx           ; D -= 2*dx
 
-   mov al, es:[di]
+   mov al, [di]
    inc di
 line1_skip_incy5:
    dec di
@@ -251,7 +253,7 @@ line1_patch15:
 
    sub dx, bx           ; D -= 2*dx
 
-   mov al, es:[di]
+   mov al, [di]
    inc di
 line1_skip_incy6:
    dec di
