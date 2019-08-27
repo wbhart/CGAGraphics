@@ -42,7 +42,7 @@ line1_pos:
 
    push bx
 
-   mov WORD PTR cs:[line1_patch17 + 2], cx
+   mov WORD PTR cs:[line1_patch17 + 1], cx
             
    and di, 8192         ; continue computing offset for line y0
    mov cl, 4
@@ -123,7 +123,7 @@ line1_yinc:
    je line1_no_iter
 
    lea si, si + line1_loop
-   mov WORD PTR cs:[jmp_addr], si
+   mov cs:[jmp_addr], si
 line1_patch17:
    mov si, 1234
 
