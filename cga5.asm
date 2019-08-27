@@ -2,6 +2,8 @@
    .MODEL small
    .CODE
 
+   jmp_addr DW ?
+
    PUBLIC _cga_draw_line1
 _cga_draw_line1 PROC
    ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
@@ -40,12 +42,7 @@ line1_pos:
 
    push bx
 
-   mov BYTE PTR cs:[line1_patch10 + 2], -050h
-   mov BYTE PTR cs:[line1_patch11 + 2], -050h
-   mov BYTE PTR cs:[line1_patch12 + 2], -050h
-   mov BYTE PTR cs:[line1_patch13 + 2], -050h
-   mov BYTE PTR cs:[line1_patch14 + 2], -050h
-   mov BYTE PTR cs:[line1_patch15 + 2], -050h
+   mov WORD PTR cs:[line1_patch17 + 2], cx
             
    and di, 8192         ; continue computing offset for line y0
    mov cl, 4
@@ -67,10 +64,10 @@ line1_yinc:
    mov dx, [D]          ; store D
 
    mov cx, [x0]         ; compute jump offset
-   and cl, 3            ; multiply x mod 4 by 20
-   shl cl, 1
+   and cl, 3            ; multiply x mod 4 by 18
    shl cl, 1
    mov al, cl
+   shl cl, 1
    shl cl, 1
    shl cl, 1
    add al, cl
@@ -126,7 +123,11 @@ line1_yinc:
    je line1_no_iter
 
    lea si, si + line1_loop
-   jmp si
+   mov WORD PTR cs:[jmp_addr], si
+line1_patch17:
+   mov si, 1234
+
+   jmp cs:[jmp_addr]
 
 line1_loop:
    and al, 03fh         
@@ -140,7 +141,7 @@ line1_patch1:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch10:
-   xor bp, 12         ; adjust ydelta
+   xor bp, si         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -158,7 +159,7 @@ line1_patch2:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch11:
-   xor bp, 12         ; adjust ydelta
+   xor bp, si         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -176,7 +177,7 @@ line1_patch3:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch12:
-   xor bp, 12         ; adjust ydelta
+   xor bp, si         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -193,7 +194,7 @@ line1_patch4:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch13:
-   xor bp, 12         ; adjust ydelta
+   xor bp, si         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
    inc di
@@ -222,7 +223,7 @@ line1_patch7:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch14:
-   xor bp, 12         ; adjust ydelta
+   xor bp, si         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -246,7 +247,7 @@ line1_patch8:
  
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch15:
-   xor bp, 12        ; adjust ydelta
+   xor bp, si        ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
