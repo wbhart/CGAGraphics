@@ -2,398 +2,6 @@
    .MODEL small
    .CODE
 
-   PUBLIC _cga_draw_line1_old
-_cga_draw_line1_old PROC
-   LOCAL yinc:WORD, ycorr:WORD=AUTO_SIZE
-   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
-   ; line from (x0, y0) - (xend, ?) including endpoints
-   ; AX: Acc, BX: 2*dx, DX: 2*dy, CX: Loop,
-   ; SI: D, DI: Offset, DS: Colour/Mask, ES: B800
-   push bp
-   mov bp, sp
-   sub sp, AUTO_SIZE
-   push di
-   push si
-   push ds
-
-   mov ax, 0b800h       ; set segment for CGA memory
-   mov es, ax
-
-   xor di, di           ; compute offset for raster y0
-   mov ax, [y0]
-   shr ax, 1
-   sbb di, 0
-   and di, 8192
-   mov cl, 4        
-   shl ax, cl
-   add di, ax
-   shl ax, 1
-   shl ax, 1
-   add di, ax
-
-   mov bx, [xdiff]      ; compute 2*dx
-   shl bx, 1
-
-   mov dx, [ydiff]      ; compute 2*dy
-   shl dx, 1
-
-   mov [yinc], 8112     ; set up y increment
-   mov [ycorr], 16304
-   cmp dx, 0       
-   jge line1_old_yinc
-   add [yinc], 80
-   neg dx
-line1_old_yinc:
-
-   mov si, D            ; store D
-
-   mov cx, [x0]         ; set up colour and mask
-   mov ah, [colour] 
-   inc cl
-   and cl, 3
-   shl cl, 1
-   ror ah, cl
-   mov al, 0fch
-   ror al, cl
-   mov ds, ax
-
-   mov ax, [x0]         ; get x0
-   
-   mov cx, [xend]       ; compute loop iterations
-   sub cx, ax
-   inc cx
-
-   shr ax, 1            ; adjust offset for column x0
-   shr ax, 1
-   add di, ax
-
-   sub si, dx           ; compensate for first addition of 2*dy
-
-   mov ax, ds           ; get colour and mask information
-
-line1_old_loop:          
-   and al, es:[di]      ; draw pixel at x, y
-   or al, ah
-   stosb
-
-   add si, dx           ; D += 2*dy
-   jle line1_old_skip_inc_y
-
-   xor ax, ax           ; increment y
-   sub di, [yinc]
-   sbb ax, ax
-   and ax, [ycorr]
-   add di, ax
-
-   sub si, bx           ; D -= 2*dx
-line1_old_skip_inc_y:   
-   mov ax, ds           ; increment x
-   ror ah, 1
-   ror ah, 1
-   ror al, 1
-   ror al, 1
-   sbb di, 0            ; adjust offset
-   mov ds, ax           ; store updated colour and mask
-
-   loop line1_old_loop
-
-   pop ds
-   pop si
-   pop di
-   add sp, AUTO_SIZE
-   pop bp
-   ret
-_cga_draw_line1_old ENDP
-
-   PUBLIC _cga_draw_line1_reenxor
-_cga_draw_line1_reenxor PROC
-   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
-   ; line from (x0, y0) - (xend, ?) including endpoints
-   ; AX: Acc, BX: 2*dx, DX: 2*dy, CX: Loop, BP: ydelta
-   ; SI: D, DI: Offset, DS: Colour/Mask, ES: B800
-   push bp
-   mov bp, sp
-   push di
-   push si
-   push ds
-
-   mov ax, 0b800h       ; set segment for CGA memory
-   mov es, ax
-
-   xor di, di           ; compute offset for line y0
-   mov ax, [y0]
-   shr ax, 1
-
-   mov bx, 8192         ; also compute ydelta
-   jnc line1_reen_y_even
-   mov bx, -8112
-line1_reen_y_even:
-   push bx
-
-   sbb di, 0            ; continue computing offset for line y0
-   and di, 8192
-   mov cl, 4        
-   shl ax, cl
-   add di, ax
-   shl ax, 1
-   shl ax, 1
-   add di, ax
-
-   mov bx, [xdiff]      ; compute 2*dx
-   shl bx, 1
-
-   mov dx, [ydiff]      ; compute 2*dy
-   shl dx, 1
-
-line1_reen_yinc:
-
-   mov si, [D]          ; store D
-
-   mov cx, [x0]         ; set up colour and mask
-   mov ah, [colour] 
-   inc cl
-   and cl, 3
-   shl cl, 1
-   ror ah, cl
-   mov al, 0fch
-   ror al, cl
-   mov ds, ax
-
-   mov ax, [x0]         ; get x0
-   
-   mov cx, [xend]       ; compute loop iterations
-   sub cx, ax
-   inc cx
-
-   shr ax, 1            ; adjust offset for column x0
-   shr ax, 1
-   add di, ax
-
-   sub si, dx           ; compensate for first addition of 2*dy
-
-   mov ax, ds           ; get colour and mask information
-
-   pop bp               ; ydelta
-
-   cli
-   mov WORD PTR cs:[line1_reen_patch1 + 1], sp
-   mov sp, dx
-   mov dx, ax
-
-line1_reen_loop:          
-   and al, es:[di]      ; draw pixel at x, y
-   or al, dh
-   stosb
-
-   add si, sp           ; D += 2*dy
-   jle line1_reen_skip_inc_y
-
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
-
-   sub si, bx           ; D -= 2*dx
-
-line1_reen_skip_inc_y:
-
-   ror dh, 1            ; increment x
-   ror dh, 1
-   ror dl, 1
-   ror dl, 1
-   sbb di, 0            ; adjust offset
-   mov al, dl           ; store updated colour and mask
-
-   loop line1_reen_loop
-
-line1_reen_patch1:
-   mov sp, 1234
-   sti
-   pop ds
-   pop si
-   pop di
-   pop bp
-   ret
-_cga_draw_line1_reenxor ENDP
-
-   PUBLIC _cga_draw_line1_unroll
-_cga_draw_line1_unroll PROC
-   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
-   ; line from (x0, y0) - (xend, ?) including endpoints
-   ; AX: Acc, BX: 2*dx, SP: 2*dy, CX: Loop, BP: ydelta
-   ; DX: D, DI: Offset, ES: B800, SI: Jump offset
-   push bp
-   mov bp, sp
-   push di
-   push si
-   push ds
-
-   mov ax, 0b800h       ; set segment for CGA memory
-   mov es, ax
-
-   xor di, di           ; compute offset for line y0
-   mov ax, [y0]
-   shr ax, 1
-
-   mov bx, 8192         ; also compute ydelta
-   jnc line1_unroll_y_even
-   mov bx, -8112
-line1_unroll_y_even:
-   push bx
-
-   sbb di, 0            ; continue computing offset for line y0
-   and di, 8192
-   mov cl, 4        
-   shl ax, cl
-   add di, ax
-   shl ax, 1
-   shl ax, 1
-   add di, ax
-
-   mov bx, [xdiff]      ; compute 2*dx
-   shl bx, 1
-
-   mov si, [ydiff]      ; compute 2*dy
-   shl si, 1
-
-line1_unroll_yinc:
-
-   mov dx, [D]          ; store D
-
-   mov cx, [x0]         ; compute jump offset
-   and cl, 3            ; multiply x mod 4 by 20
-   shl cl, 1
-   shl cl, 1
-   mov al, cl
-   shl cl, 1
-   shl cl, 1
-   add al, cl
-   xor ah, ah
-   mov ds, ax
-
-   mov ah, [colour]     ; patch colours in
-   ror ah, 1
-   ror ah, 1
-   mov BYTE PTR cs:[line1_unroll_patch1 + 1], ah
-   ror ah, 1
-   ror ah, 1
-   mov BYTE PTR cs:[line1_unroll_patch2 + 1], ah
-   ror ah, 1
-   ror ah, 1
-   mov BYTE PTR cs:[line1_unroll_patch3 + 1], ah
-   ror ah, 1
-   ror ah, 1
-   mov BYTE PTR cs:[line1_unroll_patch4 + 1], ah
-
-   mov ax, [x0]         ; get x0
-
-   shr ax, 1            ; adjust offset for column x0
-   shr ax, 1
-   add di, ax
-
-   shl ax, 1            ; round x0 down to nearest multiple of 4
-   shl ax, 1
-   
-   mov cx, [xend]       ; compute loop iterations
-   pop bp               ; (get ydelta here so we can push below)
-   sub cx, ax
-   inc cx
-   push cx              ; save iterations for prologue
-   shr cx, 1
-   shr cx, 1            ; we will unroll by 4 so divide by 4
-
-   sub dx, si           ; compensate for first addition of 2*dy
-
-   cli                  ; save and free up sp
-   mov WORD PTR cs:[line1_unroll_patch5 + 1], sp
-   mov sp, si
-
-   mov ax, ds           ; get jump offset   
-   mov si, ax
-   lea si, si + line1_unroll_loop
-   jmp si
-
-line1_unroll_loop:
-   mov al, 03fh         
-   and al, es:[di]      ; draw pixel at x, y
-line1_unroll_patch1:
-   or al, 040h
-   add dx, sp           ; D += 2*dy
-   stosb
-
-   jle line1_unroll_skip_incy1
-
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
-
-   sub dx, bx           ; D -= 2*dx
-line1_unroll_skip_incy1:             
-   dec di               ; adjust offset
-
-
-   mov al, 0cfh
-   and al, es:[di]      ; draw pixel at x, y
-line1_unroll_patch2:
-   or al, 010h
-   add dx, sp           ; D += 2*dy
-   stosb
-
-   jle line1_unroll_skip_incy2
-
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
-
-   sub dx, bx           ; D -= 2*dx
-line1_unroll_skip_incy2:             
-   dec di               ; adjust offset
-
-
-   mov al, 0f3h
-   and al, es:[di]      ; draw pixel at x, y
-line1_unroll_patch3:
-   or al, 04h
-   add dx, sp           ; D += 2*dy
-   stosb
-
-   jle line1_unroll_skip_incy3
-
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
-
-   sub dx, bx           ; D -= 2*dx
-line1_unroll_skip_incy3:             
-   dec di               ; adjust offset
-
-
-   mov al, 0fch
-   and al, es:[di]      ; draw pixel at x, y
-line1_unroll_patch4:
-   or al, 01h
-   add dx, sp           ; D += 2*dy
-   stosb
-
-   jle line1_unroll_skip_incy4
-
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, -16304       ; adjust ydelta
-
-   sub dx, bx           ; D -= 2*dx
-line1_unroll_skip_incy4:             
-
-   loop line1_unroll_loop
-
-line1_unroll_patch5:
-   mov sp, 1234
-   sti
-
-   pop cx               ; do remaining iterations (0-3)
-                        ; TODO
-   
-   pop ds
-   pop si
-   pop di
-   pop bp
-   ret
-_cga_draw_line1_unroll ENDP
-
    PUBLIC _cga_draw_line1
 _cga_draw_line1 PROC
    ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
@@ -432,17 +40,18 @@ line1_pos:
 
    push bx
 
-   mov WORD PTR cs:[line1_patch10 + 2], cx
-   mov WORD PTR cs:[line1_patch11 + 2], cx
-   mov WORD PTR cs:[line1_patch12 + 2], cx
-   mov WORD PTR cs:[line1_patch13 + 2], cx
-   mov WORD PTR cs:[line1_patch14 + 2], cx
-   mov WORD PTR cs:[line1_patch15 + 2], cx
+   mov BYTE PTR cs:[line1_patch10 + 2], -050h
+   mov BYTE PTR cs:[line1_patch11 + 2], -050h
+   mov BYTE PTR cs:[line1_patch12 + 2], -050h
+   mov BYTE PTR cs:[line1_patch13 + 2], -050h
+   mov BYTE PTR cs:[line1_patch14 + 2], -050h
+   mov BYTE PTR cs:[line1_patch15 + 2], -050h
             
    and di, 8192         ; continue computing offset for line y0
    mov cl, 4
    xor ah, ah        
    shl ax, cl
+
    add di, ax
    shl ax, 1
    shl ax, 1
@@ -531,7 +140,7 @@ line1_patch1:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch10:
-   xor bp, 1234         ; adjust ydelta
+   xor bp, 12         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -549,7 +158,7 @@ line1_patch2:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch11:
-   xor bp, 1234         ; adjust ydelta
+   xor bp, 12         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -567,7 +176,7 @@ line1_patch3:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch12:
-   xor bp, 1234         ; adjust ydelta
+   xor bp, 12         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -584,7 +193,7 @@ line1_patch4:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch13:
-   xor bp, 1234         ; adjust ydelta
+   xor bp, 12         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
    inc di
@@ -613,7 +222,7 @@ line1_patch7:
 
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch14:
-   xor bp, 1234         ; adjust ydelta
+   xor bp, 12         ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
@@ -637,7 +246,7 @@ line1_patch8:
  
    add di, bp           ; odd <-> even line (reenigne's trick)
 line1_patch15:
-   xor bp, 1234        ; adjust ydelta
+   xor bp, 12        ; adjust ydelta
 
    sub dx, bx           ; D -= 2*dx
 
