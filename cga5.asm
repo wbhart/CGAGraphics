@@ -348,9 +348,9 @@ line1_11_pos:
 
 
    mov ax, [x0]         ; compute jump offset
-   and ax, 3            ; multiply x mod 4 by 18
-   shl ax, 1
+   and ax, 3            ; multiply x mod 4 by 17
    mov si, ax
+   shl ax, 1
    shl al, 1
    shl al, 1
    shl al, 1
@@ -389,6 +389,7 @@ line1_11_loop:
    xor bx, si           ; adjust ydelta
 
    sub dx, bp           ; D -= 2*dx
+   xor al, al
 line1_11_skip_incy1:
 
    or al, 030h
@@ -401,6 +402,7 @@ line1_11_skip_incy1:
    xor bx, si           ; adjust ydelta
 
    sub dx, bp           ; D -= 2*dx
+   xor al, al
 line1_11_skip_incy2:             
 
    or al, 0ch
@@ -413,11 +415,12 @@ line1_11_skip_incy2:
    xor bx, si           ; adjust ydelta
 
    sub dx, bp           ; D -= 2*dx
+   xor al, al
 line1_11_skip_incy3:             
 
    or al, 03h
    add dx, sp           ; D += 2*dy
-   or [di]:al           ; write pixel(s)
+   or [di], al          ; write pixel(s)
    
    jle line1_11_skip_incy4
    add di, bx           ; odd <-> even line (reenigne's trick)
@@ -437,7 +440,7 @@ line1_11_no_iter:
    cmp cl, 0
    je line1_11_done                   
 
-   or al, 0c0h
+   mov al, 0c0h
    add dx, sp           ; D += 2*dy
 
    or [di], al          ; draw pixel
@@ -448,6 +451,7 @@ line1_11_no_iter:
    xor bx, si           ; adjust ydelta
 
    sub dx, bp           ; D -= 2*dx
+   xor al, al
 line1_11_skip_incy5:
 
    dec cl
@@ -465,6 +469,7 @@ line1_11_skip_incy5:
    xor bx, si           ; adjust ydelta
 
    sub dx, bp           ; D -= 2*dx
+   xor al, al
 line1_11_skip_incy6:
 
    dec cl
