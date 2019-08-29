@@ -419,8 +419,8 @@ line1_11_skip_incy2:
 line1_11_skip_incy3:             
 
    or al, 03h
-   add dx, sp           ; D += 2*dy
    or [di], al          ; write pixel(s)
+   add dx, sp           ; D += 2*dy
    
    jle line1_11_skip_incy4
    add di, bx           ; odd <-> even line (reenigne's trick)
@@ -441,9 +441,8 @@ line1_11_no_iter:
    je line1_11_done                   
 
    mov al, 0c0h
-   add dx, sp           ; D += 2*dy
-
    or [di], al          ; draw pixel
+   add dx, sp           ; D += 2*dy
 
    jle line1_11_skip_incy5
 
@@ -459,9 +458,8 @@ line1_11_skip_incy5:
 
 
    or al, 030h
-   add dx, sp           ; D += 2*dy
-
    or [di], al          ; draw pixel
+   add dx, sp           ; D += 2*dy
 
    jle line1_11_skip_incy6
  
@@ -477,7 +475,6 @@ line1_11_skip_incy6:
 
 
    or al, 0ch
-
    or [di], al         ; draw pixel
 
 line1_11_done:
