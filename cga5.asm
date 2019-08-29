@@ -5,6 +5,7 @@
    jmp_addr   DW ?
    ydelta_xor DW ?
    sp_save    DW ?
+   iter_save  DW ?
 
    PUBLIC _cga_draw_line1
 _cga_draw_line1 PROC
@@ -198,7 +199,7 @@ line1_skip_incy4:
 
 line1_no_iter:
 
-   mov cl, cs:[iter_save]  ; do remaining iterations (0-3)
+   mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h
 
    cmp cl, 0
