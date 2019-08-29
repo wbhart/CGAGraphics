@@ -139,10 +139,10 @@ line1_patch1:
    jle line1_skip_incy1
    stosb                ; draw pixel
 
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, si           ; adjust ydelta
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   sub dx, bx           ; D -= 2*dx
+   sub dx, bp           ; D -= 2*dx
 
    mov al, [di]
 line1_skip_incy1:
@@ -155,10 +155,10 @@ line1_patch2:
    jle line1_skip_incy2
    stosb                ; draw pixel(s)
 
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, si           ; adjust ydelta
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   sub dx, bx           ; D -= 2*dx
+   sub dx, bp           ; D -= 2*dx
 
    mov al, [di]
 line1_skip_incy2:             
@@ -171,10 +171,10 @@ line1_patch3:
    jle line1_skip_incy3
    stosb                ; draw pixel(s)
 
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, si           ; adjust ydelta
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   sub dx, bx           ; D -= 2*dx
+   sub dx, bp           ; D -= 2*dx
 
    mov al, [di]
 line1_skip_incy3:             
@@ -186,10 +186,10 @@ line1_patch4:
    stosb
    
    jle line1_skip_incy4
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, si           ; adjust ydelta
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   sub dx, bx           ; D -= 2*dx
+   sub dx, bp           ; D -= 2*dx
    inc di
 line1_skip_incy4:             
    mov al, [di]
@@ -213,10 +213,10 @@ line1_patch5:
 
    jle line1_skip_incy5
 
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, si           ; adjust ydelta
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   sub dx, bx           ; D -= 2*dx
+   sub dx, bp           ; D -= 2*dx
 
    mov al, [di]
    inc di
@@ -236,10 +236,10 @@ line1_patch6:
 
    jle line1_skip_incy6
  
-   add di, bp           ; odd <-> even line (reenigne's trick)
-   xor bp, si           ; adjust ydelta
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   sub dx, bx           ; D -= 2*dx
+   sub dx, bp           ; D -= 2*dx
 
    mov al, [di]
    inc di
