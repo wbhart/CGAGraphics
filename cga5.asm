@@ -362,7 +362,7 @@ line1_11_pos:
 
 
    sub dx, sp           ; compensate for first addition of 2*dy
-   mov al, es:[di]      ; get first word
+   xor al, al
 
 
    cmp cl, 0            ; check for iterations = 0
