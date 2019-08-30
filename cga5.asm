@@ -1562,7 +1562,7 @@ line2_loop4:
 
    mov al, [di]
    and al, 0fch
-line2_patch7:
+line2_patch3:
    or al, 03h
    stosb
    add dx, bx           ; D += 2*dx - 2*dy
@@ -1575,7 +1575,7 @@ line2_incx41:
 
    mov al, [di]
    and al, 0fch
-line2_patch2:
+line2_patch4:
    or al, 03h
    stosb
    add dx, bx           ; D += 2*dx - 2*dy
@@ -1653,6 +1653,6 @@ line2_no_iter:
    pop di
    pop bp
    ret
-_cga_draw_line_blank2 ENDP
+_cga_draw_line2 ENDP
 
    END
