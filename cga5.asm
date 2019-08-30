@@ -1596,7 +1596,7 @@ line2_loop2:
 line2_patch5:
    or al, 030h
    stosb
-   add dx, bp           ; D += 2*dx - 2*dy
+   add dx, bx           ; D += 2*dx - 2*dy
    jg line2_incx31
    add dx, si           ; D += 2*dy
 line2_incx21:
