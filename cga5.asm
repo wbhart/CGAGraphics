@@ -1451,7 +1451,7 @@ _cga_draw_line2 PROC
    and di, 8192
    shl ax, 1            ; round y0 down to multiple of 2
    
-   mov cx, [xend]       ; also compute iterations
+   mov cx, [yend]       ; also compute iterations
    sub cx, ax
    inc cx
    mov cs:[iter_save], cx  ; save iterations for prologue
@@ -1472,8 +1472,7 @@ _cga_draw_line2 PROC
    shr ax, 1            
    shr ax, 1
    add di, ax
-
-
+   
 
    mov ax, [x0]         ; compute jump offset
    
