@@ -1551,7 +1551,7 @@ line2_patch2:
    jg line2_incx22
    add dx, si           ; D += 2*dy
 line2_incx12:
-   sub di, 8112
+   sub di, 8113
 
    loop line2_loop1
    jmp line2_no_iter
@@ -1583,7 +1583,7 @@ line2_patch4:
    dec di
    add dx, si           ; D += 2*dy
 line2_incx42:
-   sub di, 8112
+   sub di, 8113
 
    loop line2_loop4
    jmp line2_no_iter
@@ -1611,7 +1611,7 @@ line2_patch6:
    jg line2_incx32
    add dx, si           ; D += 2*dy
 line2_incx22:
-   sub di, 8112
+   sub di, 8113
 
    loop line2_loop2
    jmp line2_no_iter
@@ -1639,7 +1639,7 @@ line2_patch8:
    jg line2_incx42
    add dx, si           ; D += 2*dy
 line2_incx32:
-   sub di, 8112
+   sub di, 8113
 
    loop line2_loop3
 
