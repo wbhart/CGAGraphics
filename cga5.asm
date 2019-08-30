@@ -1524,7 +1524,7 @@ line2_iter:
    sub bx, si
            
    mov dx, [D]          ; store D
-   add dx, si           ; shift D by 2*dy so jumps are correct   
+   sub dx, bx           ; compensate for first addition of 2*dx - 2*dy  
 
    jmp cs:[jmp_addr]
 
@@ -1564,8 +1564,8 @@ line2_loop4:
 line2_patch3:
    or al, 03h
    stosb
-   add dx, bx           ; D += 2*dx - 2*dy
    inc di               ; move to next byte, maybe?
+   add dx, bx           ; D += 2*dx - 2*dy
    jg line2_incx11
    dec di
    add dx, si           ; D += 2*dy
@@ -1577,8 +1577,8 @@ line2_incx41:
 line2_patch4:
    or al, 03h
    stosb
-   add dx, bx           ; D += 2*dx - 2*dy
    inc di               ; move to next byte, maybe?
+   add dx, bx           ; D += 2*dx - 2*dy
    jg line2_incx12
    dec di
    add dx, si           ; D += 2*dy
