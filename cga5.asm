@@ -1426,4 +1426,233 @@ line_blank1_done:
    ret
 _cga_draw_line_blank1 ENDP
 
+   PUBLIC _cga_draw_line2
+_cga_draw_line2 PROC
+   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, yend:WORD, colour:BYTE
+   ; line from (x0, y0) - (?, yend) including endpoints
+   ; AL: colour, BX: 2*dx - 2*dy, CX: Loop, DX: D
+   ; SI: 2*dy, DI: Offset, DS:B800, ES: B800
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
+
+   mov ax, 0b800h       ; set ES to segment for CGA memory
+   mov es, ax
+   mov ds, ax           ; reflect in DS
+
+
+
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
+   shr ax, 1
+   sbb di, 0
+   and di, 8192
+   shl ax, 1            ; round y0 down to multiple of 2
+   
+   mov cx, [xend]       ; also compute iterations
+   sub cx, ax
+   inc cx
+   mov cs:[iter_save], cx  ; save iterations for prologue
+
+   shr cx, 1            ; we will unroll by 2 so divide by 2
+
+   shl ax, 1            ; continue computing offset for line y0
+   shl ax, 1
+   shl ax, 1
+
+   add di, ax
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+
+   mov ax, [x0]         ; adjust offset for column x0
+
+   shr ax, 1            
+   shr ax, 1
+   add di, ax
+
+
+
+   mov ax, [x0]         ; compute jump offset
+   
+   ; TODO: fiddle bits of ax for 1423 ordering
+
+   and ax, 3            ; multiply x mod 4 by 38
+   shl ax, 1
+   mov si, ax
+   shl al, 1
+   add si, ax
+   shl al, 1
+   shl al, 1
+   shl al, 1
+   add si, ax
+
+   mov ah, [colour]     ; patch colours in
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line2_patch1 + 1], ah
+   mov BYTE PTR cs:[line2_patch2 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line2_patch5 + 1], ah
+   mov BYTE PTR cs:[line2_patch6 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line2_patch7 + 1], ah
+   mov BYTE PTR cs:[line2_patch8 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line2_patch3 + 1], ah
+   mov BYTE PTR cs:[line2_patch4 + 1], ah
+
+
+   cmp cl, 0            ; check for iterations = 0
+   je line2_iter
+   jmp line2_no_iter
+line2_iter:
+
+   lea si, si + line2_loop1 ; computed jump into loop
+   mov cs:[jmp_addr], si
+
+   
+   mov si, [ydiff]      ; compute 2*dy
+   shl si, 1            
+
+   mov bx, [xdiff]      ; compute 2*dx - 2*dy
+   shl bx, 1
+   sub bx, si
+           
+   mov dx, [D]          ; store D
+   add dx, si           ; shift D by 2*dy so jumps are correct   
+
+   jmp cs:[jmp_addr]
+
+
+line2_loop1:
+
+   mov al, [di]
+   and al, 03fh
+line2_patch1:
+   or al, 0c0h
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx21
+   add dx, si           ; D += 2*dy
+line2_incx11:
+   add di, 8191
+
+   mov al, [di]
+   and al, 03fh
+line2_patch2:
+   or al, 0c0h
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx22
+   add dx, si           ; D += 2*dy
+line2_incx12:
+   sub di, 8112
+
+   loop line2_loop1
+   jmp line2_no_iter
+   
+
+line2_loop4:
+
+   mov al, [di]
+   and al, 0fch
+line2_patch7:
+   or al, 03h
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   inc di               ; move to next byte, maybe?
+   jg line2_incx11
+   dec di
+   add dx, si           ; D += 2*dy
+line2_incx41:
+   add di, 8191
+
+   mov al, [di]
+   and al, 0fch
+line2_patch2:
+   or al, 03h
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   inc di               ; move to next byte, maybe?
+   jg line2_incx12
+   dec di
+   add dx, si           ; D += 2*dy
+line2_incx42:
+   sub di, 8112
+
+   loop line2_loop4
+   jmp line2_no_iter
+
+
+line2_loop2:
+
+   mov al, [di]
+   and al, 0cfh
+line2_patch5:
+   or al, 030h
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx31
+   add dx, si           ; D += 2*dy
+line2_incx21:
+   add di, 8191
+
+   mov al, [di]
+   and al, 0cfh
+line2_patch6:
+   or al, 030h
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx32
+   add dx, si           ; D += 2*dy
+line2_incx22:
+   sub di, 8112
+
+   loop line2_loop2
+   jmp line2_no_iter
+
+
+line2_loop3:
+
+   mov al, [di]
+   and al, 0f3h
+line2_patch7:
+   or al, 0ch
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx41
+   add dx, si           ; D += 2*dy
+line2_incx31:
+   add di, 8191
+
+   mov al, [di]
+   and al, 0f3h
+line2_patch8:
+   or al, 0ch
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx42
+   add dx, si           ; D += 2*dy
+line2_incx32:
+   sub di, 8112
+
+   loop line2_loop3
+
+line2_no_iter:
+
+   ; TODO: final iteration
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
+_cga_draw_line_blank2 ENDP
+
    END
