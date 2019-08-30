@@ -1222,242 +1222,221 @@ linew1_patch5:
    ret
 _cga_draw_line_write1 ENDP
 
-   PUBLIC _cga_draw_line_zero1
-_cga_draw_line_zero1 PROC
+   PUBLIC _cga_draw_line_blank1
+_cga_draw_line_blank1 PROC
    ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
-   ; line from (x0, y0) - (xend, ?) including endpoints, xor'd
-   ; AX: Acc, BX: 2*dx, SP: 2*dy, CX: Loop, BP: ydelta
-   ; DX: D, DI: Offset, ES: B800, SI: Jump offset
+   ; line from (x0, y0) - (xend, ?) including endpoints
+   ; AL: ES:[DI], BX: ydelta, CX: Loop, DX: D, SP: 2*dy, BP: 2*dx,
+   ; SI: ydelta_xor, DI: Offset, DS:B800, ES: B800
    push bp
    mov bp, sp
    push di
    push si
    push ds
 
-   mov ax, 0b800h       ; set segment for CGA memory
+   mov ax, 0b800h       ; set ES to segment for CGA memory
    mov es, ax
+   mov ds, ax           ; reflect in DS
 
-   xor di, di           ; compute offset for line y0
-   mov ax, [y0]
 
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
    shr ax, 1
-   mov bx, 8192         ; also compute ydelta
-   jnc linez1_y_even
-   mov bx, -8112
-linez1_y_even:
-   mov cx, 0c050h
+   mov bx, 8191         ; also compute ydelta and ydelta_xor
+   jnc line_blank1_y_even
+   mov bx, -8113
+line_blank1_y_even:
+   mov WORD PTR cs:[ydelta_xor], 0ffb0h
    sbb di, 0
+   and di, 8192
+   shl ax, 1            
+   shl ax, 1
+   shl ax, 1
+   shl ax, 1
 
-   mov si, [ydiff]      ; fixups for +ve/-ve slope
-   cmp si, 0
-   jge linez1_pos
-
-   neg si
-   sub bx, 80
-   mov cx, 0ffb0h
-
-linez1_pos:
-
-   push bx
-
-   mov WORD PTR cs:[linez1_patch10 + 2], cx
-   mov WORD PTR cs:[linez1_patch11 + 2], cx
-   mov WORD PTR cs:[linez1_patch12 + 2], cx
-   mov WORD PTR cs:[linez1_patch13 + 2], cx
-   mov WORD PTR cs:[linez1_patch14 + 2], cx
-   mov WORD PTR cs:[linez1_patch15 + 2], cx
-            
-   and di, 8192         ; continue computing offset for line y0
-   mov cl, 4
-   xor ah, ah        
-   shl ax, cl
    add di, ax
    shl ax, 1
    shl ax, 1
    add di, ax
 
-   mov bx, [xdiff]      ; compute 2*dx
-   shl bx, 1
-         
-   shl si, 1            ; compute 2*dy
 
-linez1_yinc:
-
-   mov dx, [D]          ; store D
-
-   mov cx, [x0]         ; compute jump offset
-   and cl, 3            ; multiply x mod 4 by 14
-   shl cl, 1
-   mov al, cl
-   shl cl, 1
-   add al, cl
-   shl cl, 1
-   add al, cl
-   xor ah, ah
-   mov ds, ax
-
-   mov al, [colour]     ; patch colours in
-   mov ah, al
-   ror al, 1
-   ror al, 1
-   add ah, al
-   ror al, 1
-   ror al, 1
-   add ah, al
-   ror al, 1
-   ror al, 1
-   add ah, al
-   
-   mov BYTE PTR cs:[linez1_patch1 + 1], ah
-
-   mov ax, [x0]         ; get x0
+   mov ax, [x0]         ; compute loop iterations
 
    shr ax, 1            ; adjust offset for column x0
    shr ax, 1
    add di, ax
 
-   shl ax, 1            ; round x0 down to nearest multiple of 4
+   shl ax, 1            ; round x0 down to multiple of 4
    shl ax, 1
    
-   mov cx, [xend]       ; compute loop iterations
+   mov cx, [xend] 
    sub cx, ax
    inc cx
-   mov BYTE PTR cs:[linez1_patch6 + 1], cl ; save iterations for prologue
+   mov cs:[iter_save], cx  ; save iterations for prologue
+
    shr cx, 1
    shr cx, 1            ; we will unroll by 4 so divide by 4
 
-   pop bp               ; get ydelta
-   
-   sub dx, si           ; compensate for first addition of 2*dy
 
    cli                  ; save and free up sp
-   mov WORD PTR cs:[linez1_patch5 + 1], sp
-   mov sp, si
+   mov WORD PTR cs:[sp_save], sp
 
-   mov ax, ds           ; get jump offset   
+
+   mov sp, [ydiff]      ; fixups for +ve/-ve slope
+   cmp sp, 0
+
+   jge line_blank1_pos
+   neg sp
+   sub bx, 80           ; correct ydelta and ydelta_xor
+   mov WORD PTR cs:[ydelta_xor], 0c050h
+line_blank1_pos:
+
+   shl sp, 1            ; compute 2*dy
+            
+
+   mov dx, [D]          ; store D
+
+
+   mov ax, [x0]         ; compute jump offset
+   and ax, 3            ; multiply x mod 4 by 18
+   shl ax, 1
    mov si, ax
+   shl al, 1
+   shl al, 1
+   shl al, 1
+   add si, ax
 
-linez1_patch1:
-   mov al, 123
+
+   mov ah, [colour]     ; compute colour byte
+   mov al, ah
+   ror ah, 1
+   ror ah, 1
+   add al, ah
+   ror ah, 1
+   ror ah, 1
+   add al, ah
+   ror ah, 1
+   ror ah, 1
+   add al, ah
+
+   mov bp, [xdiff]      ; compute 2*dx
+   shl bp, 1
+
+
+   sub dx, sp           ; compensate for first addition of 2*dy
+
 
    cmp cl, 0            ; check for iterations = 0
-   je linez1_no_iter
+   je line_blank1_no_iter
 
-   lea si, si + linez1_loop
-   jmp si
 
-linez1_loop:
+   lea si, si + line_blank1_loop ; computed jump into loop
+   mov cs:[jmp_addr], si
+
+
+   mov si, cs:[ydelta_xor] ; restore ydelta_xor
+
+
+   jmp cs:[jmp_addr]
+
+line_blank1_loop:
    add dx, sp           ; D += 2*dy
 
-   jle linez1_skip_incy1
-   stosb
-   dec di
- 
-   add di, bp           ; odd <-> even line (reenigne's trick)
-linez1_patch10:
-   xor bp, 1234         ; adjust ydelta
+   jle line_blank1_skip_incy1
+   stosb                ; draw pixel
 
-   sub dx, bx           ; D -= 2*dx
-linez1_skip_incy1:
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   add dx, sp           ; D += 2*dy
-
-   jle linez1_skip_incy2
-   stosb
-   dec di
-
-   add di, bp           ; odd <-> even line (reenigne's trick)
-linez1_patch11:
-   xor bp, 1234         ; adjust ydelta
-
-   sub dx, bx           ; D -= 2*dx
-linez1_skip_incy2:             
+   sub dx, bp           ; D -= 2*dx
+line_blank1_skip_incy1:
 
    add dx, sp           ; D += 2*dy
 
-   jle linez1_skip_incy3
-   stosb
-   dec di
+   jle line_blank1_skip_incy2
+   stosb                ; draw pixel(s)
 
-   add di, bp           ; odd <-> even line (reenigne's trick)
-linez1_patch12:
-   xor bp, 1234         ; adjust ydelta
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   sub dx, bx           ; D -= 2*dx
-linez1_skip_incy3:             
+   sub dx, bp           ; D -= 2*dx
+line_blank1_skip_incy2:             
+
+   add dx, sp           ; D += 2*dy
+
+   jle line_blank1_skip_incy3
+   stosb                ; draw pixel(s)
+
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
+
+   sub dx, bp           ; D -= 2*dx
+line_blank1_skip_incy3:             
 
    add dx, sp           ; D += 2*dy
    stosb
    
-   jle linez1_skip_incy4
+   jle line_blank1_skip_incy4
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   add di, bp           ; odd <-> even line (reenigne's trick)
-linez1_patch13:
-   xor bp, 1234         ; adjust ydelta
+   sub dx, bp           ; D -= 2*dx
+   inc di
+line_blank1_skip_incy4:             
 
-   sub dx, bx           ; D -= 2*dx
-linez1_skip_incy4:
+   loop line_blank1_loop
 
-   loop linez1_loop
-   
+line_blank1_no_iter:
 
-linez1_no_iter:
-
-linez1_patch6:
-   mov cl, 123          ; do remaining iterations (0-3)
+   mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h
 
    cmp cl, 0
-   je linez1_done                   
-        
+   je line_blank1_done                   
+
    add dx, sp           ; D += 2*dy
 
-linez1_patch7:
    stosb                ; draw pixel
+
+   jle line_blank1_skip_incy5
+
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
+
+   sub dx, bp           ; D -= 2*dx
+
+   inc di
+line_blank1_skip_incy5:
    dec di
-
-   jle linez1_skip_incy5
-
-   add di, bp           ; odd <-> even line (reenigne's trick)
-linez1_patch14:
-   xor bp, 1234         ; adjust ydelta
-
-   sub dx, bx           ; D -= 2*dx
-
-linez1_skip_incy5:
 
    dec cl
-   jz linez1_done
+   jz line_blank1_done
 
-
-linez1_patch8:
-   stosb                ; draw pixel
-   dec di
 
    add dx, sp           ; D += 2*dy
 
-   jle linez1_skip_incy6
+   stosb                ; draw pixel
+
+   jle line_blank1_skip_incy6
  
-   add di, bp           ; odd <-> even line (reenigne's trick)
-linez1_patch15:
-   xor bp, 1234         ; adjust ydelta
+   add di, bx           ; odd <-> even line (reenigne's trick)
+   xor bx, si           ; adjust ydelta
 
-   sub dx, bx           ; D -= 2*dx
+   sub dx, bp           ; D -= 2*dx
 
-linez1_skip_incy6:
+   inc di
+line_blank1_skip_incy6:
+   dec di
 
    dec cl
-   jz linez1_done
+   jz line_blank1_done
 
 
-linez1_patch9:
    stosb                ; draw pixel
 
+line_blank1_done:
 
-linez1_done:
-
-linez1_patch5:
-   mov sp, 1234
+   mov sp, cs:[sp_save]
    sti
    
    pop ds
@@ -1465,7 +1444,4 @@ linez1_patch5:
    pop di
    pop bp
    ret
-_cga_draw_line_zero1 ENDP
-
-   END
-
+_cga_draw_line_blank1 ENDP
