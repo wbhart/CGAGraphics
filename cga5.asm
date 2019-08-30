@@ -1425,3 +1425,5 @@ line_blank1_done:
    pop bp
    ret
 _cga_draw_line_blank1 ENDP
+
+   END
