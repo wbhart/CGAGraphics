@@ -1472,7 +1472,7 @@ _cga_draw_line2 PROC
    shr ax, 1            
    shr ax, 1
    add di, ax
-   
+
 
    mov ax, [x0]         ; compute jump offset
    
@@ -1508,7 +1508,7 @@ _cga_draw_line2 PROC
 
 
    cmp cl, 0            ; check for iterations = 0
-   je line2_iter
+   jne line2_iter
    jmp line2_no_iter
 line2_iter:
 
