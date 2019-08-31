@@ -1443,7 +1443,6 @@ _cga_draw_line2 PROC
    mov ds, ax           ; reflect in DS
 
 
-
    mov ax, [y0]         ; compute offset for line y0
    xor di, di           
    shr ax, 1
@@ -1520,12 +1519,14 @@ line2_iter:
    mov si, [ydiff]      ; compute 2*dy
    shl si, 1            
 
-   mov bx, [xdiff]      ; compute 2*dx - 2*dy
-   shl bx, 1
-   sub bx, si
-           
    mov dx, [D]          ; store D
-   sub dx, bx           ; compensate for first addition of 2*dx - 2*dy  
+   
+   push bp              ; free up bp
+   mov bp, [xdiff]      ; compute 2*dx - 2*dy
+   shl bp, 1
+   sub bp, si
+           
+   sub dx, bx           ; compensate D for first addition of 2*dx - 2*dy  
 
    jmp cs:[jmp_addr]
    
@@ -1537,7 +1538,7 @@ line2_loop2:
 line2_patch5:
    or al, 030h
    stosb
-   add dx, bx           ; D += 2*dx - 2*dy
+   add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx31
    add dx, si           ; D += 2*dy
 line2_incx21:
@@ -1548,7 +1549,7 @@ line2_incx21:
 line2_patch6:
    or al, 030h
    stosb
-   add dx, bx           ; D += 2*dx - 2*dy
+   add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx32
    add dx, si           ; D += 2*dy
 line2_incx22:
@@ -1565,7 +1566,7 @@ line2_loop1:
 line2_patch1:
    or al, 0c0h
    stosb
-   add dx, bx           ; D += 2*dx - 2*dy
+   add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx21
    add dx, si           ; D += 2*dy
 line2_incx11:
@@ -1576,7 +1577,7 @@ line2_incx11:
 line2_patch2:
    or al, 0c0h
    stosb
-   add dx, bx           ; D += 2*dx - 2*dy
+   add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx22
    add dx, si           ; D += 2*dy
 line2_incx12:
@@ -1593,7 +1594,7 @@ line2_loop3:
 line2_patch7:
    or al, 0ch
    stosb
-   add dx, bx           ; D += 2*dx - 2*dy
+   add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx41
    add dx, si           ; D += 2*dy
 line2_incx31:
@@ -1604,7 +1605,7 @@ line2_incx31:
 line2_patch8:
    or al, 0ch
    stosb
-   add dx, bx           ; D += 2*dx - 2*dy
+   add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx42
    add dx, si           ; D += 2*dy
 line2_incx32:
@@ -1622,7 +1623,7 @@ line2_patch3:
    or al, 03h
    stosb
    inc di               ; move to next byte, maybe?
-   add dx, bx           ; D += 2*dx - 2*dy
+   add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx11
    dec di
    add dx, si           ; D += 2*dy
@@ -1635,7 +1636,7 @@ line2_patch4:
    or al, 03h
    stosb
    inc di               ; move to next byte, maybe?
-   add dx, bx           ; D += 2*dx - 2*dy
+   add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx12
    dec di
    add dx, si           ; D += 2*dy
@@ -1646,6 +1647,7 @@ line2_incx42:
 
 line2_no_iter:
 
+   pop bp
    ; TODO: final iteration
 
    pop ds
