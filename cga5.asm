@@ -1479,9 +1479,9 @@ _cga_draw_line2 PROC
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 36 bytes
-   shl al, 1
+   shl al, 1            ; multiply x mod 4 by 34 bytes
    mov si, ax
+   shl al, 1
    shl al, 1
    shl al, 1
    shl al, 1
@@ -1526,23 +1526,23 @@ line2_iter:
    sub bp, si
            
    sub dx, bp           ; compensate D for first addition of 2*dx - 2*dy  
-   mov bx, 8191
+   mov bx, -8192
+   add di, 8192         ; compensate for subtraction of 8192
 
    jmp cs:[jmp_addr]
    
 
 line2_loop2:
 
-   mov al, [di]
+   mov al, [bx+di]      ; reenigne's trick
    and al, 0cfh
 line2_patch5:
    or al, 030h
-   stosb
+   mov [bx+di], al
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx31
    add dx, si           ; D += 2*dy
 line2_incx21:
-   add di, bx
 
    mov al, [di]
    and al, 0cfh
@@ -1553,24 +1553,23 @@ line2_patch6:
    jg line2_incx32
    add dx, si           ; D += 2*dy
 line2_incx22:
-   sub di, 8113
+   add di, 79
 
    loop line2_loop2
    jmp line2_no_iter
-
+   nop
 
 line2_loop1:
 
-   mov al, [di]
+   mov al, [bx+di]      ; reenigne's trick
    and al, 03fh
 line2_patch1:
    or al, 0c0h
-   stosb
+   mov [bx+di], al
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx21
    add dx, si           ; D += 2*dy
 line2_incx11:
-   add di, bx
 
    mov al, [di]
    and al, 03fh
@@ -1581,24 +1580,23 @@ line2_patch2:
    jg line2_incx22
    add dx, si           ; D += 2*dy
 line2_incx12:
-   sub di, 8113
+   add di, 79
 
    loop line2_loop1
    jmp line2_no_iter
-
+   nop
 
 line2_loop3:
 
-   mov al, [di]
+   mov al, [bx+di]      ; reenigne's trick
    and al, 0f3h
 line2_patch7:
    or al, 0ch
-   stosb
+   mov [bx+di], al
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx41
    add dx, si           ; D += 2*dy
 line2_incx31:
-   add di, bx
 
    mov al, [di]
    and al, 0f3h
@@ -1609,26 +1607,25 @@ line2_patch8:
    jg line2_incx42
    add dx, si           ; D += 2*dy
 line2_incx32:
-   sub di, 8113
+   add di, 79
 
    loop line2_loop3
    jmp line2_no_iter
-
+   nop
 
 line2_loop4:
 
-   mov al, [di]
+   mov al, [bx+di]      ; reenigne's trick
    and al, 0fch
 line2_patch3:
    or al, 03h
-   stosb
+   mov [bx+di], al
    inc di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_incx11
    dec di
    add dx, si           ; D += 2*dy
 line2_incx41:
-   add di, bx
 
    mov al, [di]
    and al, 0fch
@@ -1641,7 +1638,7 @@ line2_patch4:
    dec di
    add dx, si           ; D += 2*dy
 line2_incx42:
-   sub di, 8113
+   add di, 79
 
    loop line2_loop4
 
