@@ -1728,11 +1728,10 @@ _cga_draw_line3 PROC
    shr dl, 1
    xor al, dl
    xor al, 3         
-   shl al, 1            ; multiply x mod 4 by 38 bytes
+   shl al, 1            ; multiply x mod 4 by 40 bytes
+   shl al, 1
+   shl al, 1
    mov si, ax
-   shl al, 1
-   add si, ax
-   shl al, 1
    shl al, 1
    shl al, 1
    add si, ax    
@@ -1882,10 +1881,10 @@ line3_loop1:
 line3_patch3:
    or al, 0c0h
    mov [bx+di], al
-   inc di               ; move to next byte, maybe?
+   dec di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_incx41
-   dec di
+   inc di
    add dx, si           ; D += 2*dy
 line3_incx11:
 
