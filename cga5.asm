@@ -1479,9 +1479,10 @@ _cga_draw_line2 PROC
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 34 bytes
+   shl al, 1            ; multiply x mod 4 by 38 bytes
    mov si, ax
    shl al, 1
+   add si, ax
    shl al, 1
    shl al, 1
    shl al, 1
@@ -1492,18 +1493,22 @@ _cga_draw_line2 PROC
    ror ah, 1
    mov BYTE PTR cs:[line2_patch1 + 1], ah
    mov BYTE PTR cs:[line2_patch2 + 1], ah
+   mov BYTE PTR cs:[line2_patch10 + 1], ah
    ror ah, 1
    ror ah, 1
    mov BYTE PTR cs:[line2_patch5 + 1], ah
    mov BYTE PTR cs:[line2_patch6 + 1], ah
+   mov BYTE PTR cs:[line2_patch9 + 1], ah
    ror ah, 1
    ror ah, 1
    mov BYTE PTR cs:[line2_patch7 + 1], ah
    mov BYTE PTR cs:[line2_patch8 + 1], ah
+   mov BYTE PTR cs:[line2_patch11 + 1], ah
    ror ah, 1
    ror ah, 1
    mov BYTE PTR cs:[line2_patch3 + 1], ah
    mov BYTE PTR cs:[line2_patch4 + 1], ah
+   mov BYTE PTR cs:[line2_patch12 + 1], ah
 
 
    cmp cl, 0            ; check for iterations = 0
@@ -1556,6 +1561,9 @@ line2_incx22:
    add di, 79
 
    loop line2_loop2
+   mov al, 0cfh
+line2_patch9:
+   mov ah, 030h
    jmp line2_no_iter
    nop
 
@@ -1583,6 +1591,9 @@ line2_incx12:
    add di, 79
 
    loop line2_loop1
+   mov al, 03fh
+line2_patch10:
+   mov ah, 0c0h
    jmp line2_no_iter
    nop
 
@@ -1610,6 +1621,9 @@ line2_incx32:
    add di, 79
 
    loop line2_loop3
+   mov al, 0f3h
+line2_patch11:
+   mov ah, 0ch
    jmp line2_no_iter
    nop
 
@@ -1641,11 +1655,20 @@ line2_incx42:
    add di, 79
 
    loop line2_loop4
+   mov al, 0fch
+line2_patch12:
+   mov ah, 03h
 
 line2_no_iter:
 
    pop bp
-   ; TODO: final iteration
+   test [yend], 1
+
+   jnz line2_done
+   and al, [bx+di]
+   or al, ah 
+   mov [bx+di], al
+line2_done:
 
    pop ds
    pop si
