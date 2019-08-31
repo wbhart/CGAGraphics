@@ -1479,10 +1479,9 @@ _cga_draw_line2 PROC
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 38 bytes
-   mov si, ax
+   shl al, 1            ; multiply x mod 4 by 36 bytes
    shl al, 1
-   add si, ax
+   mov si, ax
    shl al, 1
    shl al, 1
    shl al, 1
@@ -1526,7 +1525,8 @@ line2_iter:
    shl bp, 1
    sub bp, si
            
-   sub dx, bx           ; compensate D for first addition of 2*dx - 2*dy  
+   sub dx, bp           ; compensate D for first addition of 2*dx - 2*dy  
+   mov bx, 8191
 
    jmp cs:[jmp_addr]
    
@@ -1542,7 +1542,7 @@ line2_patch5:
    jg line2_incx31
    add dx, si           ; D += 2*dy
 line2_incx21:
-   add di, 8191
+   add di, bx
 
    mov al, [di]
    and al, 0cfh
@@ -1570,7 +1570,7 @@ line2_patch1:
    jg line2_incx21
    add dx, si           ; D += 2*dy
 line2_incx11:
-   add di, 8191
+   add di, bx
 
    mov al, [di]
    and al, 03fh
@@ -1598,7 +1598,7 @@ line2_patch7:
    jg line2_incx41
    add dx, si           ; D += 2*dy
 line2_incx31:
-   add di, 8191
+   add di, bx
 
    mov al, [di]
    and al, 0f3h
@@ -1628,7 +1628,7 @@ line2_patch3:
    dec di
    add dx, si           ; D += 2*dy
 line2_incx41:
-   add di, 8191
+   add di, bx
 
    mov al, [di]
    and al, 0fch
