@@ -1474,19 +1474,20 @@ _cga_draw_line2 PROC
    add di, ax
 
 
-   mov ax, [x0]         ; compute jump offset
-   
-   ; TODO: fiddle bits of ax for 1423 ordering
-
-   and ax, 3            ; multiply x mod 4 by 38
-   shl ax, 1
+   mov ax, [x0]         ; compute jump offset    
+   and ax, 3            ; deal with 2, 1, 3, 4 layout
+   mov dl, al  
+   shr dl, 1
+   xor al, dl
+   xor al, 1         
+   shl al, 1            ; multiply x mod 4 by 38 bytes
    mov si, ax
    shl al, 1
    add si, ax
    shl al, 1
    shl al, 1
    shl al, 1
-   add si, ax
+   add si, ax    
 
    mov ah, [colour]     ; patch colours in
    ror ah, 1
@@ -1527,6 +1528,34 @@ line2_iter:
    sub dx, bx           ; compensate for first addition of 2*dx - 2*dy  
 
    jmp cs:[jmp_addr]
+   
+
+line2_loop2:
+
+   mov al, [di]
+   and al, 0cfh
+line2_patch5:
+   or al, 030h
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx31
+   add dx, si           ; D += 2*dy
+line2_incx21:
+   add di, 8191
+
+   mov al, [di]
+   and al, 0cfh
+line2_patch6:
+   or al, 030h
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx32
+   add dx, si           ; D += 2*dy
+line2_incx22:
+   sub di, 8113
+
+   loop line2_loop2
+   jmp line2_no_iter
 
 
 line2_loop1:
@@ -1555,7 +1584,35 @@ line2_incx12:
 
    loop line2_loop1
    jmp line2_no_iter
-   
+
+
+line2_loop3:
+
+   mov al, [di]
+   and al, 0f3h
+line2_patch7:
+   or al, 0ch
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx41
+   add dx, si           ; D += 2*dy
+line2_incx31:
+   add di, 8191
+
+   mov al, [di]
+   and al, 0f3h
+line2_patch8:
+   or al, 0ch
+   stosb
+   add dx, bx           ; D += 2*dx - 2*dy
+   jg line2_incx42
+   add dx, si           ; D += 2*dy
+line2_incx32:
+   sub di, 8113
+
+   loop line2_loop3
+   jmp line2_no_iter
+
 
 line2_loop4:
 
@@ -1586,62 +1643,6 @@ line2_incx42:
    sub di, 8113
 
    loop line2_loop4
-   jmp line2_no_iter
-
-
-line2_loop2:
-
-   mov al, [di]
-   and al, 0cfh
-line2_patch5:
-   or al, 030h
-   stosb
-   add dx, bx           ; D += 2*dx - 2*dy
-   jg line2_incx31
-   add dx, si           ; D += 2*dy
-line2_incx21:
-   add di, 8191
-
-   mov al, [di]
-   and al, 0cfh
-line2_patch6:
-   or al, 030h
-   stosb
-   add dx, bx           ; D += 2*dx - 2*dy
-   jg line2_incx32
-   add dx, si           ; D += 2*dy
-line2_incx22:
-   sub di, 8113
-
-   loop line2_loop2
-   jmp line2_no_iter
-
-
-line2_loop3:
-
-   mov al, [di]
-   and al, 0f3h
-line2_patch7:
-   or al, 0ch
-   stosb
-   add dx, bx           ; D += 2*dx - 2*dy
-   jg line2_incx41
-   add dx, si           ; D += 2*dy
-line2_incx31:
-   add di, 8191
-
-   mov al, [di]
-   and al, 0f3h
-line2_patch8:
-   or al, 0ch
-   stosb
-   add dx, bx           ; D += 2*dx - 2*dy
-   jg line2_incx42
-   add dx, si           ; D += 2*dy
-line2_incx32:
-   sub di, 8113
-
-   loop line2_loop3
 
 line2_no_iter:
 
