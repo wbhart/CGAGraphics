@@ -1286,6 +1286,7 @@ line2_iter:
    mov bx, -8192
    add di, 8192         ; compensate for subtraction of 8192
 
+   cli
    mov WORD PTR cs:[sp_save], sp
    mov sp, 79
 
@@ -1414,6 +1415,7 @@ line2_patch12:
 line2_no_iter:
 
    mov sp, WORD PTR cs:[sp_save]
+   sti
 
    pop bp
    test [yend], 1
@@ -1543,6 +1545,7 @@ line3_iter:
    mov bx, -8192
    add di, 8192         ; compensate for subtraction of 8192
 
+   cli
    mov WORD PTR cs:[sp_save], sp
    mov sp, 79
 
@@ -1671,6 +1674,7 @@ line3_patch12:
 line3_no_iter:
 
    mov sp, WORD PTR cs:[sp_save]
+   sti
 
    pop bp
    test [yend], 1
