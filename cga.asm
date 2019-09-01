@@ -646,6 +646,7 @@ line2_not4:
 
    cmp cl, 0            ; check for iterations = 0
    jne line2_iter
+   push bp
    jmp line2_no_iter
 line2_iter:
 
@@ -904,6 +905,7 @@ line3_not1:
 
    cmp cl, 0            ; check for iterations = 0
    jne line3_iter
+   push bp
    jmp line3_no_iter
 line3_iter:
 
