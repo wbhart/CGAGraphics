@@ -13,12 +13,12 @@ _cga_vertical_retrace PROC
       
    no_retrace_loop:
       in al, dx
-      test al, 01h
+      test al, 08h
       jz no_retrace_loop
 
    retrace_loop:
       in al, dx
-      test al, 01h
+      test al, 08h
       jz retrace_loop
    
    ret
