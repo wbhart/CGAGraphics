@@ -199,6 +199,8 @@ line1_skip_incy4:
 
 line1_no_iter:
 
+   mov si, cs:[ydelta_xor] ; restore ydelta_xor
+   
    mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h
 
@@ -430,6 +432,8 @@ line1_11_skip_incy4:
 
 line1_11_no_iter:
 
+   mov si, cs:[ydelta_xor] ; restore ydelta_xor
+
    mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h
 
@@ -645,6 +649,8 @@ line1_00_skip_incy4:
    loop line1_00_loop
 
 line1_00_no_iter:
+
+   mov si, cs:[ydelta_xor] ; restore ydelta_xor
 
    mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h
@@ -887,6 +893,8 @@ line_xor1_skip_incy4:
 
 line_xor1_no_iter:
 
+   mov si, cs:[ydelta_xor] ; restore ydelta_xor
+
    mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h
 
@@ -1115,6 +1123,8 @@ line_blank1_skip_incy4:
    loop line_blank1_loop
 
 line_blank1_no_iter:
+
+   mov si, cs:[ydelta_xor] ; restore ydelta_xor
 
    mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h

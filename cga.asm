@@ -485,6 +485,8 @@ line1_skip_incy4:
 
 line1_no_iter:
 
+   mov si, cs:[ydelta_xor] ; restore ydelta_xor
+   
    mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h
 
@@ -721,6 +723,8 @@ line_blank1_skip_incy4:
 
 line_blank1_no_iter:
 
+   mov si, cs:[ydelta_xor] ; restore ydelta_xor
+   
    mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
    and cl, 03h
 
