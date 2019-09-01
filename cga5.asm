@@ -83,9 +83,9 @@ line1_pos:
 
 
    mov ax, [x0]         ; compute jump offset
-   and ax, 3            ; multiply x mod 4 by 18
-   shl ax, 1
+   and ax, 3            ; multiply x mod 4 by 17
    mov si, ax
+   shl ax, 1
    shl al, 1
    shl al, 1
    shl al, 1
@@ -345,13 +345,12 @@ line1_11_pos:
 
 
    mov ax, [x0]         ; compute jump offset
-   and ax, 3            ; multiply x mod 4 by 17
-   mov si, ax
+   and ax, 3            ; multiply x mod 4 by 16
    shl ax, 1
    shl al, 1
    shl al, 1
    shl al, 1
-   add si, ax
+   mov si, ax
 
 
    mov bp, [xdiff]      ; compute 2*dx
@@ -562,13 +561,12 @@ line1_00_pos:
 
 
    mov ax, [x0]         ; compute jump offset
-   and ax, 3            ; multiply x mod 4 by 17
-   mov si, ax
+   and ax, 3            ; multiply x mod 4 by 16
    shl ax, 1
    shl al, 1
    shl al, 1
    shl al, 1
-   add si, ax
+   mov si, ax
 
 
    mov bp, [xdiff]      ; compute 2*dx
@@ -779,13 +777,12 @@ line_xor1_pos:
 
 
    mov ax, [x0]         ; compute jump offset
-   and ax, 3            ; multiply x mod 4 by 18
+   and ax, 3            ; multiply x mod 4 by 16
    shl ax, 1
+   shl al, 1
+   shl al, 1
+   shl al, 1
    mov si, ax
-   shl al, 1
-   shl al, 1
-   shl al, 1
-   add si, ax
 
 
    mov ah, [colour]     ; patch colours in
@@ -953,255 +950,6 @@ line_xor1_done:
    ret
 _cga_draw_line_xor1 ENDP
 
-   PUBLIC _cga_draw_line_write1
-_cga_draw_line_write1 PROC
-   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
-   ; line from (x0, y0) - (xend, ?) including endpoints
-   ; AL: ES:[DI], BX: ydelta, CX: Loop, DX: D, SP: 2*dy, BP: 2*dx,
-   ; SI: ydelta_xor, DI: Offset, DS:B800, ES: B800
-   push bp
-   mov bp, sp
-   push di
-   push si
-   push ds
-
-   mov ax, 0b800h       ; set ES to segment for CGA memory
-   mov es, ax
-   mov ds, ax           ; reflect in DS
-
-
-   mov ax, [y0]         ; compute offset for line y0
-   xor di, di           
-   shr ax, 1
-   mov bx, 8191         ; also compute ydelta and ydelta_xor
-   jnc line_write1_y_even
-   mov bx, -8113
-line_write1_y_even:
-   mov WORD PTR cs:[ydelta_xor], 0ffb0h
-   sbb di, 0
-   and di, 8192
-   shl ax, 1            
-   shl ax, 1
-   shl ax, 1
-   shl ax, 1
-
-   add di, ax
-   shl ax, 1
-   shl ax, 1
-   add di, ax
-
-
-   mov ax, [x0]         ; compute loop iterations
-
-   shr ax, 1            ; adjust offset for column x0
-   shr ax, 1
-   add di, ax
-
-   shl ax, 1            ; round x0 down to multiple of 4
-   shl ax, 1
-   
-   mov cx, [xend] 
-   sub cx, ax
-   inc cx
-   mov cs:[iter_save], cx  ; save iterations for prologue
-
-   shr cx, 1
-   shr cx, 1            ; we will unroll by 4 so divide by 4
-
-
-   cli                  ; save and free up sp
-   mov WORD PTR cs:[sp_save], sp
-
-
-   mov sp, [ydiff]      ; fixups for +ve/-ve slope
-   cmp sp, 0
-
-   jge line_write1_pos
-   neg sp
-   sub bx, 80           ; correct ydelta and ydelta_xor
-   mov WORD PTR cs:[ydelta_xor], 0c050h
-line_write1_pos:
-
-   shl sp, 1            ; compute 2*dy
-            
-
-   mov dx, [D]          ; store D
-
-
-   mov ax, [x0]         ; compute jump offset
-   and ax, 3            ; multiply x mod 4 by 18
-   shl ax, 1
-   mov si, ax
-   shl al, 1
-   shl al, 1
-   shl al, 1
-   add si, ax
-
-
-   mov ah, [colour]     ; patch colours in
-   ror ah, 1
-   ror ah, 1
-   mov BYTE PTR cs:[line_write1_patch1 + 1], ah
-   mov BYTE PTR cs:[line_write1_patch5 + 1], ah
-   ror ah, 1
-   ror ah, 1
-   mov BYTE PTR cs:[line_write1_patch2 + 1], ah
-   mov BYTE PTR cs:[line_write1_patch6 + 1], ah
-   ror ah, 1
-   ror ah, 1
-   mov BYTE PTR cs:[line_write1_patch3 + 1], ah
-   mov BYTE PTR cs:[line_write1_patch7 + 1], ah
-   ror ah, 1
-   ror ah, 1
-   mov BYTE PTR cs:[line_write1_patch4 + 1], ah
-
-
-   mov bp, [xdiff]      ; compute 2*dx
-   shl bp, 1
-
-
-   sub dx, sp           ; compensate for first addition of 2*dy
-   mov al, es:[di]      ; get first word
-
-
-   cmp cl, 0            ; check for iterations = 0
-   je line_write1_no_iter
-
-
-   lea si, si + line_write1_loop ; computed jump into loop
-   mov cs:[jmp_addr], si
-
-
-   mov si, cs:[ydelta_xor] ; restore ydelta_xor
-
-
-   jmp cs:[jmp_addr]
-
-line_write1_loop:         
-line_write1_patch1:
-   mov al, 040h
-   add dx, sp           ; D += 2*dy
-
-   jle line_write1_skip_incy1
-   stosb                ; draw pixel
-
-   add di, bx           ; odd <-> even line (reenigne's trick)
-   xor bx, si           ; adjust ydelta
-
-   sub dx, bp           ; D -= 2*dx
-
-   xor al, al
-line_write1_skip_incy1:
-
-line_write1_patch2:
-   or al, 010h
-   add dx, sp           ; D += 2*dy
-
-   jle line_write1_skip_incy2
-   stosb                ; draw pixel(s)
-
-   add di, bx           ; odd <-> even line (reenigne's trick)
-   xor bx, si           ; adjust ydelta
-
-   sub dx, bp           ; D -= 2*dx
-
-   xor al, al
-line_write1_skip_incy2:             
-
-line_write1_patch3:
-   or al, 04h
-   add dx, sp           ; D += 2*dy
-
-   jle line_write1_skip_incy3
-   stosb                ; draw pixel(s)
-
-   add di, bx           ; odd <-> even line (reenigne's trick)
-   xor bx, si           ; adjust ydelta
-
-   sub dx, bp           ; D -= 2*dx
-
-   xor al, al
-line_write1_skip_incy3:             
-
-line_write1_patch4:
-   or al, 01h
-   add dx, sp           ; D += 2*dy
-   stosb
-   
-   jle line_write1_skip_incy4
-   add di, bx           ; odd <-> even line (reenigne's trick)
-   xor bx, si           ; adjust ydelta
-
-   sub dx, bp           ; D -= 2*dx
-   inc di
-line_write1_skip_incy4:             
-   xor al, al
-
-   loop line_write1_loop
-
-line_write1_no_iter:
-
-   mov cx, cs:[iter_save]  ; do remaining iterations (0-3)
-   and cl, 03h
-
-   cmp cl, 0
-   je line_write1_done                   
-         
-line_write1_patch5:
-   mov al, 040h
-   add dx, sp           ; D += 2*dy
-
-   dec cl
-   jz line_write1_last_write
-
-   jle line_write1_skip_incy5
-   stosb                ; draw pixel
-
-   add di, bx           ; odd <-> even line (reenigne's trick)
-   xor bx, si           ; adjust ydelta
-
-   sub dx, bp           ; D -= 2*dx
-
-   xor al, al
-line_write1_skip_incy5:
-
-         
-line_write1_patch6:
-   or al, 010h
-   add dx, sp           ; D += 2*dy
-
-   dec cl
-   jz line_write1_last_write
-
-   jle line_write1_skip_incy6
-   stosb                ; draw pixel
- 
-   add di, bx           ; odd <-> even line (reenigne's trick)
-   xor bx, si           ; adjust ydelta
-
-   sub dx, bp           ; D -= 2*dx
-   xor al, al
-line_write1_skip_incy6:
-
-
-line_write1_patch7:
-   or al, 04h
-
-line_write1_last_write:
-   stosb                ; draw pixel
-
-line_write1_done:
-
-   mov sp, cs:[sp_save]
-   sti
-   
-   pop ds
-   pop si
-   pop di
-   pop bp
-   ret
-_cga_draw_line_write1 ENDP
-
    PUBLIC _cga_draw_line_blank1
 _cga_draw_line_blank1 PROC
    ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
@@ -1278,10 +1026,10 @@ line_blank1_pos:
 
 
    mov ax, [x0]         ; compute jump offset
-   and ax, 3            ; multiply x mod 4 by 18
-   shl ax, 1
+   and ax, 3            ; multiply x mod 4 by 11
    mov si, ax
-   shl al, 1
+   shl ax, 1
+   add si, ax
    shl al, 1
    shl al, 1
    add si, ax
