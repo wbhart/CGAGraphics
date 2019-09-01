@@ -1442,10 +1442,12 @@ _cga_draw_line2 PROC
    mov es, ax
    mov ds, ax           ; reflect in DS
 
+   xor si, si           ; clear computed jump offset
 
    mov ax, [y0]         ; compute offset for line y0
    xor di, di           
    shr ax, 1
+   sbb si, 1            ; set up to deal with odd/even computed jump offset
    sbb di, 0
    and di, 8192
    shl ax, 1            ; round y0 down to multiple of 2
@@ -1475,15 +1477,19 @@ _cga_draw_line2 PROC
 
    mov ax, [x0]         ; compute jump offset    
    and ax, 3            ; deal with 2, 1, 3, 4 layout
+   cmp al, 3
+   jne line2_not4
+   and si, 16            ; adjust computed jump for extra inc/dec 
+line2_not4:
+   and si, 14
    mov dl, al  
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 38 bytes
-   mov si, ax
+   shl al, 1            ; multiply x mod 4 by 40 bytes
+   shl al, 1
    shl al, 1
    add si, ax
-   shl al, 1
    shl al, 1
    shl al, 1
    add si, ax    
@@ -1691,10 +1697,12 @@ _cga_draw_line3 PROC
    mov es, ax
    mov ds, ax           ; reflect in DS
 
+   xor si, si           ; clear computed jump offset
 
    mov ax, [y0]         ; compute offset for line y0
    xor di, di           
    shr ax, 1
+   sbb si, 0            ; setup odd/even line computed jump offset
    sbb di, 0
    and di, 8192
    shl ax, 1            ; round y0 down to multiple of 2
@@ -1724,6 +1732,10 @@ _cga_draw_line3 PROC
 
    mov ax, [x0]         ; compute jump offset    
    and ax, 3            ; deal with 3, 4, 2, 1 layout
+   jnz line3_not1       ; adjust computed offset for extra inc/dec instructions
+   and si, 16
+line3_not1:
+   and si, 14
    mov dl, al  
    shr dl, 1
    xor al, dl
@@ -1731,7 +1743,7 @@ _cga_draw_line3 PROC
    shl al, 1            ; multiply x mod 4 by 40 bytes
    shl al, 1
    shl al, 1
-   mov si, ax
+   add si, ax
    shl al, 1
    shl al, 1
    add si, ax    
