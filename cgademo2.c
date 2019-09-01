@@ -846,10 +846,10 @@ int main(void)
 
    set_video_mode(4);
 
-   cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 1);
-   cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 1);
-   cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 1);
-   cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 1);
+   cga_draw_hline(cx0 - 1, cy0 - 1, cx1 + 1, 1);
+   cga_draw_hline(cx0 - 1, cy1 + 1, cx1 + 1, 1);
+   cga_draw_vline(cx0 - 1, cy0 - 1, cy1 + 1, 1);
+   cga_draw_vline(cx1 + 1, cy0 - 1, cy1 + 1, 1);
 
    draw_tetrahedron(icoords, 2);
 
@@ -871,38 +871,46 @@ int main(void)
       if (mode == 0)
       {
 
-         cga_draw_line(cx0, cy0 - 1, cx0, cy1 + 1, 1);
-         cga_draw_line(cx1 + 2, cy0 - 1, cx1 + 2, cy1 + 1, 1);
-         cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 0);
-         cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 0);
+         /*
+           cga_draw_line(cx0, cy0 - 1, cx0, cy1 + 1, 1);
+           cga_draw_line(cx1 + 2, cy0 - 1, cx1 + 2, cy1 + 1, 1);
+         */
+         cga_draw_vline(cx0 - 1, cy0 - 1, cy1 + 1, 0);
+         cga_draw_vline(cx1 + 1, cy0 - 1, cy1 + 1, 0);
       } else if (mode == 1)
       {
-         cga_draw_line(cx0 - 1, cy0, cx1 + 1, cy0, 1);
-         cga_draw_line(cx0 - 1, cy1 + 2, cx1 + 1, cy1 + 2, 1);
-         cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 0);
-         cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 0);
+         /*
+           cga_draw_line(cx0 - 1, cy0, cx1 + 1, cy0, 1);
+           cga_draw_line(cx0 - 1, cy1 + 2, cx1 + 1, cy1 + 2, 1);
+         */
+         cga_draw_hline(cx0 - 1, cy0 - 1, cx1 + 1, 0);
+         cga_draw_hline(cx0 - 1, cy1 + 1, cx1 + 1, 0);
       } else if (mode == 2)
       {
-         cga_draw_line(cx0 - 2, cy0 - 1, cx0 - 2, cy1 + 1, 1);
-         cga_draw_line(cx1, cy0 - 1, cx1, cy1 + 1, 1);
-         cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 0);
-         cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 0);
+         /*
+           cga_draw_line(cx0 - 2, cy0 - 1, cx0 - 2, cy1 + 1, 1);
+           cga_draw_line(cx1, cy0 - 1, cx1, cy1 + 1, 1);
+         */
+         cga_draw_vline(cx0 - 1, cy0 - 1, cy1 + 1, 0);
+         cga_draw_vline(cx1 + 1, cy0 - 1, cy1 + 1, 0);
       }  else
       {
-         cga_draw_line(cx0 - 1, cy0 - 2, cx1 + 1, cy0 - 2, 1);
-         cga_draw_line(cx0 - 1, cy1, cx1 + 1, cy1, 1);
-         cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 0);
-         cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 0);
+         /*
+           cga_draw_line(cx0 - 1, cy0 - 2, cx1 + 1, cy0 - 2, 1);
+           cga_draw_line(cx0 - 1, cy1, cx1 + 1, cy1, 1);
+         */
+         cga_draw_hline(cx0 - 1, cy0 - 1, cx1 + 1, 0);
+         cga_draw_hline(cx0 - 1, cy1 + 1, cx1 + 1, 0);
       } 
 
       draw_tetrahedron(oldcoords, 0);
 
       move_clipbox();
 
-      cga_draw_line(cx0 - 1, cy0 - 1, cx1 + 1, cy0 - 1, 1);
-      cga_draw_line(cx0 - 1, cy1 + 1, cx1 + 1, cy1 + 1, 1);
-      cga_draw_line(cx0 - 1, cy0 - 1, cx0 - 1, cy1 + 1, 1);
-      cga_draw_line(cx1 + 1, cy0 - 1, cx1 + 1, cy1 + 1, 1);
+      cga_draw_hline(cx0 - 1, cy0 - 1, cx1 + 1, 1);
+      cga_draw_hline(cx0 - 1, cy1 + 1, cx1 + 1, 1);
+      cga_draw_vline(cx0 - 1, cy0 - 1, cy1 + 1, 1);
+      cga_draw_vline(cx1 + 1, cy0 - 1, cy1 + 1, 1);
 
       draw_tetrahedron(newcoords, 2);
          
