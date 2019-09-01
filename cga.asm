@@ -874,6 +874,14 @@ line2_not4:
 
    cmp cl, 0            ; check for iterations = 0
    jne line2_iter
+   mov cx, [x0]
+   and cl, 3
+   inc cl
+   shl cl, 1
+   mov ah, 0fch
+   ror ah, cl
+   mov al, [colour]
+   ror al, cl
    push bp
    cli
    mov WORD PTR cs:[sp_save], sp
@@ -1343,6 +1351,14 @@ line3_not1:
 
    cmp cl, 0            ; check for iterations = 0
    jne line3_iter
+   mov cx, [x0]
+   and cl, 3
+   inc cl
+   shl cl, 1
+   mov ah, 0fch
+   ror ah, cl
+   mov al, [colour]
+   ror al, cl
    push bp
    cli
    mov WORD PTR cs:[sp_save], sp
