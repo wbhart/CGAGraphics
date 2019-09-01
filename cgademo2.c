@@ -14,8 +14,6 @@ extern void cga_draw_vline(int x, int y0, int y1, unsigned char colour);
 
 extern void cga_draw_line1(int x0, int y0, int dx, int dy,
                                        int D, int endx, unsigned char colour);
-extern void cga_draw_line2(int x0, int y0, int dx, int dy,
-                                       int D, int endx, unsigned char colour);
 extern void cga_draw_line3(int x0, int y0, int dx, int dy,
                                        int D, int endy, unsigned char colour);
 extern void cga_draw_line4(int x0, int y0, int dx, int dy,
@@ -153,7 +151,7 @@ void cga_draw_line(int x0, int y0, int x1, int y1, unsigned char colour)
       if (dx >= dy)
       {
          D = 2*dy - dx;
-         cga_draw_line2(x0, y0, dx, dy, D, x1, colour);
+         cga_draw_line1(x0, y0, -dx, dy, D, x1, colour);
       } else /* dx < dy */
       {
          D = 2*dx - dy;
@@ -289,7 +287,7 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
             else
                endx = x1;            
 
-            cga_draw_line2(x, y, dx, dy, D, endx, colour);
+            cga_draw_line1(x, y, -dx, dy, D, endx, colour);
          }
       } else /* dx < dy */
       {

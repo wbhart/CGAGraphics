@@ -3,6 +3,11 @@
 	.CODE
 	PUBLIC _cga_draw_pixel
 
+   jmp_addr   DW ?
+   ydelta_xor DW ?
+   sp_save    DW ?
+   iter_save  DW ?
+
 _cga_draw_pixel PROC
 	ARG x:WORD, y:WORD, colour:BYTE
 	push bp
@@ -548,144 +553,6 @@ line1_done:
    pop bp
    ret
 _cga_draw_line1 ENDP
-
-        PUBLIC _cga_draw_line2
-_cga_draw_line2 PROC
-	ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
-	; line from (x0, y0) - (xend, ?) including endpoints
-        push bp
-	mov bp, sp
-        push di
-        push si
-        mov ax, 0b800h
-        mov es, ax
-        std
-
-        xor di, di
-        mov ax, [y0]
-        shr ax, 1
-        sbb di, 0
-        and di, 8192
-        shl ax, 1
-        shl ax, 1
-        shl ax, 1        
-        shl ax, 1
-        add di, ax
-        shl ax, 1
-        shl ax, 1
-        add di, ax
-
-        mov bx, [x0]
-        mov ax, [xend]
-        sub ax, bx
-        neg ax
-        inc ax
-        push ax
-        shr ax, 1
-        push bp
-        push ax
-        mov cl, bl
-        mov ch, [colour]
-        inc cl
-        and cl, 3
-        shl cl, 1
-        ror ch, cl
-        mov ah, 0fch
-        ror ah, cl
-        mov cl, ah
-        shr bx, 1
-        shr bx, 1
-        add di, bx
-
-        mov dx, [ydiff]
-        shl dx, 1
-        mov bx, [xdiff]
-        shl bx, 1
-        mov si, [D]
-        sub si, dx
-
-        pop bp
-        cmp bp, 0
-        je line2_end2
-
-line2_begin2:
-        add si, dx
-        jg line2_Dgt0_1
-        mov al, cl
-        rol cl, 1
-        rol cl, 1
-        jnc line2_ine3
-        and al, cl
-        and al, es:[di]
-        or al, ch
-        rol ch, 1
-        rol ch, 1
-        jmp line2_Dcmp_end_1
-line2_ine3:
-        and al, es:[di]
-        or al, ch
-        stosb
-        rol ch, 1
-        rol ch, 1
-        mov al, cl
-        and al, es:[di]
-        jmp line2_Dcmp_end_1
-line2_Dgt0_1:
-        mov al, cl
-        and al, es:[di]
-        or al, ch
-        stosb
-        xor ax, ax
-        sub di, 8112
-        sbb ax, ax
-        and ax, 16304
-        add di, ax
-        rol ch, 1
-        rol ch, 1
-        rol cl, 1
-        rol cl, 1
-        adc di, 0
-        mov al, cl
-        and al, es:[di]
-        sub si, bx        
-line2_Dcmp_end_1:
-        or al, ch
-        stosb
-        add si, dx
-        jle line2_no_inc
-        xor ax, ax
-        sub di, 8112
-        sbb ax, ax
-        and ax, 16304
-        add di, ax
-        sub si, bx        
-line2_no_inc:
-        rol ch, 1
-        rol ch, 1
-        rol cl, 1
-        rol cl, 1
-        adc di, 0
-        dec bp
-        jnz line2_begin2
-line2_end2:
-        pop bp
-
-        pop ax
-        test al, 1
-        jz line2_done
-
-        mov al, cl
-        and al, es:[di]
-        or al, ch
-        stosb
-line2_done:
-
-        cld
-        pop si
-        pop di
-        pop bp
-        ret
-_cga_draw_line2 ENDP
 
         PUBLIC _cga_draw_line3
 _cga_draw_line3 PROC
