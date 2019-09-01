@@ -1447,7 +1447,9 @@ _cga_draw_line2 PROC
    mov ax, [y0]         ; compute offset for line y0
    xor di, di           
    shr ax, 1
+   pushf
    sbb si, 1            ; set up to deal with odd/even computed jump offset
+   popf
    sbb di, 0
    and di, 8192
    shl ax, 1            ; round y0 down to multiple of 2
@@ -1702,7 +1704,9 @@ _cga_draw_line3 PROC
    mov ax, [y0]         ; compute offset for line y0
    xor di, di           
    shr ax, 1
+   pushf
    sbb si, 0            ; setup odd/even line computed jump offset
+   popf
    sbb di, 0
    and di, 8192
    shl ax, 1            ; round y0 down to multiple of 2
