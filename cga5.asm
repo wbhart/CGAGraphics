@@ -1485,7 +1485,7 @@ _cga_draw_line_blank2 PROC
 
    mov ax, [x0]         ; compute jump offset    
    and ax, 3            ; deal with 2, 1, 3, 4 layout
-   mov bx, 14           ; adjust computed jump for extra inc/dec 
+   mov bx, 8            ; adjust computed jump for extra inc/dec 
    cmp al, 3
    jne line_blank2_not4
    add bl, 2            
@@ -1954,7 +1954,7 @@ _cga_draw_line_blank3 PROC
 
 
    mov ax, [x0]         ; compute jump offset    
-   mov bx, 14
+   mov bx, 8
    and ax, 3            ; deal with 3, 4, 2, 1 layout
    jnz line_blank3_not1       ; adjust computed offset for extra inc/dec instructions
    add bl, 2
