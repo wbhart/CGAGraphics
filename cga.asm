@@ -218,6 +218,7 @@ _cga_draw_vline PROC
         shl bx, 1
         shl bx, 1
         add bx, dx          ; offset 8192 + 80*(y0/2) = first odd line
+        add bh, 020h
         mov ax, [y1]        ; y1 coordinate
         xor ch, ch
         shr ax, 1           ; y1/2
@@ -241,7 +242,7 @@ _cga_draw_vline PROC
         add bx, ax          ; add it to offset of first odd line
         mov ah, [colour]
         inc cl
-        and al, 3
+        and ah, 3
         shl cl, 1
         ror ah, cl          ; shift colour into correct bitfield
         mov al, 0fch        

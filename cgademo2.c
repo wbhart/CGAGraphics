@@ -846,8 +846,8 @@ int main(void)
 
    set_video_mode(4);
 
-   cga_draw_hline(cx0 - 1, cy0 - 1, cx1 + 1, 1);
-   cga_draw_hline(cx0 - 1, cy1 + 1, cx1 + 1, 1);
+   cga_draw_hline(cx0 - 1, cx1 + 1, cy0 - 1, 1);
+   cga_draw_hline(cx0 - 1, cx1 + 1, cy1 + 1, 1);
    cga_draw_vline(cx0 - 1, cy0 - 1, cy1 + 1, 1);
    cga_draw_vline(cx1 + 1, cy0 - 1, cy1 + 1, 1);
 
