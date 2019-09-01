@@ -554,125 +554,264 @@ line1_done:
    ret
 _cga_draw_line1 ENDP
 
-        PUBLIC _cga_draw_line3
-_cga_draw_line3 PROC
-	ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, yend:WORD, colour:BYTE
-	; line from (x0, y0) - (?, yend) including endpoints
-        push bp
-	mov bp, sp
-        push di
-        push si
-        mov ax, 0b800h
-        mov es, ax
+   PUBLIC _cga_draw_line2
+_cga_draw_line2 PROC
+   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, yend:WORD, colour:BYTE
+   ; line from (x0, y0) - (?, yend) including endpoints, right moving
+   ; AL: colour, BX: 2*dx - 2*dy, CX: Loop, DX: D
+   ; SI: 2*dy, DI: Offset, DS:B800, ES: B800
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
 
-        xor di, di
-        mov ax, [y0]
-        mov bx, [yend]
-        sub bx, ax
-        inc bx
-        push bx
-        shr bx, 1
-        push bp
-        push bx
-        shr ax, 1
-        sbb di, 0
-        and di, 8192
-        shl ax, 1
-        shl ax, 1
-        shl ax, 1        
-        shl ax, 1
-        add di, ax
-        shl ax, 1
-        shl ax, 1
-        add di, ax
+   mov ax, 0b800h       ; set ES to segment for CGA memory
+   mov es, ax
+   mov ds, ax           ; reflect in DS
 
-        mov bx, [x0]
-        mov cl, bl
-        mov ch, [colour]
-        inc cl
-        and cl, 3
-        shl cl, 1
-        ror ch, cl
-        mov ah, 0fch
-        ror ah, cl
-        mov cl, ah
-        shr bx, 1
-        shr bx, 1
-        add di, bx
+   xor si, si           ; clear computed jump offset
 
-        mov dx, [ydiff]
-        shl dx, 1
-        mov bx, [xdiff]
-        shl bx, 1
-        mov si, [D]
-        sub si, bx
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
+   shr ax, 1
+   sbb si, 0            ; set up to deal with odd/even computed jump offset
+   shl ax, 1            ; round y0 down to multiple of 2
+   
+   mov cx, [yend]       ; also compute iterations
+   sub cx, ax
+   inc cx
+   mov cs:[iter_save], cx  ; save iterations for prologue
 
-        pop bp
-        cmp bp, 0
-        je line3_end2
+   shr cx, 1            ; we will unroll by 2 so divide by 2
 
-line3_begin2:
-        mov al, cl
-        and al, es:[di]
-        or al, ch
-        stosb
-        xor ax, ax
-        sub di, 8113
-        sbb ax, 0
-        and ax, 16304
-        add di, ax
-        add si, bx
-        jng line3_Dcmp_end_1
-        inc di
-        ror ch, 1
-        ror ch, 1
-        ror cl, 1
-        ror cl, 1
-        jnc line3_ine3
-        dec di
-line3_ine3:
-        sub si, dx        
-line3_Dcmp_end_1:
-        mov al, cl
-        and al, es:[di]
-        or al, ch
-        stosb
-        xor ax, ax
-        sub di, 8113
-        sbb ax, 0
-        and ax, 16304
-        add di, ax
-        add si, bx
-        jle line3_no_inc
-        inc di
-        sub si, dx
-        ror ch, 1
-        ror ch, 1
-        ror cl, 1
-        ror cl, 1
-        jnc line3_no_inc
-        dec di
-line3_no_inc:
-        dec bp
-        jnz line3_begin2
-line3_end2:
-        pop bp
+   shl ax, 1            ; continue computing offset for line y0
+   shl ax, 1
+   shl ax, 1
 
-        pop ax
-        test al, 1
-        jz line3_done
+   add di, ax
+   shl ax, 1
+   shl ax, 1
+   add di, ax
 
-        mov al, cl
-        and al, es:[di]
-        or al, ch
-        stosb
-line3_done:
+   mov ax, [x0]         ; adjust offset for column x0
 
-        pop si
-        pop di
-        pop bp
-        ret
-_cga_draw_line3 ENDP
+   shr ax, 1            
+   shr ax, 1
+   add di, ax
+
+
+   mov ax, [x0]         ; compute jump offset    
+   and ax, 3            ; deal with 2, 1, 3, 4 layout
+   mov bx, 14           ; adjust computed jump for extra inc/dec 
+   cmp al, 3
+   jne line2_not4
+   add bl, 2            
+line2_not4:
+   and si, bx
+   mov dl, al  
+   shr dl, 1
+   xor al, dl
+   xor al, 1         
+   shl al, 1            ; multiply x mod 4 by 38 bytes
+   add si, ax
+   shl al, 1
+   add si, ax
+   shl al, 1
+   shl al, 1
+   shl al, 1
+   add si, ax    
+
+   mov ah, [colour]     ; patch colours in
+   mov BYTE PTR cs:[line2_patch3 + 1], ah
+   mov BYTE PTR cs:[line2_patch4 + 1], ah
+   mov BYTE PTR cs:[line2_patch12 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line2_patch1 + 1], ah
+   mov BYTE PTR cs:[line2_patch2 + 1], ah
+   mov BYTE PTR cs:[line2_patch10 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line2_patch5 + 1], ah
+   mov BYTE PTR cs:[line2_patch6 + 1], ah
+   mov BYTE PTR cs:[line2_patch9 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line2_patch7 + 1], ah
+   mov BYTE PTR cs:[line2_patch8 + 1], ah
+   mov BYTE PTR cs:[line2_patch11 + 1], ah
+
+
+   cmp cl, 0            ; check for iterations = 0
+   jne line2_iter
+   jmp line2_no_iter
+line2_iter:
+
+   lea si, si + line2_loop2 ; computed jump into loop
+   mov cs:[jmp_addr], si
+
+   
+   mov si, [ydiff]      ; compute 2*dy
+   shl si, 1            
+
+   mov dx, [D]          ; store D
+   
+   push bp              ; free up bp
+   mov bp, [xdiff]      ; compute 2*dx - 2*dy
+   shl bp, 1
+   sub bp, si
+           
+   sub dx, bp           ; compensate D for first addition of 2*dx - 2*dy  
+   mov bx, -8192
+   add di, 8192         ; compensate for subtraction of 8192
+
+   cli
+   mov WORD PTR cs:[sp_save], sp
+   mov sp, 79
+
+   jmp cs:[jmp_addr]
+   
+
+line2_loop2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0cfh
+line2_patch5:
+   or al, 030h
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx31
+   add dx, si           ; D += 2*dy
+line2_incx21:
+
+   mov al, [di]
+   and al, 0cfh
+line2_patch6:
+   or al, 030h
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx32
+   add dx, si           ; D += 2*dy
+line2_incx22:
+   add di, sp
+
+   loop line2_loop2
+   mov al, 0cfh
+line2_patch9:
+   mov ah, 030h
+   jmp line2_no_iter
+
+line2_loop1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 03fh
+line2_patch1:
+   or al, 0c0h
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx21
+   add dx, si           ; D += 2*dy
+line2_incx11:
+
+   mov al, [di]
+   and al, 03fh
+line2_patch2:
+   or al, 0c0h
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx22
+   add dx, si           ; D += 2*dy
+line2_incx12:
+   add di, sp
+
+   loop line2_loop1
+   mov al, 03fh
+line2_patch10:
+   mov ah, 0c0h
+   jmp line2_no_iter
+
+line2_loop3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0f3h
+line2_patch7:
+   or al, 0ch
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx41
+   add dx, si           ; D += 2*dy
+line2_incx31:
+
+   mov al, [di]
+   and al, 0f3h
+line2_patch8:
+   or al, 0ch
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx42
+   add dx, si           ; D += 2*dy
+line2_incx32:
+   add di, sp
+
+   loop line2_loop3
+   mov al, 0f3h
+line2_patch11:
+   mov ah, 0ch
+   jmp line2_no_iter
+
+line2_loop4:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0fch
+line2_patch3:
+   or al, 03h
+   mov [bx+di], al
+   inc di               ; move to next byte, maybe?
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx11
+   dec di
+   add dx, si           ; D += 2*dy
+line2_incx41:
+
+   mov al, [di]
+   and al, 0fch
+line2_patch4:
+   or al, 03h
+   stosb
+   inc di               ; move to next byte, maybe?
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line2_incx12
+   dec di
+   add dx, si           ; D += 2*dy
+line2_incx42:
+   add di, sp
+
+   loop line2_loop4
+   mov al, 0fch
+line2_patch12:
+   mov ah, 03h
+
+line2_no_iter:
+
+   mov sp, WORD PTR cs:[sp_save]
+   sti
+
+   pop bp
+   test [yend], 1
+
+   jnz line2_done
+   and al, [bx+di]
+   or al, ah 
+   mov [bx+di], al
+line2_done:
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
+_cga_draw_line2 ENDP
 
         PUBLIC _cga_draw_line4
 _cga_draw_line4 PROC
