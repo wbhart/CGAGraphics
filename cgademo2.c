@@ -151,7 +151,7 @@ void cga_draw_line(int x0, int y0, int x1, int y1, unsigned char colour)
       if (dx >= dy)
       {
          D = 2*dy - dx;
-         cga_draw_line1(x0, y0, -dx, dy, D, x1, colour);
+         cga_draw_line1(x1, y1, dx, -dy, D, x0, colour);
       } else /* dx < dy */
       {
          D = 2*dx - dy;
@@ -253,8 +253,13 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
       if (dx >= dy)
       {
          /* flip all coords about vertical line mid way between y0 and y1 */
-         int fcy0 = y0 + y1 - cy0;
-         int fcy1 = y0 + y1 - cy1;
+         int fcy0, fcy1, t;
+         
+         t = x0; x0 = x1; x1 = t;
+         t = y0; y0 = y1; y1 = t;
+
+         fcy0 = y0 + y1 - cy0;
+         fcy1 = y0 + y1 - cy1;
       
          /* check we don't miss the clip box (inclusive) entirely */
          if (x0 <= cx1 && y1 <= cy1 && x1 >= cx0 && y0 >= cy0 &&
@@ -271,7 +276,7 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
                y = cy1;
             } else if (x0 <= cx0)
             {
-               y = dx == 0 ? cy1 : y0 + y1 - cga_first_intercept_vert(&D, x0, y1, dx, dy, fcx1);
+               y = dx == 0 ? cy1 : y0 + y1 - cga_first_intercept_vert(&D, x0, y1, dx, dy, cx0);
                x = cx0;
             } else
             {
