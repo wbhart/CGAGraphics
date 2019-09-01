@@ -874,14 +874,15 @@ line2_not4:
 
    cmp cl, 0            ; check for iterations = 0
    jne line2_iter
+   xor bx, bx
    mov cx, [x0]
    and cl, 3
    inc cl
    shl cl, 1
-   mov ah, 0fch
-   ror ah, cl
-   mov al, [colour]
+   mov al, 0fch
    ror al, cl
+   mov ah, [colour]
+   ror ah, cl
    push bp
    cli
    mov WORD PTR cs:[sp_save], sp
@@ -1136,6 +1137,7 @@ line_blank2_not4:
 
    cmp cl, 0            ; check for iterations = 0
    jne line_blank2_iter
+   xor bx, bx
    push bp
    cli
    mov WORD PTR cs:[sp_save], sp
@@ -1351,14 +1353,15 @@ line3_not1:
 
    cmp cl, 0            ; check for iterations = 0
    jne line3_iter
+   xor bx, bx
    mov cx, [x0]
    and cl, 3
    inc cl
    shl cl, 1
-   mov ah, 0fch
-   ror ah, cl
-   mov al, [colour]
+   mov al, 0fch
    ror al, cl
+   mov ah, [colour]
+   ror ah, cl
    push bp
    cli
    mov WORD PTR cs:[sp_save], sp
@@ -1611,6 +1614,7 @@ line_blank3_not1:
    
    cmp cl, 0            ; check for iterations = 0
    jne line_blank3_iter
+   xor bx, bx
    push bp
    cli
    mov WORD PTR cs:[sp_save], sp
