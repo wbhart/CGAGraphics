@@ -1,13 +1,30 @@
 	DOSSEG
 	.MODEL small
 	.CODE
-	PUBLIC _cga_draw_pixel
 
    jmp_addr   DW ?
    ydelta_xor DW ?
    sp_save    DW ?
    iter_save  DW ?
 
+   PUBLIC _cga_vertical_retrace
+_cga_vertical_retrace PROC
+   mov dx, 03dah
+      
+   no_retrace_loop:
+      in al, dx
+      test al, 01h
+      jz no_retrace_loop
+
+   retrace_loop:
+      in al, dx
+      test al, 01h
+      jz retrace_loop
+   
+   ret
+_cga_vertical_retrace ENDP
+
+        PUBLIC _cga_draw_pixel
 _cga_draw_pixel PROC
 	ARG x:WORD, y:WORD, colour:BYTE
 	push bp

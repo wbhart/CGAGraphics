@@ -6,6 +6,7 @@
 #include <time.h>
 #include <math.h>
 
+extern void cga_vertical_retrace();
 extern void cga_draw_pixel(int x, int y, unsigned char colour);
 extern void cga_set_y(int y);
 extern void cga_draw_pixel_x(int x, unsigned char colour);
@@ -886,6 +887,8 @@ int main(void)
       for (j = 0, k = 0; j < 12; j += 3, k += 2)
         xyz2xy(newcoords + k, coords + j);
 
+      cga_vertical_retrace();
+      
       if (mode == 0)
       {
 
