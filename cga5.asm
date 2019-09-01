@@ -1482,8 +1482,10 @@ _cga_draw_line2 PROC
    cmp al, 3
    jne line2_not4
    and si, 16            ; adjust computed jump for extra inc/dec 
+   jmp line2_is4
 line2_not4:
    and si, 14
+line2_is4:
    mov dl, al  
    shr dl, 1
    xor al, dl
@@ -1738,8 +1740,10 @@ _cga_draw_line3 PROC
    and ax, 3            ; deal with 3, 4, 2, 1 layout
    jnz line3_not1       ; adjust computed offset for extra inc/dec instructions
    and si, 16
+   jmp line3_is1
 line3_not1:
    and si, 14
+line3_is1:
    mov dl, al  
    shr dl, 1
    xor al, dl
