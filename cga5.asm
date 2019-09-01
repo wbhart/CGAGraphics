@@ -1233,10 +1233,11 @@ line2_not4:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 40 bytes
-   shl al, 1
+   shl al, 1            ; multiply x mod 4 by 38 bytes
+   add si, ax
    shl al, 1
    add si, ax
+   shl al, 1
    shl al, 1
    shl al, 1
    add si, ax    
@@ -1285,6 +1286,9 @@ line2_iter:
    mov bx, -8192
    add di, 8192         ; compensate for subtraction of 8192
 
+   mov WORD PTR cs:[sp_save], sp
+   mov sp, 79
+
    jmp cs:[jmp_addr]
    
 
@@ -1309,14 +1313,13 @@ line2_patch6:
    jg line2_incx32
    add dx, si           ; D += 2*dy
 line2_incx22:
-   add di, 79
+   add di, sp
 
    loop line2_loop2
    mov al, 0cfh
 line2_patch9:
    mov ah, 030h
    jmp line2_no_iter
-   nop
 
 line2_loop1:
 
@@ -1339,14 +1342,13 @@ line2_patch2:
    jg line2_incx22
    add dx, si           ; D += 2*dy
 line2_incx12:
-   add di, 79
+   add di, sp
 
    loop line2_loop1
    mov al, 03fh
 line2_patch10:
    mov ah, 0c0h
    jmp line2_no_iter
-   nop
 
 line2_loop3:
 
@@ -1369,14 +1371,13 @@ line2_patch8:
    jg line2_incx42
    add dx, si           ; D += 2*dy
 line2_incx32:
-   add di, 79
+   add di, sp
 
    loop line2_loop3
    mov al, 0f3h
 line2_patch11:
    mov ah, 0ch
    jmp line2_no_iter
-   nop
 
 line2_loop4:
 
@@ -1403,7 +1404,7 @@ line2_patch4:
    dec di
    add dx, si           ; D += 2*dy
 line2_incx42:
-   add di, 79
+   add di, sp
 
    loop line2_loop4
    mov al, 0fch
@@ -1411,6 +1412,8 @@ line2_patch12:
    mov ah, 03h
 
 line2_no_iter:
+
+   mov sp, WORD PTR cs:[sp_save]
 
    pop bp
    test [yend], 1
@@ -1486,10 +1489,11 @@ line3_not1:
    shr dl, 1
    xor al, dl
    xor al, 3         
-   shl al, 1            ; multiply x mod 4 by 40 bytes
-   shl al, 1
+   shl al, 1            ; multiply x mod 4 by 38 bytes
+   add si, ax
    shl al, 1
    add si, ax
+   shl al, 1
    shl al, 1
    shl al, 1
    add si, ax    
@@ -1539,6 +1543,9 @@ line3_iter:
    mov bx, -8192
    add di, 8192         ; compensate for subtraction of 8192
 
+   mov WORD PTR cs:[sp_save], sp
+   mov sp, 79
+
    jmp cs:[jmp_addr]
    
 
@@ -1563,14 +1570,13 @@ line3_patch6:
    jg line3_incx22
    add dx, si           ; D += 2*dy
 line3_incx32:
-   add di, 79
+   add di, sp
 
    loop line3_loop3
    mov al, 0f3h
 line3_patch9:
    mov ah, 0ch
    jmp line3_no_iter
-   nop
 
 line3_loop4:
 
@@ -1593,14 +1599,13 @@ line3_patch2:
    jg line3_incx32
    add dx, si           ; D += 2*dy
 line3_incx42:
-   add di, 79
+   add di, sp
 
    loop line3_loop4
    mov al, 0fch
 line3_patch10:
    mov ah, 03h
    jmp line3_no_iter
-   nop
 
 line3_loop2:
 
@@ -1623,14 +1628,13 @@ line3_patch8:
    jg line3_incx12
    add dx, si           ; D += 2*dy
 line3_incx22:
-   add di, 79
+   add di, sp
 
    loop line3_loop2
    mov al, 0cfh
 line3_patch11:
    mov ah, 030h
    jmp line3_no_iter
-   nop
 
 line3_loop1:
 
@@ -1657,7 +1661,7 @@ line3_patch4:
    inc di
    add dx, si           ; D += 2*dy
 line3_incx12:
-   add di, 79
+   add di, sp
 
    loop line3_loop1
    mov al, 03fh
@@ -1665,6 +1669,8 @@ line3_patch12:
    mov ah, 0c0h
 
 line3_no_iter:
+
+   mov sp, WORD PTR cs:[sp_save]
 
    pop bp
    test [yend], 1
