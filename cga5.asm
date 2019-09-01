@@ -1266,6 +1266,8 @@ line2_not4:
    cmp cl, 0            ; check for iterations = 0
    jne line2_iter
    push bp
+   cli
+   mov WORD PTR cs:[sp_save], sp
    jmp line2_no_iter
 line2_iter:
 
@@ -1434,6 +1436,214 @@ line2_done:
    ret
 _cga_draw_line2 ENDP
 
+   PUBLIC _cga_draw_line_blank2
+_cga_draw_line_blank2 PROC
+   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, yend:WORD, colour:BYTE
+   ; line from (x0, y0) - (?, yend) including endpoints, right moving
+   ; AL: colour, BX: 2*dx - 2*dy, CX: Loop, DX: D
+   ; SI: 2*dy, DI: Offset, DS:B800, ES: B800
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
+
+   mov ax, 0b800h       ; set ES to segment for CGA memory
+   mov es, ax
+   mov ds, ax           ; reflect in DS
+
+   xor si, si           ; clear computed jump offset
+
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
+   shr ax, 1
+   sbb si, 0            ; set up to deal with odd/even computed jump offset
+   shl ax, 1            ; round y0 down to multiple of 2
+   
+   mov cx, [yend]       ; also compute iterations
+   sub cx, ax
+   inc cx
+   mov cs:[iter_save], cx  ; save iterations for prologue
+
+   shr cx, 1            ; we will unroll by 2 so divide by 2
+
+   shl ax, 1            ; continue computing offset for line y0
+   shl ax, 1
+   shl ax, 1
+
+   add di, ax
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+
+   mov ax, [x0]         ; adjust offset for column x0
+
+   shr ax, 1            
+   shr ax, 1
+   add di, ax
+
+
+   mov ax, [x0]         ; compute jump offset    
+   and ax, 3            ; deal with 2, 1, 3, 4 layout
+   mov bx, 14           ; adjust computed jump for extra inc/dec 
+   cmp al, 3
+   jne line_blank2_not4
+   add bl, 2            
+line_blank2_not4:
+   and si, bx
+   mov dl, al  
+   shr dl, 1
+   xor al, dl
+   xor al, 1         
+   shl al, 1            ; multiply x mod 4 by 22 bytes
+   add si, ax
+   shl al, 1
+   add si, ax
+   shl al, 1
+   shl al, 1
+   add si, ax    
+
+
+   mov al, [colour]     ; duplicate colour 4 times in byte
+   mov ah, al
+   shl ah, 1
+   shl ah, 1
+   add al, ah
+   mov ah, al
+   shl ah, 1
+   shl ah, 1
+   shl ah, 1
+   shl ah, 1
+   add al, ah
+
+
+   cmp cl, 0            ; check for iterations = 0
+   jne line_blank2_iter
+   push bp
+   cli
+   mov WORD PTR cs:[sp_save], sp
+   jmp line_blank2_no_iter
+line_blank2_iter:
+
+   lea si, si + line_blank2_loop2 ; computed jump into loop
+   mov cs:[jmp_addr], si
+
+   
+   mov si, [ydiff]      ; compute 2*dy
+   shl si, 1            
+
+   mov dx, [D]          ; store D
+   
+   push bp              ; free up bp
+   mov bp, [xdiff]      ; compute 2*dx - 2*dy
+   shl bp, 1
+   sub bp, si
+           
+   sub dx, bp           ; compensate D for first addition of 2*dx - 2*dy  
+   mov bx, -8192
+   add di, 8192         ; compensate for subtraction of 8192
+
+   cli
+   mov WORD PTR cs:[sp_save], sp
+   mov sp, 79
+
+   jmp cs:[jmp_addr]
+   
+
+line_blank2_loop2:
+
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank2_incx31
+   add dx, si           ; D += 2*dy
+line_blank2_incx21:
+
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank2_incx32
+   add dx, si           ; D += 2*dy
+line_blank2_incx22:
+   add di, sp
+
+   loop line_blank2_loop2
+   jmp line_blank2_no_iter
+
+line_blank2_loop1:
+
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank2_incx21
+   add dx, si           ; D += 2*dy
+line_blank2_incx11:
+
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank2_incx22
+   add dx, si           ; D += 2*dy
+line_blank2_incx12:
+   add di, sp
+
+   loop line_blank2_loop1
+   jmp line_blank2_no_iter
+
+line_blank2_loop3:
+
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank2_incx41
+   add dx, si           ; D += 2*dy
+line_blank2_incx31:
+
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank2_incx42
+   add dx, si           ; D += 2*dy
+line_blank2_incx32:
+   add di, sp
+
+   loop line_blank2_loop3
+   jmp line_blank2_no_iter
+
+line_blank2_loop4:
+
+   mov [bx+di], al
+   inc di               ; move to next byte, maybe?
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank2_incx11
+   dec di
+   add dx, si           ; D += 2*dy
+line_blank2_incx41:
+
+   stosb
+   inc di               ; move to next byte, maybe?
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank2_incx12
+   dec di
+   add dx, si           ; D += 2*dy
+line_blank2_incx42:
+   add di, sp
+
+   loop line_blank2_loop4
+
+line_blank2_no_iter:
+
+   mov sp, WORD PTR cs:[sp_save]
+   sti
+
+   pop bp
+   test [yend], 1
+
+   jnz line_blank2_done
+   mov [bx+di], al
+line_blank2_done:
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
+_cga_draw_line_blank2 ENDP
+
    PUBLIC _cga_draw_line3
 _cga_draw_line3 PROC
    ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, yend:WORD, colour:BYTE
@@ -1525,6 +1735,8 @@ line3_not1:
    cmp cl, 0            ; check for iterations = 0
    jne line3_iter
    push bp
+   cli
+   mov WORD PTR cs:[sp_save], sp
    jmp line3_no_iter
 line3_iter:
 
@@ -1693,5 +1905,210 @@ line3_done:
    pop bp
    ret
 _cga_draw_line3 ENDP
+
+   PUBLIC _cga_draw_line_blank3
+_cga_draw_line_blank3 PROC
+   ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, yend:WORD, colour:BYTE
+   ; line from (x0, y0) - (?, yend) including endpoints, left moving
+   ; AL: colour, BX: 2*dx - 2*dy, CX: Loop, DX: D
+   ; SI: 2*dy, DI: Offset, DS:B800, ES: B800
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
+
+   mov ax, 0b800h       ; set ES to segment for CGA memory
+   mov es, ax
+   mov ds, ax           ; reflect in DS
+
+   xor si, si           ; clear computed jump offset
+
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
+   shr ax, 1
+   sbb si, 0            ; setup odd/even line computed jump offset
+   shl ax, 1            ; round y0 down to multiple of 2
+   
+   mov cx, [yend]       ; also compute iterations
+   sub cx, ax
+   inc cx
+   mov cs:[iter_save], cx  ; save iterations for prologue
+
+   shr cx, 1            ; we will unroll by 2 so divide by 2
+
+   shl ax, 1            ; continue computing offset for line y0
+   shl ax, 1
+   shl ax, 1
+
+   add di, ax
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+
+   mov ax, [x0]         ; adjust offset for column x0
+
+   shr ax, 1            
+   shr ax, 1
+   add di, ax
+
+
+   mov ax, [x0]         ; compute jump offset    
+   mov bx, 14
+   and ax, 3            ; deal with 3, 4, 2, 1 layout
+   jnz line_blank3_not1       ; adjust computed offset for extra inc/dec instructions
+   add bl, 2
+line_blank3_not1:
+   and si, bx
+   mov dl, al  
+   shr dl, 1
+   xor al, dl
+   xor al, 3         
+   shl al, 1            ; multiply x mod 4 by 22 bytes
+   add si, ax
+   shl al, 1
+   add si, ax
+   shl al, 1
+   shl al, 1
+   add si, ax    
+
+   mov al, [colour]     ; duplicate colour 4 times in byte
+   mov ah, al
+   shl ah, 1
+   shl ah, 1
+   add al, ah
+   mov ah, al
+   shl ah, 1
+   shl ah, 1
+   shl ah, 1
+   shl ah, 1
+   add al, ah
+   
+   cmp cl, 0            ; check for iterations = 0
+   jne line_blank3_iter
+   push bp
+   cli
+   mov WORD PTR cs:[sp_save], sp
+   jmp line_blank3_no_iter
+line_blank3_iter:
+
+   lea si, si + line_blank3_loop3 ; computed jump into loop
+   mov cs:[jmp_addr], si
+   
+   mov si, [ydiff]      ; compute 2*dy
+   shl si, 1            
+
+   mov dx, [D]          ; store D
+   
+   push bp              ; free up bp
+   mov bp, [xdiff]      ; compute 2*dx - 2*dy
+   neg bp
+   shl bp, 1
+   sub bp, si
+           
+   sub dx, bp           ; compensate D for first addition of 2*dx - 2*dy  
+   mov bx, -8192
+   add di, 8192         ; compensate for subtraction of 8192
+
+   cli
+   mov WORD PTR cs:[sp_save], sp
+   mov sp, 79
+
+   jmp cs:[jmp_addr]
+   
+
+line_blank3_loop3:
+
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank3_incx21
+   add dx, si           ; D += 2*dy
+line_blank3_incx31:
+
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank3_incx22
+   add dx, si           ; D += 2*dy
+line_blank3_incx32:
+   add di, sp
+
+   loop line_blank3_loop3
+   jmp line_blank3_no_iter
+
+line_blank3_loop4:
+
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank3_incx31
+   add dx, si           ; D += 2*dy
+line_blank3_incx41:
+
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank3_incx32
+   add dx, si           ; D += 2*dy
+line_blank3_incx42:
+   add di, sp
+
+   loop line_blank3_loop4
+   jmp line_blank3_no_iter
+
+line_blank3_loop2:
+
+   mov [bx+di], al
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank3_incx11
+   add dx, si           ; D += 2*dy
+line_blank3_incx21:
+
+   stosb
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank3_incx12
+   add dx, si           ; D += 2*dy
+line_blank3_incx22:
+   add di, sp
+
+   loop line_blank3_loop2
+   jmp line_blank3_no_iter
+
+line_blank3_loop1:
+
+   mov [bx+di], al
+   dec di               ; move to next byte, maybe?
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank3_incx41
+   inc di
+   add dx, si           ; D += 2*dy
+line_blank3_incx11:
+
+   stosb
+   dec di               ; move to next byte, maybe?
+   add dx, bp           ; D += 2*dx - 2*dy
+   jg line_blank3_incx42
+   inc di
+   add dx, si           ; D += 2*dy
+line_blank3_incx12:
+   add di, sp
+
+   loop line_blank3_loop1
+
+line_blank3_no_iter:
+
+   mov sp, WORD PTR cs:[sp_save]
+   sti
+
+   pop bp
+   test [yend], 1
+
+   jnz line_blank3_done
+   mov [bx+di], al
+line_blank3_done:
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
+_cga_draw_line_blank3 ENDP
 
    END

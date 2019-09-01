@@ -14,9 +14,15 @@ extern void cga_draw_vline(int x, int y0, int y1, unsigned char colour);
 
 extern void cga_draw_line1(int x0, int y0, int dx, int dy,
                                        int D, int endx, unsigned char colour);
+extern void cga_draw_line_blank1(int x0, int y0, int dx, int dy,
+                                       int D, int endx, unsigned char colour);
 extern void cga_draw_line2(int x0, int y0, int dx, int dy,
                                        int D, int endy, unsigned char colour);
+extern void cga_draw_line_blank2(int x0, int y0, int dx, int dy,
+                                       int D, int endy, unsigned char colour);
 extern void cga_draw_line3(int x0, int y0, int dx, int dy,
+                                       int D, int endy, unsigned char colour);
+extern void cga_draw_line_blank3(int x0, int y0, int dx, int dy,
                                        int D, int endy, unsigned char colour);
 extern int cga_draw_ellipse1(int x0, int y0, int r,
                                                  int s, unsigned char colour);
@@ -160,7 +166,7 @@ void cga_draw_line(int x0, int y0, int x1, int y1, unsigned char colour)
    }
 }
 
-void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
+void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour, char mode)
 {
    int dx = x1 - x0;
    int dy = y1 - y0;
@@ -168,7 +174,7 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
    /* ensure y1 >= y0 */
    if (dy < 0)
    {
-      cga_draw_line_clipped(x1, y1, x0, y0, colour);
+      cga_draw_line_clipped(x1, y1, x0, y0, colour, mode);
 
       return;
    }
@@ -208,7 +214,10 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
             else
                endx = x1;            
 
-            cga_draw_line1(x, y, dx, dy, D, endx, colour);
+            if (mode == 1)
+               cga_draw_line1(x, y, dx, dy, D, endx, colour);
+            else
+               cga_draw_line_blank1(x, y, dx, dy, D, endx, colour);
          }
       } else /* dx < dy */
       {
@@ -243,7 +252,10 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
             else
                endy = y1;            
 
-            cga_draw_line2(x, y, dx, dy, D, endy, colour);
+            if (mode == 1)
+               cga_draw_line2(x, y, dx, dy, D, endy, colour);
+            else
+               cga_draw_line_blank2(x, y, dx, dy, D, endy, colour);
          }
       }
    } else /* dx < 0 */
@@ -292,7 +304,10 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
             else
                endx = x1;            
 
-            cga_draw_line1(x, y, dx, -dy, D, endx, colour);
+            if (mode == 1)
+               cga_draw_line1(x, y, dx, -dy, D, endx, colour);
+            else
+               cga_draw_line_blank1(x, y, dx, -dy, D, endx, colour);  
          }
       } else /* dx < dy */
       {
@@ -331,7 +346,10 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
             else
                endy = y1;            
 
-            cga_draw_line3(x, y, -dx, dy, D, endy, colour);
+            if (mode == 1)
+               cga_draw_line3(x, y, -dx, dy, D, endy, colour);
+            else
+               cga_draw_line_blank3(x, y, -dx, dy, D, endy, colour);    
          }
       }
    }
@@ -781,14 +799,14 @@ void xyz2xy(int * icoords, double * coords)
    icoords[1] = (int) (100.5 + (coords[1]*256.0)/(100.0 + coords[2]));
 }
 
-void draw_tetrahedron(int * icoords, unsigned char colour)
+void draw_tetrahedron(int * icoords, unsigned char colour, char mode)
 {
-   cga_draw_line_clipped(icoords[0], icoords[1], icoords[2], icoords[3], colour);
-   cga_draw_line_clipped(icoords[0], icoords[1], icoords[4], icoords[5], colour);
-   cga_draw_line_clipped(icoords[0], icoords[1], icoords[6], icoords[7], colour);
-   cga_draw_line_clipped(icoords[2], icoords[3], icoords[4], icoords[5], colour);
-   cga_draw_line_clipped(icoords[2], icoords[3], icoords[6], icoords[7], colour);
-   cga_draw_line_clipped(icoords[4], icoords[5], icoords[6], icoords[7], colour);
+   cga_draw_line_clipped(icoords[0], icoords[1], icoords[2], icoords[3], colour, mode);
+   cga_draw_line_clipped(icoords[0], icoords[1], icoords[4], icoords[5], colour, mode);
+   cga_draw_line_clipped(icoords[0], icoords[1], icoords[6], icoords[7], colour, mode);
+   cga_draw_line_clipped(icoords[2], icoords[3], icoords[4], icoords[5], colour, mode);
+   cga_draw_line_clipped(icoords[2], icoords[3], icoords[6], icoords[7], colour, mode);
+   cga_draw_line_clipped(icoords[4], icoords[5], icoords[6], icoords[7], colour, mode);
 }
 
 void move_clipbox()
@@ -851,7 +869,7 @@ int main(void)
    cga_draw_vline(cx0 - 1, cy0 - 1, cy1 + 1, 1);
    cga_draw_vline(cx1 + 1, cy0 - 1, cy1 + 1, 1);
 
-   draw_tetrahedron(icoords, 2);
+   draw_tetrahedron(icoords, 2, 1);
 
    oldcoords = icoords;
    newcoords = icoords1;
@@ -903,7 +921,7 @@ int main(void)
          cga_draw_hline(cx0 - 1, cx1 + 1, cy1 + 1, 0);
       } 
 
-      draw_tetrahedron(oldcoords, 0);
+      draw_tetrahedron(oldcoords, 0, 0);
 
       move_clipbox();
 
@@ -912,7 +930,7 @@ int main(void)
       cga_draw_vline(cx0 - 1, cy0 - 1, cy1 + 1, 1);
       cga_draw_vline(cx1 + 1, cy0 - 1, cy1 + 1, 1);
 
-      draw_tetrahedron(newcoords, 2);
+      draw_tetrahedron(newcoords, 2, 1);
          
       tmp = oldcoords;
       oldcoords = newcoords;
