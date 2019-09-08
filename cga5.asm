@@ -1558,7 +1558,7 @@ line2_00_iter:
 
    cli
    mov WORD PTR cs:[sp_save], sp
-   mov sp, 79
+   mov sp, 80
 
    jmp cs:[jmp_addr]
    
@@ -1764,7 +1764,7 @@ line2_11_iter:
 
    cli
    mov WORD PTR cs:[sp_save], sp
-   mov sp, 79
+   mov sp, 80
 
    jmp cs:[jmp_addr]
    
@@ -2450,7 +2450,7 @@ line3_00_iter:
 
    cli
    mov WORD PTR cs:[sp_save], sp
-   mov sp, 79
+   mov sp, 80
 
    jmp cs:[jmp_addr]
    
@@ -2656,7 +2656,7 @@ line3_11_iter:
 
    cli
    mov WORD PTR cs:[sp_save], sp
-   mov sp, 79
+   mov sp, 80
 
    jmp cs:[jmp_addr]
    
