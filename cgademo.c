@@ -911,7 +911,7 @@ int main(void)
       cy1 = 100;
 
       for (i = 0; i < 200; i++)
-         cga_draw_line_clipped(0, 0, 319, i, k);
+         cga_draw_line_clipped(0, 0, 319, i, k, 1);
 
       cx0 = 20;
       cy0 = 20;
@@ -919,7 +919,7 @@ int main(void)
       cy1 = 100;
 
       for (i = 0; i < 200; i++)
-         cga_draw_line_clipped(319, 0, 0, i, k);
+         cga_draw_line_clipped(319, 0, 0, i, k, 1);
 
       cx0 = 20;
       cy0 = 100;
@@ -927,7 +927,7 @@ int main(void)
       cy1 = 180;
 
       for (i = 0; i < 200; i++)
-         cga_draw_line_clipped(0, 0, i, 199, k);
+         cga_draw_line_clipped(0, 0, i, 199, k, 1);
 
       cx0 = 200;
       cy0 = 100;
@@ -935,7 +935,7 @@ int main(void)
       cy1 = 180;
 
       for (i = 0; i < 200; i++)
-         cga_draw_line_clipped(319, 0, 319 - i, 199, k);
+         cga_draw_line_clipped(319, 0, 319 - i, 199, k, 1);
 
       k = k == 3 ? 0 : k + 1;
 
@@ -952,17 +952,17 @@ int main(void)
       cy1 = 165 - j;
 
       for (i = 0; i < 320; i++)
-         cga_draw_line_clipped(160, 100, i, 0, j & 3);
+         cga_draw_line_clipped(160, 100, i, 0, j & 3, 1);
 
       for (i = 0; i < 200; i++)
-         cga_draw_line_clipped(160, 100, 319, i, j & 3);
+         cga_draw_line_clipped(160, 100, 319, i, j & 3, 1);
 
       for (i = 0; i < 320; i++)
-         cga_draw_line_clipped(160, 100, 319 - i, 199, j & 3);
+         cga_draw_line_clipped(160, 100, 319 - i, 199, j & 3, 1);
 
 
       for (i = 0; i < 200; i++)
-         cga_draw_line_clipped(160, 100, 0, 199 - i, j & 3);
+         cga_draw_line_clipped(160, 100, 0, 199 - i, j & 3, 1);
    }
    while(!kbhit()) ;
    getch();
