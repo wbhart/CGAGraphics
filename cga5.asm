@@ -1564,13 +1564,13 @@ line2_00_iter:
 
 line2_00_loop2:
 
-   and [bx+di], 0cfh    ; reenigne's trick
+   and BYTE PTR [bx+di], 0cfh    ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx31
    add dx, si           ; D += 2*dy
 line2_00_incx21:
 
-   and [di], 0cfh       ; reenigne's trick
+   and BYTE PTR [di], 0cfh       ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx32
    add dx, si           ; D += 2*dy
@@ -1583,13 +1583,13 @@ line2_00_incx22:
 
 line2_00_loop1:
 
-   and [bx+di], 03fh    ; reenigne's trick
+   and BYTE PTR [bx+di], 03fh    ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx21
    add dx, si           ; D += 2*dy
 line2_00_incx11:
 
-   and [di], 03fh       ; reenigne's trick
+   and BYTE PTR [di], 03fh       ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx22
    add dx, si           ; D += 2*dy
@@ -1602,13 +1602,13 @@ line2_00_incx12:
 
 line2_00_loop3:
 
-   and [bx+di], 0f3h    ; reenigne's trick
+   and BYTE PTR [bx+di], 0f3h    ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx41
    add dx, si           ; D += 2*dy
 line2_00_incx31:
 
-   and [di], 0f3h       ; reenigne's trick
+   and BYTE PTR [di], 0f3h       ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx42
    add dx, si           ; D += 2*dy
@@ -1621,7 +1621,7 @@ line2_00_incx32:
 
 line2_00_loop4:
 
-   and [bx+di], 0fch    ; reenigne's trick
+   and BYTE PTR [bx+di], 0fch    ; reenigne's trick
    inc di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx11
@@ -1629,7 +1629,7 @@ line2_00_loop4:
    add dx, si           ; D += 2*dy
 line2_00_incx41:
 
-   and [bx+di], 0fch    ; reenigne's trick
+   and BYTE PTR [bx+di], 0fch    ; reenigne's trick
    inc di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx12
@@ -1769,13 +1769,13 @@ line2_11_iter:
 
 line2_11_loop2:
 
-   or [bx+di], 030h     ; reenigne's trick
+   or BYTE PTR [bx+di], 030h     ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx31
    add dx, si           ; D += 2*dy
 line2_11_incx21:
 
-   or [di], 030h        ; reenigne's trick
+   or BYTE PTR [di], 030h        ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx32
    add dx, si           ; D += 2*dy
@@ -1788,13 +1788,13 @@ line2_11_incx22:
 
 line2_11_loop1:
 
-   or [bx+di], 0c0h     ; reenigne's trick
+   or BYTE PTR [bx+di], 0c0h     ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx21
    add dx, si           ; D += 2*dy
 line2_11_incx11:
 
-   or [di], 0c0h        ; reenigne's trick
+   or BYTE PTR [di], 0c0h        ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx22
    add dx, si           ; D += 2*dy
@@ -1807,13 +1807,13 @@ line2_11_incx12:
 
 line2_11_loop3:
 
-   or [bx+di], 0ch      ; reenigne's trick
+   or BYTE PTR [bx+di], 0ch      ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx41
    add dx, si           ; D += 2*dy
 line2_11_incx31:
 
-   or [di], 0ch         ; reenigne's trick
+   or BYTE PTR [di], 0ch         ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx42
    add dx, si           ; D += 2*dy
@@ -1826,7 +1826,7 @@ line2_11_incx32:
 
 line2_11_loop4:
 
-   or [bx+di], 03h      ; reenigne's trick
+   or BYTE PTR [bx+di], 03h      ; reenigne's trick
    inc di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx11
@@ -1834,7 +1834,7 @@ line2_11_loop4:
    add dx, si           ; D += 2*dy
 line2_11_incx41:
 
-   or [bx+di], 03h      ; reenigne's trick
+   or BYTE PTR [bx+di], 03h      ; reenigne's trick
    inc di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx12
@@ -2454,13 +2454,13 @@ line3_00_iter:
 
 line3_00_loop3:
 
-   and [bx+di], 0f3h    ; reenigne's trick
+   and BYTE PTR [bx+di], 0f3h    ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_00_incx21
    add dx, si           ; D += 2*dy
 line3_00_incx31:
 
-   and [di], 0f3h       ; reenigne's trick
+   and BYTE PTR [di], 0f3h       ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_00_incx22
    add dx, si           ; D += 2*dy
@@ -2473,13 +2473,13 @@ line3_00_incx32:
 
 line3_00_loop4:
 
-   and [bx+di], 0fch    ; reenigne's trick
+   and BYTE PTR [bx+di], 0fch    ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_00_incx31
    add dx, si           ; D += 2*dy
 line3_00_incx41:
 
-   and [di], 0fch       ; reenigne's trick
+   and BYTE PTR [di], 0fch       ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_00_incx32
    add dx, si           ; D += 2*dy
@@ -2492,13 +2492,13 @@ line3_00_incx42:
 
 line3_00_loop2:
 
-   and [bx+di], 0cfh    ; reenigne's trick
+   and BYTE PTR [bx+di], 0cfh    ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_00_incx11
    add dx, si           ; D += 2*dy
 line3_00_incx21:
 
-   and [di], 0cfh       ; reenigne's trick
+   and BYTE PTR [di], 0cfh       ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_00_incx12
    add dx, si           ; D += 2*dy
@@ -2511,7 +2511,7 @@ line3_00_incx22:
 
 line3_00_loop1:
 
-   and [bx+di], 03fh    ; reenigne's trick
+   and BYTE PTR [bx+di], 03fh    ; reenigne's trick
    dec di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_00_incx41
@@ -2519,7 +2519,7 @@ line3_00_loop1:
    add dx, si           ; D += 2*dy
 line3_00_incx11:
 
-   and [di], 03fh       ; reenigne's trick
+   and BYTE PTR [di], 03fh       ; reenigne's trick
    dec di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_00_incx42
@@ -2659,13 +2659,13 @@ line3_11_iter:
 
 line3_11_loop3:
 
-   or [bx+di], 0ch      ; reenigne's trick
+   or BYTE PTR [bx+di], 0ch      ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_11_incx21
    add dx, si           ; D += 2*dy
 line3_11_incx31:
 
-   or [di], 0ch         ; reenigne's trick
+   or BYTE PTR [di], 0ch         ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_11_incx22
    add dx, si           ; D += 2*dy
@@ -2678,13 +2678,13 @@ line3_11_incx32:
 
 line3_11_loop4:
 
-   or [bx+di], 03h      ; reenigne's trick
+   or BYTE PTR [bx+di], 03h      ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_11_incx31
    add dx, si           ; D += 2*dy
 line3_11_incx41:
 
-   or [di], 03h         ; reenigne's trick
+   or BYTE PTR [di], 03h         ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_11_incx32
    add dx, si           ; D += 2*dy
@@ -2697,13 +2697,13 @@ line3_11_incx42:
 
 line3_11_loop2:
 
-   or [bx+di], 030h     ; reenigne's trick
+   or BYTE PTR [bx+di], 030h     ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_11_incx11
    add dx, si           ; D += 2*dy
 line3_11_incx21:
 
-   or [di], 030h        ; reenigne's trick
+   or BYTE PTR [di], 030h        ; reenigne's trick
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_11_incx12
    add dx, si           ; D += 2*dy
@@ -2716,7 +2716,7 @@ line3_11_incx22:
 
 line3_11_loop1:
 
-   or [bx+di], 0c0h     ; reenigne's trick
+   or BYTE PTR [bx+di], 0c0h     ; reenigne's trick
    dec di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_11_incx41
@@ -2724,7 +2724,7 @@ line3_11_loop1:
    add dx, si           ; D += 2*dy
 line3_11_incx11:
 
-   or [di], 0c0h        ; reenigne's trick
+   or BYTE PTR [di], 0c0h        ; reenigne's trick
    dec di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line3_11_incx42
