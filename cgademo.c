@@ -142,7 +142,7 @@ void cga_draw_line(int x0, int y0, int x1, int y1, unsigned char colour)
       } else /* dx < dy */
       {
          D = 2*dx - dy;
-         cga_draw_line3(x0, y0, dx, dy, D, y1, colour);
+         cga_draw_line2(x0, y0, dx, dy, D, y1, colour);
       }
    } else /* dx < 0 */
    {
@@ -151,16 +151,16 @@ void cga_draw_line(int x0, int y0, int x1, int y1, unsigned char colour)
       if (dx >= dy)
       {
          D = 2*dy - dx;
-         cga_draw_line2(x0, y0, dx, dy, D, x1, colour);
+         cga_draw_line1(x1, y1, dx, -dy, D, x0, colour);
       } else /* dx < dy */
       {
          D = 2*dx - dy;
-         cga_draw_line4(x0, y0, dx, dy, D, y1, colour);
+         cga_draw_line3(x0, y0, -dx, dy, D, y1, colour);
       }
    }
 }
 
-void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
+void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour, char mode)
 {
    int dx = x1 - x0;
    int dy = y1 - y0;
@@ -168,7 +168,7 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
    /* ensure y1 >= y0 */
    if (dy < 0)
    {
-      cga_draw_line_clipped(x1, y1, x0, y0, colour);
+      cga_draw_line_clipped(x1, y1, x0, y0, colour, mode);
 
       return;
    }
@@ -208,7 +208,10 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
             else
                endx = x1;            
 
-            cga_draw_line1(x, y, dx, dy, D, endx, colour);
+            if (mode == 1)
+               cga_draw_line1(x, y, dx, dy, D, endx, colour);
+            else
+               cga_draw_line_blank1(x, y, dx, dy, D, endx, colour);
          }
       } else /* dx < dy */
       {
@@ -243,7 +246,10 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
             else
                endy = y1;            
 
-            cga_draw_line3(x, y, dx, dy, D, endy, colour);
+            if (mode == 1)
+               cga_draw_line2(x, y, dx, dy, D, endy, colour);
+            else
+               cga_draw_line_blank2(x, y, dx, dy, D, endy, colour);
          }
       }
    } else /* dx < 0 */
@@ -252,27 +258,32 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
 
       if (dx >= dy)
       {
-         /* flip all coords about vertical line mid way between x0 and x1 */
-         int fcx0 = x0 + x1 - cx0;
-         int fcx1 = x0 + x1 - cx1;
+         /* flip all coords about vertical line mid way between y0 and y1 */
+         int fcy0, fcy1, t;
+         
+         t = x0; x0 = x1; x1 = t;
+         t = y0; y0 = y1; y1 = t;
+
+         fcy0 = y0 + y1 - cy0;
+         fcy1 = y0 + y1 - cy1;
       
          /* check we don't miss the clip box (inclusive) entirely */
-         if (x1 <= cx1 && y0 <= cy1 && x0 >= cx0 && y1 >= cy0 &&
-            (y0 >= cy0 || cga_line_cmp(x1, y0, dx, dy, fcx0, cy0 - 1) > 0) &&
-            (x1 >= fcx1 || cga_line_cmp(x1, y0, dx, dy, fcx1, cy1) <= 0))
+         if (x0 <= cx1 && y1 <= cy1 && x1 >= cx0 && y0 >= cy0 &&
+            (y1 >= fcy1 || cga_line_cmp(x0, y1, dx, dy, cx1, fcy1 - 1) > 0) &&
+            (x0 >= cx0 || cga_line_cmp(x0, y1, dx, dy, cx0, fcy0) <= 0))
          {
             int D, y, x, endx;
 
-            /* if we go above the top right corner of clip box (incl.) */
-            if (y0 < cy0 &&
-               (x1 > fcx1 || cga_line_cmp(x1, y0, dx, dy, fcx1, cy0 - 1) <= 0))
+            /* if we go above the top left corner of clip box (incl.) */
+            if (y1 < fcy1 &&
+               (x0 > cx0 || cga_line_cmp(x0, y1, dx, dy, cx0, fcy1 - 1) <= 0))
             {
-               x = x0 + x1 - cga_first_intercept_horiz(&D, x1, y0, dx, dy, cy0);
-               y = cy0;
-            } else if (x1 <= fcx1)
+               x = cga_first_intercept_horiz(&D, x0, y1, dx, dy, fcy1);
+               y = cy1;
+            } else if (x0 <= cx0)
             {
-               y = cga_first_intercept_vert(&D, x1, y0, dx, dy, fcx1);
-               x = cx1;
+               y = dx == 0 ? cy1 : y0 + y1 - cga_first_intercept_vert(&D, x0, y1, dx, dy, cx0);
+               x = cx0;
             } else
             {
                D = 2*dy - dx;
@@ -280,14 +291,17 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
                x = x0;
             }
 
-            if (x0 > fcx0 && cga_line_cmp(x1, y0, dx, dy, fcx0, cy1) <= 0)
-               endx = cx0;
-            else if (y1 > cy1)
-               endx = x0 + x1 - cga_last_intercept_horiz(x1, y0, dx, dy, cy1);
+            if (x1 > cx1 && cga_line_cmp(x0, y1, dx, dy, cx1, fcy0) <= 0)
+               endx = cx1;
+            else if (y0 > fcy0)
+               endx = cga_last_intercept_horiz(x0, y1, dx, dy, fcy0);
             else
                endx = x1;            
 
-            cga_draw_line2(x, y, dx, dy, D, endx, colour);
+            if (mode == 1)
+               cga_draw_line1(x, y, dx, -dy, D, endx, colour);
+            else
+               cga_draw_line_blank1(x, y, dx, -dy, D, endx, colour);  
          }
       } else /* dx < dy */
       {
@@ -326,7 +340,10 @@ void cga_draw_line_clipped(int x0, int y0, int x1, int y1, unsigned char colour)
             else
                endy = y1;            
 
-            cga_draw_line4(x, y, dx, dy, D, endy, colour);
+            if (mode == 1)
+               cga_draw_line3(x, y, -dx, dy, D, endy, colour);
+            else
+               cga_draw_line_blank3(x, y, -dx, dy, D, endy, colour);    
          }
       }
    }
