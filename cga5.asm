@@ -1514,9 +1514,9 @@ line2_00_not4:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 26 bytes
-   add si, ax
+   shl al, 1            ; multiply x mod 4 by 28 bytes
    shl al, 1
+   add si, ax
    shl al, 1
    add si, ax
    shl al, 1
@@ -1562,7 +1562,7 @@ line2_00_iter:
 
    jmp cs:[jmp_addr]
    
-
+ALIGN 2
 line2_00_loop2:
 
    and BYTE PTR [bx+di], 0cfh    ; reenigne's trick
@@ -1582,6 +1582,7 @@ line2_00_incx22:
    mov al, 0cfh
    jmp line2_00_no_iter
 
+ALIGN 2
 line2_00_loop1:
 
    and BYTE PTR [bx+di], 03fh    ; reenigne's trick
@@ -1601,6 +1602,7 @@ line2_00_incx12:
    mov al, 03fh
    jmp line2_00_no_iter
 
+ALIGN 2
 line2_00_loop3:
 
    and BYTE PTR [bx+di], 0f3h    ; reenigne's trick
@@ -1620,6 +1622,7 @@ line2_00_incx32:
    mov al, 0f3h
    jmp line2_00_no_iter
 
+ALIGN 2
 line2_00_loop4:
 
    and BYTE PTR [bx+di], 0fch    ; reenigne's trick
@@ -1720,9 +1723,9 @@ line2_11_not4:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 26 bytes
-   add si, ax
+   shl al, 1            ; multiply x mod 4 by 28 bytes
    shl al, 1
+   add si, ax
    shl al, 1
    add si, ax
    shl al, 1
@@ -1768,7 +1771,7 @@ line2_11_iter:
 
    jmp cs:[jmp_addr]
    
-
+ALIGN 2
 line2_11_loop2:
 
    or BYTE PTR [bx+di], 030h     ; reenigne's trick
@@ -1788,6 +1791,7 @@ line2_11_incx22:
    mov al, 030h
    jmp line2_11_no_iter
 
+ALIGN 2
 line2_11_loop1:
 
    or BYTE PTR [bx+di], 0c0h     ; reenigne's trick
@@ -1807,6 +1811,7 @@ line2_11_incx12:
    mov al, 0c0h
    jmp line2_11_no_iter
 
+ALIGN 2
 line2_11_loop3:
 
    or BYTE PTR [bx+di], 0ch      ; reenigne's trick
@@ -1826,6 +1831,7 @@ line2_11_incx32:
    mov al, 0ch
    jmp line2_11_no_iter
 
+ALIGN 2
 line2_11_loop4:
 
    or BYTE PTR [bx+di], 03h      ; reenigne's trick
@@ -2405,9 +2411,9 @@ line3_00_not1:
    shr dl, 1
    xor al, dl
    xor al, 3         
-   shl al, 1            ; multiply x mod 4 by 26 bytes
-   add si, ax
+   shl al, 1            ; multiply x mod 4 by 28 bytes
    shl al, 1
+   add si, ax
    shl al, 1
    add si, ax
    shl al, 1
@@ -2454,7 +2460,7 @@ line3_00_iter:
 
    jmp cs:[jmp_addr]
    
-
+ALIGN 2
 line3_00_loop3:
 
    and BYTE PTR [bx+di], 0f3h    ; reenigne's trick
@@ -2474,6 +2480,7 @@ line3_00_incx32:
    mov al, 0f3h
    jmp line3_00_no_iter
 
+ALIGN 2
 line3_00_loop4:
 
    and BYTE PTR [bx+di], 0fch    ; reenigne's trick
@@ -2493,6 +2500,7 @@ line3_00_incx42:
    mov al, 0fch
    jmp line3_00_no_iter
 
+ALIGN 2
 line3_00_loop2:
 
    and BYTE PTR [bx+di], 0cfh    ; reenigne's trick
@@ -2512,6 +2520,7 @@ line3_00_incx22:
    mov al, 0cfh
    jmp line3_00_no_iter
 
+ALIGN 2
 line3_00_loop1:
 
    and BYTE PTR [bx+di], 03fh    ; reenigne's trick
@@ -2611,9 +2620,9 @@ line3_11_not1:
    shr dl, 1
    xor al, dl
    xor al, 3         
-   shl al, 1            ; multiply x mod 4 by 26 bytes
-   add si, ax
+   shl al, 1            ; multiply x mod 4 by 28 bytes
    shl al, 1
+   add si, ax
    shl al, 1
    add si, ax
    shl al, 1
@@ -2660,7 +2669,7 @@ line3_11_iter:
 
    jmp cs:[jmp_addr]
    
-
+ALIGN 2
 line3_11_loop3:
 
    or BYTE PTR [bx+di], 0ch      ; reenigne's trick
@@ -2680,6 +2689,7 @@ line3_11_incx32:
    mov al, 0ch
    jmp line3_11_no_iter
 
+ALIGN 2
 line3_11_loop4:
 
    or BYTE PTR [bx+di], 03h      ; reenigne's trick
@@ -2699,6 +2709,7 @@ line3_11_incx42:
    mov al, 03h
    jmp line3_11_no_iter
 
+ALIGN 2
 line3_11_loop2:
 
    or BYTE PTR [bx+di], 030h     ; reenigne's trick
@@ -2718,6 +2729,7 @@ line3_11_incx22:
    mov al, 030h
    jmp line3_11_no_iter
 
+ALIGN 2
 line3_11_loop1:
 
    or BYTE PTR [bx+di], 0c0h     ; reenigne's trick
