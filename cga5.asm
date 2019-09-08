@@ -1504,7 +1504,7 @@ _cga_draw_line2_00 PROC
 
    mov ax, [x0]         ; compute jump offset    
    and ax, 3            ; deal with 2, 1, 3, 4 layout
-   mov bx, 8            ; adjust computed jump for extra inc/dec 
+   mov bx, 9            ; adjust computed jump for extra inc/dec 
    cmp al, 3
    jne line2_00_not4
    add bl, 2            
@@ -1514,7 +1514,8 @@ line2_00_not4:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 24 bytes
+   shl al, 1            ; multiply x mod 4 by 26 bytes
+   add si, ax
    shl al, 1
    shl al, 1
    add si, ax
@@ -1629,7 +1630,7 @@ line2_00_loop4:
    add dx, si           ; D += 2*dy
 line2_00_incx41:
 
-   and BYTE PTR [bx+di], 0fch    ; reenigne's trick
+   and BYTE PTR [di], 0fch       ; reenigne's trick
    inc di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_00_incx12
@@ -1709,7 +1710,7 @@ _cga_draw_line2_11 PROC
 
    mov ax, [x0]         ; compute jump offset    
    and ax, 3            ; deal with 2, 1, 3, 4 layout
-   mov bx, 8            ; adjust computed jump for extra inc/dec 
+   mov bx, 9            ; adjust computed jump for extra inc/dec 
    cmp al, 3
    jne line2_11_not4
    add bl, 2            
@@ -1719,7 +1720,8 @@ line2_11_not4:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 24 bytes
+   shl al, 1            ; multiply x mod 4 by 26 bytes
+   add si, ax
    shl al, 1
    shl al, 1
    add si, ax
@@ -1834,7 +1836,7 @@ line2_11_loop4:
    add dx, si           ; D += 2*dy
 line2_11_incx41:
 
-   or BYTE PTR [bx+di], 03h      ; reenigne's trick
+   or BYTE PTR [di], 03h         ; reenigne's trick
    inc di               ; move to next byte, maybe?
    add dx, bp           ; D += 2*dx - 2*dy
    jg line2_11_incx12
@@ -2393,7 +2395,7 @@ _cga_draw_line3_00 PROC
 
 
    mov ax, [x0]         ; compute jump offset    
-   mov bx, 8
+   mov bx, 9
    and ax, 3            ; deal with 3, 4, 2, 1 layout
    jnz line3_00_not1    ; adjust computed offset for extra inc/dec instructions
    add bl, 2
@@ -2403,7 +2405,8 @@ line3_00_not1:
    shr dl, 1
    xor al, dl
    xor al, 3         
-   shl al, 1            ; multiply x mod 4 by 24 bytes
+   shl al, 1            ; multiply x mod 4 by 26 bytes
+   add si, ax
    shl al, 1
    shl al, 1
    add si, ax
@@ -2598,7 +2601,7 @@ _cga_draw_line3_11 PROC
 
 
    mov ax, [x0]         ; compute jump offset    
-   mov bx, 8
+   mov bx, 9
    and ax, 3            ; deal with 3, 4, 2, 1 layout
    jnz line3_11_not1    ; adjust computed offset for extra inc/dec instructions
    add bl, 2
@@ -2608,7 +2611,8 @@ line3_11_not1:
    shr dl, 1
    xor al, dl
    xor al, 3         
-   shl al, 1            ; multiply x mod 4 by 24 bytes
+   shl al, 1            ; multiply x mod 4 by 26 bytes
+   add si, ax
    shl al, 1
    shl al, 1
    add si, ax
