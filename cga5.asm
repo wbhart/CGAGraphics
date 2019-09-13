@@ -3032,9 +3032,9 @@ circle1_y_even:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 60 bytes
-   shl al, 1
+   shl al, 1            ; multiply x mod 4 by 58 bytes
    mov si, ax
+   shl al, 1
    shl al, 1
    add si, ax
    shl al, 1
@@ -3052,16 +3052,16 @@ circle1_y_even:
    mov BYTE PTR cs:[circle1_patch8 + 1], ah
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[circle1_patch5 + 1], ah
-   mov BYTE PTR cs:[circle1_patch6 + 1], ah
-   ror ah, 1
-   ror ah, 1
    mov BYTE PTR cs:[circle1_patch3 + 1], ah
    mov BYTE PTR cs:[circle1_patch4 + 1], ah
    ror ah, 1
    ror ah, 1
    mov BYTE PTR cs:[circle1_patch1 + 1], ah
    mov BYTE PTR cs:[circle1_patch2 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[circle1_patch5 + 1], ah
+   mov BYTE PTR cs:[circle1_patch6 + 1], ah
 
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
@@ -3101,7 +3101,7 @@ circle1_patch2:
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
-   sub bx, 160          ; decrement/increment y lines 
+   sub bx, 80          ; decrement/increment y lines 
 
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
@@ -3129,19 +3129,19 @@ circle1_x2:
 circle1_jump1:
    mov al, [di+bx]      ; draw pixel above axis
    and al, 03fh
-circle1_patch5:
+circle1_patch3:
    or al, 0c0h
    mov [di+bx], al
 
    mov al, [di]         ; draw pixel below axis
    and al, 03fh
-circle1_patch6:
+circle1_patch4:
    or al, 0c0h
    stosb
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
-   sub bx, 160          ; decrement/increment y lines 
+   sub bx, 80          ; decrement/increment y lines 
 
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
@@ -3169,19 +3169,19 @@ circle1_x1:
 circle1_jump3:
    mov al, [di+bx]      ; draw pixel above axis
    and al, 0f3h
-circle1_patch3:
+circle1_patch5:
    or al, 0ch
    mov [di+bx], al
 
    mov al, [di]         ; draw pixel below axis
    and al, 0f3h
-circle1_patch4:
+circle1_patch6:
    or al, 0ch
    stosb
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
-   sub bx, 160          ; decrement/increment y lines 
+   sub bx, 80          ; decrement/increment y lines 
 
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
@@ -3221,7 +3221,7 @@ circle1_patch8:
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
-   sub bx, 160          ; decrement/increment y lines 
+   sub bx, 80          ; decrement/increment y lines 
 
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
