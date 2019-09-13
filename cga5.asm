@@ -3032,10 +3032,11 @@ circle1_y_even:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 56 bytes
-   shl al, 1
-   shl al, 1
+   shl al, 1            ; multiply x mod 4 by 58 bytes
    mov si, ax
+   shl al, 1
+   shl al, 1
+   add si, ax
    shl al, 1
    add si, ax
    shl al, 1
@@ -3105,7 +3106,7 @@ circle1_patch2:
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
 
-   mov ax, dx           ; if dx/2 > si, decrement x
+   mov ax, dx           ; if dx/2 <= D, decrement x
    shr ax, 1
    cmp ax, si
    jle circle1_x1
@@ -3124,47 +3125,7 @@ circle1_x2:
    jmp circle1_donev    ; done verticalish
    
    
-      ALIGN 2
-circle1_jump3:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 0f3h
-circle1_patch3:
-   or al, 0ch
-   mov [di+bx], al
-
-   mov al, [di]         ; draw pixel below axis
-   and al, 0f3h
-circle1_patch4:
-   or al, 0ch
-   stosb
-
-   add di, sp           ; update offset
-   xor sp, bp           ; update offset update for odd<->even
-   sub bx, 160          ; decrement/increment y lines 
-
-   add si, cx           ; D += dy
-   add cx, 72           ; dy += 2r'^2 (= 72)
-
-   mov ax, dx           ; if dx/2 > si, decrement x
-   shr ax, 1
-   cmp ax, si
-   jle circle1_x2
-
-   cmp dx, cx           ; check if done verticalish
-   jae circle1_jump3
-   jmp circle1_donev    ; done verticalish
-
-circle1_x3:
-   sub dx, 25           ; dx -= s'^2 (= 25)
-   sub si, dx           ; D -= dx
-   sub dx, 25           ; dx -= s'^2 (= 25)
-
-   cmp dx, cx           ; check if done verticalish 
-   jae circle1_jump3
-   jmp circle1_donev    ; done verticalish
-
-
-      ALIGN 2
+   ALIGN 2
 circle1_jump1:
    mov al, [di+bx]      ; draw pixel above axis
    and al, 03fh
@@ -3185,7 +3146,7 @@ circle1_patch6:
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
 
-   mov ax, dx           ; if dx/2 > si, decrement x
+   mov ax, dx           ; if dx/2 <= D, decrement x
    shr ax, 1
    cmp ax, si
    jle circle1_x4
@@ -3201,6 +3162,46 @@ circle1_x1:
 
    cmp dx, cx           ; check if done verticalish 
    jae circle1_jump1
+   jmp circle1_donev    ; done verticalish
+   
+
+   ALIGN 2
+circle1_jump3:
+   mov al, [di+bx]      ; draw pixel above axis
+   and al, 0f3h
+circle1_patch3:
+   or al, 0ch
+   mov [di+bx], al
+
+   mov al, [di]         ; draw pixel below axis
+   and al, 0f3h
+circle1_patch4:
+   or al, 0ch
+   stosb
+
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 160          ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, decrement x
+   shr ax, 1
+   cmp ax, si
+   jle circle1_x2
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle1_jump3
+   jmp circle1_donev    ; done verticalish
+
+circle1_x3:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle1_jump3
    jmp circle1_donev    ; done verticalish
 
 
@@ -3225,7 +3226,7 @@ circle1_patch8:
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
 
-   mov ax, dx           ; if dx/2 > si, decrement x
+   mov ax, dx           ; if dx/2 <= D, decrement x
    shr ax, 1
    cmp ax, si
    jle circle1_x3
