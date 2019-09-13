@@ -3018,23 +3018,23 @@ circle1_y_even:
    shl ax, 1
    add di, ax
 
-   mov ax, [x0]         ; adjust offset for column x0 + r
-   add ax, [r]
-   mov dx, ax
-   shr ax, 1            
-   shr ax, 1
-   add di, ax
+   mov dx, [x0]         ; adjust offset for column x0 + r
+   add dx, [r]
+   mov ax, dx
+   shr dx, 1            
+   shr dx, 1
+   add di, dx
 
 
-   mov ax, dx           ; compute jump offset    
+                        ; compute jump offset    
    and ax, 3            ; deal with 2, 1, 3, 4 layout
    mov dl, al  
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 58 bytes
-   mov si, ax
+   shl al, 1            ; multiply x mod 4 by 60 bytes
    shl al, 1
+   mov si, ax
    shl al, 1
    add si, ax
    shl al, 1
