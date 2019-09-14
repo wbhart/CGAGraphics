@@ -3372,7 +3372,7 @@ circle1_patch11:
    
    mov [di+bx], ah
    stosb
-
+   
    sub si, cx           ; D -= dy
    add cx, 72           ; dy += 2r'^2 (= 72)
 
@@ -3401,9 +3401,11 @@ circle1_patch12:
 
    mov [di+bx], ah
    stosb
+   dec di
 
    jge circle1_skip_y1
    
+   inc di
    sub si, cx           ; D -= dy
    add cx, 72           ; dy += 2r'^2 (= 72)
 
@@ -3411,8 +3413,6 @@ circle1_patch12:
    xor sp, 0ffb0h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
 
-   mov ah, [di+bx]
-   mov al, [di]
 circle1_skip_y1:
    dec di
    sub dx, 25           ; dx -= s'^2 (= 25)
