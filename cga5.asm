@@ -3395,13 +3395,13 @@ circle1_patch12:
    sub dx, 25           ; dx -= s'^2 (= 25)
    add si, dx           ; D += dx
 
-   mov bp, cx           ; if dy/2 < D, increment y
-   shr bp, 1
-   cmp bp, si
-
    mov [di+bx], ah
    stosb
    dec di
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
 
    jge circle1_skip_y1
    
