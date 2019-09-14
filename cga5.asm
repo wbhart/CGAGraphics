@@ -3005,7 +3005,6 @@ _cga_draw_circle1 PROC
    jnc circle1_y_even
    mov sp, -8113
 circle1_y_even:
-   mov WORD PTR cs:[ydelta_xor], 0ffb0h
    sbb di, 0
    and di, 8192
    shl ax, 1            
@@ -3088,7 +3087,7 @@ circle1_y_even:
    xor bx, bx           ; distance between lines above and below axis
 
 
-   mov bp, cs:[ydelta_xor]
+   mov bp, 0ffb0h
 
    jmp cs:[jmp_addr]
    
@@ -3306,10 +3305,10 @@ circle1_patch9:
    sub dx, 25           ; dx -= s'^2 (= 25)
    add si, dx           ; D += dx
 
-   mov ax, cx           ; if dy/2 < D, increment y
-   shr ax, 1
-   cmp ax, si
-   jg circle1_skip_y4
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle1_skip_y4
    
    mov [di+bx], ah
    stosb
@@ -3318,7 +3317,7 @@ circle1_patch9:
    add cx, 72           ; dy += 2r'^2 (= 72)
 
    add di, sp           ; update offset
-   xor sp, bp           ; update offset update for odd<->even
+   xor sp, 0ffb0h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
 
    mov ah, [di+bx]
@@ -3336,10 +3335,10 @@ circle1_patch10:
    sub dx, 25           ; dx -= s'^2 (= 25)
    add si, dx           ; D += dx
 
-   mov ax, cx           ; if dy/2 < D, increment y
-   shr ax, 1
-   cmp ax, si
-   jg circle1_skip_y3
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle1_skip_y3
    
    mov [di+bx], ah
    stosb
@@ -3348,7 +3347,7 @@ circle1_patch10:
    add cx, 72           ; dy += 2r'^2 (= 72)
 
    add di, sp           ; update offset
-   xor sp, bp           ; update offset update for odd<->even
+   xor sp, 0ffb0h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
 
    mov ah, [di+bx]
@@ -3366,10 +3365,10 @@ circle1_patch11:
    sub dx, 25           ; dx -= s'^2 (= 25)
    add si, dx           ; D += dx
 
-   mov ax, cx           ; if dy/2 < D, increment y
-   shr ax, 1
-   cmp ax, si
-   jg circle1_skip_y2
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle1_skip_y2
    
    mov [di+bx], ah
    stosb
@@ -3378,7 +3377,7 @@ circle1_patch11:
    add cx, 72           ; dy += 2r'^2 (= 72)
 
    add di, sp           ; update offset
-   xor sp, bp           ; update offset update for odd<->even
+   xor sp, 0ffb0h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
 
    mov ah, [di+bx]
@@ -3396,10 +3395,10 @@ circle1_patch12:
    sub dx, 25           ; dx -= s'^2 (= 25)
    add si, dx           ; D += dx
 
-   mov ax, cx           ; if dy/2 < D, increment y
-   shr ax, 1
-   cmp ax, si
-   jg circle1_skip_y1
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle1_skip_y1
    
    mov [di+bx], ah
    stosb
@@ -3408,7 +3407,7 @@ circle1_patch12:
    add cx, 72           ; dy += 2r'^2 (= 72)
 
    add di, sp           ; update offset
-   xor sp, bp           ; update offset update for odd<->even
+   xor sp, 0ffb0h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
 
    mov ah, [di+bx]
