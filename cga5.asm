@@ -3108,7 +3108,7 @@ circle1_patch2:
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
-   sub bx, 80          ; decrement/increment y lines 
+   sub bx, 80           ; decrement/increment y lines 
 
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
@@ -3148,7 +3148,7 @@ circle1_patch4:
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
-   sub bx, 80          ; decrement/increment y lines 
+   sub bx, 80           ; decrement/increment y lines 
 
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
@@ -3188,7 +3188,7 @@ circle1_patch6:
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
-   sub bx, 80          ; decrement/increment y lines 
+   sub bx, 80           ; decrement/increment y lines 
 
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
@@ -3398,11 +3398,12 @@ circle1_patch12:
    mov bp, cx           ; if dy/2 < D, increment y
    shr bp, 1
    cmp bp, si
-   jge circle1_skip_y1
-   
+
    mov [di+bx], ah
    stosb
 
+   jge circle1_skip_y1
+   
    sub si, cx           ; D -= dy
    add cx, 72           ; dy += 2r'^2 (= 72)
 
