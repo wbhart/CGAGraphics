@@ -3414,6 +3414,7 @@ circle1_patch12:
    mov ah, [di+bx]
    mov al, [di]
 circle1_skip_y1:
+   dec di
    sub dx, 25           ; dx -= s'^2 (= 25)
    jb circle1_doneh2
 
