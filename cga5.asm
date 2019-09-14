@@ -3324,7 +3324,7 @@ circle1_patch9:
    mov al, [di]
 circle1_skip_y4:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jb circle1_doneh1
+   jl circle1_doneh1
 
 
 circle1_h3:
@@ -3354,7 +3354,7 @@ circle1_patch10:
    mov al, [di]
 circle1_skip_y3:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jb circle1_doneh1
+   jl circle1_doneh1
 
 
 circle1_h2:
@@ -3384,7 +3384,7 @@ circle1_patch11:
    mov al, [di]
 circle1_skip_y2:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jb circle1_doneh2
+   jl circle1_doneh2
 
 
 circle1_h1:
@@ -3416,7 +3416,7 @@ circle1_patch12:
 circle1_skip_y1:
    dec di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jb circle1_doneh2
+   jl circle1_doneh2
 
    jmp circle1_h4
 
