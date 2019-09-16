@@ -3858,7 +3858,7 @@ circle2_patch9:
    cmp bp, si
    jge circle2_skip_y4
    
-   dec di
+   inc di
 
    sub si, cx           ; D -= dy
    add cx, 72           ; dy += 2r'^2 (= 72)
