@@ -3690,7 +3690,7 @@ circle2_patch4:
    add si, cx           ; D += dy
    add cx, 72           ; dy += 2r'^2 (= 72)
 
-   mov ax, dx           ; if dx/2 <= D, inccrement x
+   mov ax, dx           ; if dx/2 <= D, increment x
    shr ax, 1
    cmp ax, si
    jle circle2_x2
@@ -3712,8 +3712,6 @@ circle2_x1:
 circle2_donev1:
 
    neg si               ; D = -D
-   mov ah, [di+bx]
-   mov al, [di]
    jmp circle2_h1   
 
 circle2_donev2:
@@ -3733,6 +3731,8 @@ circle2_donev3:
 circle2_donev4:
 
    neg si               ; D = -D
+   mov ah, [di+bx]
+   mov al, [di]
    jmp circle2_h4   
 
 
@@ -3751,6 +3751,8 @@ circle2_doneh2:
 
 
 circle2_h1:
+   mov ah, [di+bx]
+   mov al, [di]
    and ax, 03f3fh
 circle2_patch12:
    or ax, 0c0c0h
@@ -3840,8 +3842,6 @@ circle2_skip_y3:
 
 
 circle2_h4:
-   mov ah, [di+bx]
-   mov al, [di]
    and ax, 0fcfch
 circle2_patch9:
    or ax, 0303h
