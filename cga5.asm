@@ -3776,6 +3776,8 @@ circle2_patch12:
    xor sp, 0ffb0h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
 
+   mov ah, [di+bx]
+   mov al, [di]
 circle2_skip_y1:
    sub dx, 25           ; dx -= s'^2 (= 25)
    jl circle2_doneh2
@@ -3867,8 +3869,6 @@ circle2_patch9:
    xor sp, 0ffb0h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
 
-   mov ah, [di+bx]
-   mov al, [di]
 circle2_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
