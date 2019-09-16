@@ -3473,7 +3473,7 @@ circle2_y_even:
    shl ax, 1
    add di, ax
 
-   mov dx, [x0]         ; adjust offset for column x0 + r
+   mov dx, [x0]         ; adjust offset for column x0 - r
    sub dx, [r]
    mov ax, dx
    shr dx, 1            
@@ -3707,8 +3707,6 @@ circle2_x1:
 
    cmp dx, cx           ; check if done verticalish 
    jae circle2_jump1
-   jmp circle2_donev1   ; done verticalish
-
 
                         ; horizontalish part of circle
 circle2_donev1:
@@ -3777,11 +3775,8 @@ circle2_patch12:
    sub bx, 80           ; decrement/increment y lines 
 
 circle2_skip_y1:
-   dec di
    sub dx, 25           ; dx -= s'^2 (= 25)
    jl circle2_doneh2
-
-   jmp circle2_h4
 
 
 circle2_h2:
@@ -3877,6 +3872,7 @@ circle2_skip_y4:
    sub dx, 25           ; dx -= s'^2 (= 25)
    jl circle2_doneh1
 
+   jmp circle2_h1
 
 circle2_doneh1:
 
