@@ -3498,7 +3498,7 @@ circle2_y_even:
    add si, ax
 
 
-   lea si, si + circle2_jump2 ; computed jump into loop
+   lea si, si + circle2_jump3 ; computed jump into loop
    mov cs:[jmp_addr], si
 
 
@@ -3758,14 +3758,14 @@ circle2_patch12:
    sub dx, 25           ; dx -= s'^2 (= 25)
    add si, dx           ; D += dx
 
-   mov [di+bx], ah
-   stosb
-
    mov bp, cx           ; if dy/2 < D, increment y
    shr bp, 1
    cmp bp, si
 
    jge circle2_skip_y1
+
+   mov [di+bx], ah
+   stosb
 
    sub si, cx           ; D -= dy
    add cx, 72           ; dy += 2r'^2 (= 72)
@@ -3849,14 +3849,16 @@ circle2_patch9:
    sub dx, 25           ; dx -= s'^2 (= 25)
    add si, dx           ; D += dx
 
+   mov [di+bx], ah
+   stosb
+   dec di
+
    mov bp, cx           ; if dy/2 < D, increment y
    shr bp, 1
    cmp bp, si
    jge circle2_skip_y4
    
-   mov [di+bx], ah
-   stosb
-   inc di
+   dec di
 
    sub si, cx           ; D -= dy
    add cx, 72           ; dy += 2r'^2 (= 72)
@@ -3868,7 +3870,7 @@ circle2_patch9:
    mov ah, [di+bx]
    mov al, [di]
 circle2_skip_y4:
-   dec di
+   inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
    jl circle2_doneh1
 
