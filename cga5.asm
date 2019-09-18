@@ -3030,11 +3030,10 @@ circle1_y_even:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 58 bytes
+   shl al, 1            ; multiply x mod 4 by 56 bytes
+   shl al, 1
+   shl al, 1
    mov si, ax
-   shl al, 1
-   shl al, 1
-   add si, ax
    shl al, 1
    add si, ax
    shl al, 1
@@ -3148,6 +3147,7 @@ circle1_patch2:
    cmp dx, cx           ; check if done verticalish
    jae circle1_jump1
    jmp circle1_donev1   ; done verticalish
+   nop
 
 circle1_x1:
    sub dx, 25           ; dx -= s'^2 (= 25)
@@ -3184,6 +3184,7 @@ circle1_patch3:
    cmp dx, cx           ; check if done verticalish
    jae circle1_jump3
    jmp circle1_donev3   ; done verticalish
+   nop
 
 circle1_x3:
    sub dx, 25           ; dx -= s'^2 (= 25)
@@ -3466,11 +3467,10 @@ circle2_y_even:
    shr dl, 1
    xor al, dl
    xor al, 3          
-   shl al, 1            ; multiply x mod 4 by 58 bytes
+   shl al, 1            ; multiply x mod 4 by 56 bytes
+   shl al, 1
+   shl al, 1
    mov si, ax
-   shl al, 1
-   shl al, 1
-   add si, ax
    shl al, 1
    add si, ax
    shl al, 1
@@ -3585,6 +3585,7 @@ circle2_patch2:
    cmp dx, cx           ; check if done verticalish
    jae circle2_jump4
    jmp circle2_donev4   ; done verticalish
+   nop
 
 circle2_x4:
    sub dx, 25           ; dx -= s'^2 (= 25)
@@ -3657,7 +3658,8 @@ circle2_patch4:
    cmp dx, cx           ; check if done verticalish
    jae circle2_jump1
    jmp circle2_donev1   ; done verticalish
-
+   nop
+   
 circle2_x1:
    inc di               ; inc offset byte
    sub dx, 25           ; dx -= s'^2 (= 25)
