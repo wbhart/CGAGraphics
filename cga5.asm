@@ -3046,28 +3046,24 @@ circle1_y_even:
 
 
    mov ah, [colour]     ; patch colours in
-   mov BYTE PTR cs:[circle1_patch7 + 1], ah
-   mov BYTE PTR cs:[circle1_patch8 + 1], ah
-   mov BYTE PTR cs:[circle1_patch9 + 1], ah
-   mov BYTE PTR cs:[circle1_patch9 + 2], ah
+   mov al, ah
+   mov WORD PTR cs:[circle1_patch4 + 1], ax
+   mov WORD PTR cs:[circle1_patch9 + 1], ax
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[circle1_patch3 + 1], ah
-   mov BYTE PTR cs:[circle1_patch4 + 1], ah
-   mov BYTE PTR cs:[circle1_patch12 + 1], ah
-   mov BYTE PTR cs:[circle1_patch12 + 2], ah
+   mov al, ah
+   mov WORD PTR cs:[circle1_patch2 + 1], ax
+   mov WORD PTR cs:[circle1_patch12 + 1], ax
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[circle1_patch1 + 1], ah
-   mov BYTE PTR cs:[circle1_patch2 + 1], ah
-   mov BYTE PTR cs:[circle1_patch11 + 1], ah
-   mov BYTE PTR cs:[circle1_patch11 + 2], ah
+   mov al, ah
+   mov WORD PTR cs:[circle1_patch1 + 1], ax
+   mov WORD PTR cs:[circle1_patch11 + 1], ax
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[circle1_patch5 + 1], ah
-   mov BYTE PTR cs:[circle1_patch6 + 1], ah
-   mov BYTE PTR cs:[circle1_patch10 + 1], ah
-   mov BYTE PTR cs:[circle1_patch10 + 2], ah
+   mov al, ah
+   mov WORD PTR cs:[circle1_patch3 + 1], ax
+   mov WORD PTR cs:[circle1_patch10 + 1], ax
 
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
@@ -3093,16 +3089,12 @@ circle1_y_even:
                         ; verticalish part of circle
    ALIGN 2
 circle1_jump2:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 0cfh
-circle1_patch1:
-   or al, 030h
-   mov [di+bx], al
-
+   mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
-   and al, 0cfh
-circle1_patch2:
-   or al, 030h
+   and ax, 0cfcfh
+circle1_patch1:
+   or ax, 03030h
+   mov [di+bx], ah
    stosb
 
    add di, sp           ; update offset
@@ -3133,18 +3125,14 @@ circle1_x2:
    
    ALIGN 2
 circle1_jump1:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 03fh
-circle1_patch3:
-   or al, 0c0h
-   mov [di+bx], al
-
+   mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
-   and al, 03fh
-circle1_patch4:
-   or al, 0c0h
+   and ax, 03f3fh
+circle1_patch2:
+   or ax, 0c0c0h
+   mov [di+bx], ah
    stosb
-
+   
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
@@ -3173,16 +3161,12 @@ circle1_x1:
 
    ALIGN 2
 circle1_jump3:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 0f3h
-circle1_patch5:
-   or al, 0ch
-   mov [di+bx], al
-
+   mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
-   and al, 0f3h
-circle1_patch6:
-   or al, 0ch
+   and ax, 0f3f3h
+circle1_patch3:
+   or ax, 0c0ch
+   mov [di+bx], ah
    stosb
 
    add di, sp           ; update offset
@@ -3213,16 +3197,12 @@ circle1_x3:
 
       ALIGN 2
 circle1_jump4:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 0fch
-circle1_patch7:
-   or al, 03h
-   mov [di+bx], al
-
+   mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
-   and al, 0fch
-circle1_patch8:
-   or al, 03h
+   and ax, 0fcfch
+circle1_patch4:
+   or ax, 0303h
+   mov [di+bx], ah
    stosb
 
    add di, sp           ; update offset
@@ -3249,10 +3229,14 @@ circle1_x4:
 
    cmp dx, cx           ; check if done verticalish 
    jae circle1_jump4
-   jmp circle1_donev4   ; done verticalish
-
+                        ; done verticalish
 
                         ; horizontalish part of circle
+circle1_donev4:
+
+   neg si               ; D = -D
+   jmp circle1_h4   
+
 circle1_donev1:
 
    neg si               ; D = -D
@@ -3273,11 +3257,6 @@ circle1_donev3:
    mov ah, [di+bx]
    mov al, [di]
    jmp circle1_h3   
-
-circle1_donev4:
-
-   neg si               ; D = -D
-   jmp circle1_h4   
 
 
 circle1_doneh1:
@@ -3503,29 +3482,25 @@ circle2_y_even:
 
 
    mov ah, [colour]     ; patch colours in
-   mov BYTE PTR cs:[circle2_patch7 + 1], ah
-   mov BYTE PTR cs:[circle2_patch8 + 1], ah
-   mov BYTE PTR cs:[circle2_patch9 + 1], ah
-   mov BYTE PTR cs:[circle2_patch9 + 2], ah
+   mov al, ah
+   mov WORD PTR cs:[circle2_patch2 + 1], ax
+   mov WORD PTR cs:[circle2_patch9 + 1], ax
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[circle2_patch3 + 1], ah
-   mov BYTE PTR cs:[circle2_patch4 + 1], ah
-   mov BYTE PTR cs:[circle2_patch12 + 1], ah
-   mov BYTE PTR cs:[circle2_patch12 + 2], ah
+   mov al, ah
+   mov WORD PTR cs:[circle2_patch4 + 1], ax
+   mov WORD PTR cs:[circle2_patch12 + 1], ax
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[circle2_patch1 + 1], ah
-   mov BYTE PTR cs:[circle2_patch2 + 1], ah
-   mov BYTE PTR cs:[circle2_patch11 + 1], ah
-   mov BYTE PTR cs:[circle2_patch11 + 2], ah
+   mov al, ah
+   mov WORD PTR cs:[circle2_patch3 + 1], ax
+   mov WORD PTR cs:[circle2_patch11 + 1], ax
    ror ah, 1
    ror ah, 1
-   mov BYTE PTR cs:[circle2_patch5 + 1], ah
-   mov BYTE PTR cs:[circle2_patch6 + 1], ah
-   mov BYTE PTR cs:[circle2_patch10 + 1], ah
-   mov BYTE PTR cs:[circle2_patch10 + 2], ah
-
+   mov al, ah
+   mov WORD PTR cs:[circle2_patch1 + 1], ax
+   mov WORD PTR cs:[circle2_patch10 + 1], ax
+   
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
@@ -3551,16 +3526,12 @@ circle2_y_even:
                         ; verticalish part of circle
    ALIGN 2
 circle2_jump3:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 0f3h
-circle2_patch5:
-   or al, 0ch
-   mov [di+bx], al
-
+   mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
-   and al, 0f3h
-circle2_patch6:
-   or al, 0ch
+   and ax, 0f3f3h
+circle2_patch1:
+   or ax, 0c0ch
+   mov [di+bx], ah
    stosb
 
    add di, sp           ; update offset
@@ -3591,16 +3562,12 @@ circle2_x3:
 
       ALIGN 2
 circle2_jump4:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 0fch
-circle2_patch7:
-   or al, 03h
-   mov [di+bx], al
-
+   mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
-   and al, 0fch
-circle2_patch8:
-   or al, 03h
+   and ax, 0fcfch
+circle2_patch2:
+   or ax, 0303h
+   mov [di+bx], ah
    stosb
 
    add di, sp           ; update offset
@@ -3631,18 +3598,14 @@ circle2_x4:
 
    ALIGN 2
 circle2_jump2:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 0cfh
-circle2_patch1:
-   or al, 030h
-   mov [di+bx], al
-
+   mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
-   and al, 0cfh
-circle2_patch2:
-   or al, 030h
+   and ax, 0cfcfh
+circle2_patch3:
+   or ax, 03030h
+   mov [di+bx], ah
    stosb
-
+   
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
@@ -3671,16 +3634,12 @@ circle2_x2:
    
    ALIGN 2
 circle2_jump1:
-   mov al, [di+bx]      ; draw pixel above axis
-   and al, 03fh
-circle2_patch3:
-   or al, 0c0h
-   mov [di+bx], al
-
+   mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
-   and al, 03fh
+   and ax, 03f3fh
 circle2_patch4:
-   or al, 0c0h
+   or ax, 0c0c0h
+   mov [di+bx], ah
    stosb
 
    add di, sp           ; update offset
