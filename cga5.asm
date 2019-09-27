@@ -3416,7 +3416,7 @@ _cga_draw_circle1 ENDP
 
    PUBLIC _cga_draw_circle1_00
 _cga_draw_circle1_00 PROC
-   ARG x0:WORD, y0:WORD, r:WORD, colour:BYTE
+   ARG x0:WORD, y0:WORD, r:WORD
    ; circle with centre (x0, y0) and radius in the x-direction of r
    ; draws only the right side of the circle
    ; pixel aspect ratio is 1.2 i.e. r' = 6, s' = 5
@@ -3503,8 +3503,8 @@ circle1_00_y_even:
                         ; verticalish part of circle
    ALIGN 2
 circle1_00_jump2:
-   and [di+bx], 0cfh    ; draw pixel above axis
-   and [di], 0cfh       ; draw pixel below axis
+   and BYTE PTR [di+bx], 0cfh    ; draw pixel above axis
+   and BYTE PTR [di], 0cfh       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -3534,8 +3534,8 @@ circle1_00_x2:
    
    ALIGN 2
 circle1_00_jump1:
-   and [di+bx], 03fh    ; draw pixel above axis
-   and [di], 03fh       ; draw pixel below axis
+   and BYTE PTR [di+bx], 03fh    ; draw pixel above axis
+   and BYTE PTR [di], 03fh       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -3566,8 +3566,8 @@ circle1_00_x1:
 
    ALIGN 2
 circle1_00_jump3:
-   and [di+bx], 0f3h    ; draw pixel above axis
-   and [di], 0f3h       ; draw pixel below axis
+   and BYTE PTR [di+bx], 0f3h    ; draw pixel above axis
+   and BYTE PTR [di], 0f3h       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -3598,8 +3598,8 @@ circle1_00_x3:
 
       ALIGN 2
 circle1_00_jump4:
-   and [di+bx], 0fch    ; draw pixel above axis
-   and [di], 0fch       ; draw pixel below axis
+   and BYTE PTR [di+bx], 0fch    ; draw pixel above axis
+   and BYTE PTR [di], 0fch       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -3811,7 +3811,7 @@ _cga_draw_circle1_00 ENDP
 
    PUBLIC _cga_draw_circle1_11
 _cga_draw_circle1_11 PROC
-   ARG x0:WORD, y0:WORD, r:WORD, colour:BYTE
+   ARG x0:WORD, y0:WORD, r:WORD
    ; circle with centre (x0, y0) and radius in the x-direction of r
    ; draws only the right side of the circle
    ; pixel aspect ratio is 1.2 i.e. r' = 6, s' = 5
@@ -3898,8 +3898,8 @@ circle1_11_y_even:
                         ; verticalish part of circle
    ALIGN 2
 circle1_11_jump2:
-   or [di+bx], 030h     ; draw pixel above axis
-   or [di], 030h        ; draw pixel below axis
+   or BYTE PTR [di+bx], 030h     ; draw pixel above axis
+   or BYTE PTR [di], 030h        ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -3929,8 +3929,8 @@ circle1_11_x2:
    
    ALIGN 2
 circle1_11_jump1:
-   or [di+bx], 0c0h     ; draw pixel above axis
-   or [di], 0c0h        ; draw pixel below axis
+   or BYTE PTR [di+bx], 0c0h     ; draw pixel above axis
+   or BYTE PTR [di], 0c0h        ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -3961,8 +3961,8 @@ circle1_11_x1:
 
    ALIGN 2
 circle1_11_jump3:
-   or [di+bx], 0ch      ; draw pixel above axis
-   or [di], 0ch         ; draw pixel below axis
+   or BYTE PTR [di+bx], 0ch      ; draw pixel above axis
+   or BYTE PTR [di], 0ch         ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -3993,8 +3993,8 @@ circle1_11_x3:
 
       ALIGN 2
 circle1_11_jump4:
-   or [di+bx], 03h    ; draw pixel above axis
-   or [di], 03h       ; draw pixel below axis
+   or BYTE PTR [di+bx], 03h    ; draw pixel above axis
+   or BYTE PTR [di], 03h       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -4643,7 +4643,7 @@ _cga_draw_circle2 ENDP
 
    PUBLIC _cga_draw_circle2_00
 _cga_draw_circle2_00 PROC
-   ARG x0:WORD, y0:WORD, r:WORD, colour:BYTE
+   ARG x0:WORD, y0:WORD, r:WORD
    ; circle with centre (x0, y0) and radius in the x-direction of r
    ; draws only the left side of the circle
    ; pixel aspect ratio is 1.2 i.e. r' = 6, s' = 5
@@ -4731,8 +4731,8 @@ circle2_00_y_even:
                         ; verticalish part of circle
    ALIGN 2
 circle2_00_jump3:
-   and [di+bx], 0f3h    ; draw pixel above axis
-   and [di], 0f3h       ; draw pixel below axis
+   and BYTE PTR [di+bx], 0f3h    ; draw pixel above axis
+   and BYTE PTR [di], 0f3h       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -4762,8 +4762,8 @@ circle2_00_x3:
 
       ALIGN 2
 circle2_00_jump4:
-   and [di+bx], 0fch    ; draw pixel above axis
-   and [di], 0fch       ; draw pixel below axis
+   and BYTE PTR [di+bx], 0fch    ; draw pixel above axis
+   and BYTE PTR [di], 0fch       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -4794,8 +4794,8 @@ circle2_00_x4:
 
    ALIGN 2
 circle2_00_jump2:
-   and [di+bx], 0cfh    ; draw pixel above axis
-   and [di], 0cfh       ; draw pixel below axis
+   and BYTE PTR [di+bx], 0cfh    ; draw pixel above axis
+   and BYTE PTR [di], 0cfh       ; draw pixel below axis
    
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -4825,8 +4825,8 @@ circle2_00_x2:
    
    ALIGN 2
 circle2_00_jump1:
-   and [di+bx], 03fh    ; draw pixel above axis
-   and [di], 03fh       ; draw pixel below axis
+   and BYTE PTR [di+bx], 03fh    ; draw pixel above axis
+   and BYTE PTR [di], 03fh       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -5038,7 +5038,7 @@ _cga_draw_circle2_00 ENDP
 
    PUBLIC _cga_draw_circle2_11
 _cga_draw_circle2_11 PROC
-   ARG x0:WORD, y0:WORD, r:WORD, colour:BYTE
+   ARG x0:WORD, y0:WORD, r:WORD
    ; circle with centre (x0, y0) and radius in the x-direction of r
    ; draws only the left side of the circle
    ; pixel aspect ratio is 1.2 i.e. r' = 6, s' = 5
@@ -5126,8 +5126,8 @@ circle2_11_y_even:
                         ; verticalish part of circle
    ALIGN 2
 circle2_11_jump3:
-   or [di+bx], 0ch     ; draw pixel above axis
-   or [di], 0ch        ; draw pixel below axis
+   or BYTE PTR [di+bx], 0ch     ; draw pixel above axis
+   or BYTE PTR [di], 0ch        ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -5157,8 +5157,8 @@ circle2_11_x3:
 
       ALIGN 2
 circle2_11_jump4:
-   or [di+bx], 03h      ; draw pixel above axis
-   or [di], 03h         ; draw pixel below axis
+   or BYTE PTR [di+bx], 03h      ; draw pixel above axis
+   or BYTE PTR [di], 03h         ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -5189,8 +5189,8 @@ circle2_11_x4:
 
    ALIGN 2
 circle2_11_jump2:
-   or [di+bx], 030h     ; draw pixel above axis
-   or [di], 030h        ; draw pixel below axis
+   or BYTE PTR [di+bx], 030h     ; draw pixel above axis
+   or BYTE PTR [di], 030h        ; draw pixel below axis
    
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -5220,8 +5220,8 @@ circle2_11_x2:
    
    ALIGN 2
 circle2_11_jump1:
-   or [di+bx], 0c0h     ; draw pixel above axis
-   or [di], 0c0h        ; draw pixel below axis
+   or BYTE PTR [di+bx], 0c0h     ; draw pixel above axis
+   or BYTE PTR [di], 0c0h        ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
