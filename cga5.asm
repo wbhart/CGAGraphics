@@ -3979,7 +3979,6 @@ circle1_11_jump3:
    cmp dx, cx           ; check if done verticalish
    jae circle1_11_jump3
    jmp circle1_11_donev3   ; done verticalish
-   nop
 
 circle1_11_x3:
    sub dx, 25           ; dx -= s'^2 (= 25)
@@ -4011,6 +4010,7 @@ circle1_11_jump4:
    cmp dx, cx           ; check if done verticalish
    jae circle1_11_jump4
    jmp circle1_11_donev4   ; done verticalish
+   nop
 
 circle1_11_x4:
    dec di               ; dec offset byte
@@ -5175,7 +5175,6 @@ circle2_11_jump4:
    cmp dx, cx           ; check if done verticalish
    jae circle2_11_jump4
    jmp circle2_11_donev4   ; done verticalish
-   nop
 
 circle2_11_x4:
    sub dx, 25           ; dx -= s'^2 (= 25)
@@ -5207,6 +5206,7 @@ circle2_11_jump2:
    cmp dx, cx           ; check if done verticalish
    jae circle2_11_jump2
    jmp circle2_11_donev2   ; done verticalish
+   nop
 
 circle2_11_x2:
    sub dx, 25           ; dx -= s'^2 (= 25)
@@ -5216,7 +5216,7 @@ circle2_11_x2:
    cmp dx, cx           ; check if done verticalish 
    jae circle2_11_jump2
    jmp circle2_11_donev2   ; done verticalish
-   
+
    
    ALIGN 2
 circle2_11_jump1:
