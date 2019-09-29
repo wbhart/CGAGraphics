@@ -4269,25 +4269,25 @@ circle_xor1_y_even:
    mov ah, al
    mov BYTE PTR cs:[circle_xor1_patch7+2], al
    mov BYTE PTR cs:[circle_xor1_patch8+2], al
-   mov WORD PTR cs:[circle_xor1_patch9+2], ax
+   mov WORD PTR cs:[circle_xor1_patch9+1], ax
    ror al, 1
    ror al, 1
    mov ah, al
    mov BYTE PTR cs:[circle_xor1_patch3+2], al
    mov BYTE PTR cs:[circle_xor1_patch4+2], al
-   mov WORD PTR cs:[circle_xor1_patch12+2], ax
+   mov WORD PTR cs:[circle_xor1_patch12+1], ax
    ror al, 1
    ror al, 1
    mov ah, al
    mov BYTE PTR cs:[circle_xor1_patch1+2], al
    mov BYTE PTR cs:[circle_xor1_patch2+2], al
-   mov WORD PTR cs:[circle_xor1_patch11+2], ax
+   mov WORD PTR cs:[circle_xor1_patch11+1], ax
    ror al, 1
    ror al, 1
    mov ah, al
    mov BYTE PTR cs:[circle_xor1_patch5+2], al
    mov BYTE PTR cs:[circle_xor1_patch6+2], al
-   mov WORD PTR cs:[circle_xor1_patch10+2], ax
+   mov WORD PTR cs:[circle_xor1_patch10+1], ax
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
@@ -5920,25 +5920,25 @@ circle_xor2_y_even:
    mov ah, al
    mov BYTE PTR cs:[circle_xor2_patch3+2], al
    mov BYTE PTR cs:[circle_xor2_patch4+2], al
-   mov WORD PTR cs:[circle_xor2_patch12+2], ax
+   mov WORD PTR cs:[circle_xor2_patch12+1], ax
    ror al, 1
    ror al, 1
    mov ah, al
    mov BYTE PTR cs:[circle_xor2_patch7+2], al
    mov BYTE PTR cs:[circle_xor2_patch8+2], al
-   mov WORD PTR cs:[circle_xor2_patch9+2], ax
+   mov WORD PTR cs:[circle_xor2_patch9+1], ax
    ror al, 1
    ror al, 1
    mov ah, al
    mov BYTE PTR cs:[circle_xor2_patch5+2], al
    mov BYTE PTR cs:[circle_xor2_patch6+2], al
-   mov WORD PTR cs:[circle_xor2_patch10+2], ax
+   mov WORD PTR cs:[circle_xor2_patch10+1], ax
    ror al, 1
    ror al, 1
    mov ah, al
    mov BYTE PTR cs:[circle_xor2_patch1+2], al
    mov BYTE PTR cs:[circle_xor2_patch2+2], al
-   mov WORD PTR cs:[circle_xor2_patch11+2], ax
+   mov WORD PTR cs:[circle_xor2_patch11+1], ax
    
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
