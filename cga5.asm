@@ -4610,7 +4610,7 @@ circle_xor1_patch12:
 circle_xor1_skip_y1:
    dec di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle_xor1_doneh2
+   jl circle_xor1_doneh2_skip ; skip extra byte
 
    jmp circle_xor1_h4
 
@@ -4619,6 +4619,8 @@ circle_xor1_doneh2:
 
    mov [di+bx], ah
    mov [di], al
+
+circle_xor1_doneh2_skip:
 
    mov WORD PTR sp, cs:[sp_save]
 
