@@ -3395,7 +3395,7 @@ circle1_patch12:
 circle1_skip_y1:
    dec di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle1_doneh2
+   jl circle1_doneh2_skip ; skip extra byte
 
    jmp circle1_h4
 
@@ -3404,6 +3404,8 @@ circle1_doneh2:
 
    mov [di+bx], ah
    mov [di], al
+
+circle1_doneh2_skip:
 
    mov WORD PTR sp, cs:[sp_save]
 
@@ -3477,6 +3479,7 @@ circle1_00_y_even:
 
 
    lea si, si + circle1_00_jump2 ; computed jump into loop
+   add si, 3                     ; don't double first pixel
    mov cs:[jmp_addr], si
 
 
@@ -3788,7 +3791,7 @@ circle1_00_h1:
 circle1_00_skip_y1:
    dec di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle1_00_doneh2
+   jl circle1_00_doneh2_skip ; skip extra byte
 
    jmp circle1_00_h4
 
@@ -3797,6 +3800,8 @@ circle1_00_doneh2:
 
    mov [di+bx], ah
    mov [di], al
+
+circle1_00_doneh2_skip:
 
    mov WORD PTR sp, cs:[sp_save]
 
@@ -3870,6 +3875,7 @@ circle1_11_y_even:
 
 
    lea si, si + circle1_11_jump2 ; computed jump into loop
+   add si, 3                     ; don't double first pixel
    mov cs:[jmp_addr], si
 
 
@@ -4181,7 +4187,7 @@ circle1_11_h1:
 circle1_11_skip_y1:
    dec di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle1_11_doneh2
+   jl circle1_11_doneh2_skip ; skip extra byte
 
    jmp circle1_11_h4
 
@@ -4190,6 +4196,8 @@ circle1_11_doneh2:
 
    mov [di+bx], ah
    mov [di], al
+
+circle1_11_doneh2_skip:
 
    mov WORD PTR sp, cs:[sp_save]
 
@@ -5050,7 +5058,7 @@ circle2_patch9:
 circle2_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_doneh1
+   jl circle2_doneh1_skip ; skip extra byte
 
    jmp circle2_h1
 
@@ -5058,6 +5066,8 @@ circle2_doneh1:
 
    mov [di+bx], ah
    mov [di], al
+
+circle2_doneh1_skip:
 
    mov WORD PTR sp, cs:[sp_save]
 
@@ -5131,6 +5141,7 @@ circle2_00_y_even:
 
 
    lea si, si + circle2_00_jump3 ; computed jump into loop
+   add si, 3                     ; don't double first pixel
    mov cs:[jmp_addr], si
    
 
@@ -5443,7 +5454,7 @@ circle2_00_h4:
 circle2_00_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_00_doneh1
+   jl circle2_00_doneh1_skip ; skip extra byte
 
    jmp circle2_00_h1
 
@@ -5451,6 +5462,8 @@ circle2_00_doneh1:
 
    mov [di+bx], ah
    mov [di], al
+
+circle2_00_doneh1_skip:
 
    mov WORD PTR sp, cs:[sp_save]
 
@@ -5524,6 +5537,7 @@ circle2_11_y_even:
 
 
    lea si, si + circle2_11_jump3 ; computed jump into loop
+   add si, 3                     ; don't double first pixel
    mov cs:[jmp_addr], si
    
 
@@ -5836,7 +5850,7 @@ circle2_11_h4:
 circle2_11_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_11_doneh1
+   jl circle2_11_doneh1_skip ; skip extra byte
 
    jmp circle2_11_h1
 
@@ -5844,6 +5858,8 @@ circle2_11_doneh1:
 
    mov [di+bx], ah
    mov [di], al
+
+circle2_11_doneh1_skip:
 
    mov WORD PTR sp, cs:[sp_save]
 
