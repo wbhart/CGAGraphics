@@ -4263,6 +4263,7 @@ circle_xor1_y_even:
 
 
    lea si, si + circle_xor1_jump2 ; computed jump into loop
+   add si, 3            ; adjust for double xor of first point
    mov cs:[jmp_addr], si
 
    mov al, [colour]
@@ -5914,6 +5915,7 @@ circle_xor2_y_even:
 
 
    lea si, si + circle_xor2_jump3 ; computed jump into loop
+   add si, 3            ; compensate for double xor of first point
    mov cs:[jmp_addr], si
 
    mov al, [colour]
@@ -6262,7 +6264,7 @@ circle_xor2_patch12:
 circle_xor2_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle_xor2_doneh1
+   jl circle_xor2_doneh1_skip ; skip extra bytes
 
    jmp circle_xor2_h1
 
@@ -6270,6 +6272,8 @@ circle_xor2_doneh1:
 
    mov [di+bx], ah
    mov [di], al
+
+circle_xor2_doneh1_skip:
 
    mov WORD PTR sp, cs:[sp_save]
 
