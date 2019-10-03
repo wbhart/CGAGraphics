@@ -4715,6 +4715,409 @@ circle_xor1_doneh2_skip:
    ret   
 _cga_draw_circle_xor1 ENDP
 
+   PUBLIC _cga_draw_circle_blank1
+_cga_draw_circle_blank1 PROC
+   ARG x0:WORD, y0:WORD, r:WORD, colour:BYTE
+   ; circle with centre (x0, y0) and radius in the x-direction of r
+   ; draws only the right side of the circle
+   ; pixel aspect ratio is 1.2 i.e. r' = 6, s' = 5
+   ; di, di+bx offsets of points above and below axis, ah:accum
+   ; cx: deltay, dx:deltax, sp:yinc, bp:yinc_xor
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
+
+   mov ax, 0b800h       ; set ES to segment for CGA memory
+   mov es, ax
+   mov ds, ax           ; reflect in DS
+
+   cli                  ; save and free up sp
+   mov WORD PTR cs:[sp_save], sp
+
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
+   shr ax, 1
+   mov sp, 8192         ; also compute ydelta and ydelta_xor
+   jnc circle_blank1_y_even
+   mov sp, -8112
+circle_blank1_y_even:
+   sbb di, 0
+   and di, 8192
+   shl ax, 1            
+   shl ax, 1
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+
+   mov dx, [x0]         ; adjust offset for column x0 + r
+   add dx, [r]
+   mov ax, dx
+   shr dx, 1            
+   shr dx, 1
+   add di, dx
+
+
+                        ; compute jump offset    
+   and ax, 3            ; deal with 2, 1, 3, 4 layout
+   mov dl, al  
+   shr dl, 1
+   xor al, dl
+   xor al, 1         
+   shl al, 1            ; multiply x mod 4 by 46 bytes
+   mov si, ax
+   shl al, 1
+   add si, ax
+   shl al, 1
+   add si, ax
+   shl al, 1
+   shl al, 1
+   add si, ax
+
+
+   lea si, si + circle_blank1_jump2 ; computed jump into loop
+   add si, 3            ; adjust for double xor of first point
+   mov cs:[jmp_addr], si
+
+   mov al, [colour]     ; duplicate colour 4 times in byte
+   mov ah, al
+   shl ah, 1
+   shl ah, 1
+   add al, ah
+   mov ah, al
+   shl ah, 1
+   shl ah, 1
+   shl ah, 1
+   shl ah, 1
+   add al, ah
+
+   mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
+   shl dx, 1
+   jz circle_blank1_radius_zero
+   mov cx, dx
+   shl cx, 1
+   shl cx, 1
+   shl cx, 1
+   add dx, cx
+   shl cx, 1
+   add dx, cx
+
+
+   mov cx, 36           ; deltay = r'^2 = 36
+   xor si, si           ; D = 0
+   xor bx, bx           ; distance between lines above and below axis
+
+
+   mov bp, 0c050h
+
+   jmp cs:[jmp_addr]
+
+circle_blank1_radius_zero:
+
+   mov [di], al
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+                        ; verticalish part of circle
+   ALIGN 2
+circle_blank1_jump2:
+   mov BYTE PTR [di+bx], al     ; draw pixel above axis
+   mov BYTE PTR [di], al        ; draw pixel below axis
+
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, decrement x
+   shr ax, 1
+   cmp ax, si
+   jle circle_blank1_x1
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle_blank1_jump2
+   jmp circle_blank1_donev2   ; done verticalish
+
+circle_blank1_x2:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle_blank1_jump2
+   jmp circle_blank1_donev2   ; done verticalish
+   
+   
+   ALIGN 2
+circle_blank1_jump1:
+   mov BYTE PTR [di+bx], al     ; draw pixel above axis
+   mov BYTE PTR [di], al        ; draw pixel below axis
+
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, decrement x
+   shr ax, 1
+   cmp ax, si
+   jle circle_blank1_x4
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle_blank1_jump1
+   jmp circle_blank1_donev1   ; done verticalish
+
+circle_blank1_x1:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle_blank1_jump1
+   jmp circle_blank1_donev1   ; done verticalish
+   
+
+   ALIGN 2
+circle_blank1_jump3:
+   mov BYTE PTR [di+bx], al      ; draw pixel above axis
+   mov BYTE PTR [di], al         ; draw pixel below axis
+
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, decrement x
+   shr ax, 1
+   cmp ax, si
+   jle circle_blank1_x2
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle_blank1_jump3
+   jmp circle_blank1_donev3   ; done verticalish
+
+circle_blank1_x3:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle_blank1_jump3
+   jmp circle_blank1_donev3   ; done verticalish
+
+
+      ALIGN 2
+circle_blank1_jump4:
+   mov BYTE PTR [di+bx], al    ; draw pixel above axis
+   mov BYTE PTR [di], al       ; draw pixel below axis
+
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, decrement x
+   shr ax, 1
+   cmp ax, si
+   jle circle_blank1_x3
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle_blank1_jump4
+   jmp circle_blank1_donev4   ; done verticalish
+
+circle_blank1_x4:
+   dec di               ; dec offset byte
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle_blank1_jump4
+                        ; done verticalish
+
+                        ; horizontalish part of circle
+circle_blank1_donev4:
+
+   dec sp
+   mov bp, 0ffb0h
+   neg si               ; D = -D
+   jmp circle_blank1_h4   
+
+circle_blank1_donev1:
+
+   dec sp
+   mov bp, 0ffb0h
+   neg si               ; D = -D
+   jmp circle_blank1_h1   
+
+circle_blank1_donev2:
+
+   dec sp
+   mov bp, 0ffb0h
+   neg si               ; D = -D
+   jmp circle_blank1_h2   
+
+circle_blank1_donev3:
+
+   dec sp
+   mov bp, 0ffb0h
+   neg si               ; D = -D
+   jmp circle_blank1_h3   
+
+
+circle_blank1_doneh1:
+
+   mov [di+bx], al
+   mov [di], al
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+
+
+circle_blank1_h4:
+
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   add si, dx           ; D += dx
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle_blank1_skip_y4
+   
+   mov [di+bx], al
+   stosb
+
+   sub si, cx           ; D -= dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   add di, sp           ; update offset
+   xor sp, 0ffb0h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+circle_blank1_skip_y4:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   jl circle_blank1_doneh1
+
+
+circle_blank1_h3:
+
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   add si, dx           ; D += dx
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle_blank1_skip_y3
+   
+   mov [di+bx], al
+   stosb
+
+   sub si, cx           ; D -= dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   add di, sp           ; update offset
+   xor sp, 0ffb0h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+circle_blank1_skip_y3:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   jl circle_blank1_doneh1
+
+
+circle_blank1_h2:
+
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   add si, dx           ; D += dx
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle_blank1_skip_y2
+   
+   mov [di+bx], al
+   stosb
+   
+   sub si, cx           ; D -= dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   add di, sp           ; update offset
+   xor sp, 0ffb0h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+circle_blank1_skip_y2:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   jl circle_blank1_doneh2
+
+
+circle_blank1_h1:
+
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   add si, dx           ; D += dx
+
+   mov [di+bx], al
+   stosb
+   dec di
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+
+   jge circle_blank1_skip_y1
+   
+   inc di
+   sub si, cx           ; D -= dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   add di, sp           ; update offset
+   xor sp, 0ffb0h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+circle_blank1_skip_y1:
+   dec di
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   jl circle_blank1_doneh2_skip ; skip extra byte
+
+   jmp circle_blank1_h4
+
+
+circle_blank1_doneh2:
+
+   mov [di+bx], al
+   mov [di], al
+
+circle_blank1_doneh2_skip:
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+_cga_draw_circle_blank1 ENDP
+
    PUBLIC _cga_draw_circle2
 _cga_draw_circle2 PROC
    ARG x0:WORD, y0:WORD, r:WORD, colour:BYTE
@@ -6417,5 +6820,405 @@ circle_xor2_doneh1_skip:
    pop bp
    ret   
 _cga_draw_circle_xor2 ENDP
+
+        PUBLIC _cga_draw_circle_blank2
+_cga_draw_circle_blank2 PROC
+   ARG x0:WORD, y0:WORD, r:WORD, colour:BYTE
+   ; circle with centre (x0, y0) and radius in the x-direction of r
+   ; draws only the left side of the circle
+   ; pixel aspect ratio is 1.2 i.e. r' = 6, s' = 5
+   ; di, di+bx offsets of points above and below axis, ah:accum
+   ; cx: deltay, dx:deltax, sp:yinc, bp:yinc_xor
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
+
+   mov ax, 0b800h       ; set ES to segment for CGA memory
+   mov es, ax
+   mov ds, ax           ; reflect in DS
+
+   cli                  ; save and free up sp
+   mov WORD PTR cs:[sp_save], sp
+
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
+   shr ax, 1
+   mov sp, 8192         ; also compute ydelta and ydelta_xor
+   jnc circle_blank2_y_even
+   mov sp, -8112
+circle_blank2_y_even:
+   sbb di, 0
+   and di, 8192
+   shl ax, 1            
+   shl ax, 1
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+
+   mov dx, [x0]         ; adjust offset for column x0 - r
+   sub dx, [r]
+   mov ax, dx
+   shr dx, 1            
+   shr dx, 1
+   add di, dx
+
+
+                        ; compute jump offset    
+   and ax, 3            ; deal with 3, 4, 2, 1 layout
+   mov dl, al  
+   shr dl, 1
+   xor al, dl
+   xor al, 3          
+   shl al, 1            ; multiply x mod 4 by 46 bytes
+   mov si, ax
+   shl al, 1
+   add si, ax
+   shl al, 1
+   add si, ax
+   shl al, 1
+   shl al, 1
+   add si, ax
+
+
+   lea si, si + circle_blank2_jump3 ; computed jump into loop
+   add si, 3            ; compensate for double xor of first point
+   mov cs:[jmp_addr], si  
+
+   mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
+   shl dx, 1
+   jz circle_blank2_radius_zero
+   mov ax, dx
+   shl ax, 1
+   shl ax, 1
+   shl ax, 1
+   add dx, ax
+   shl ax, 1
+   add dx, ax
+
+   mov al, [colour]     ; duplicate colour 4 times in byte
+   mov ah, al
+   shl ah, 1
+   shl ah, 1
+   add al, ah
+   mov ah, al
+   shl ah, 1
+   shl ah, 1
+   shl ah, 1
+   shl ah, 1
+   add al, ah
+
+   mov cx, 36           ; deltay = r'^2 = 36
+   xor si, si           ; D = 0
+   xor bx, bx           ; distance between lines above and below axis
+
+
+   mov bp, 0c050h
+
+   jmp cs:[jmp_addr]
+
+circle_blank2_radius_zero:
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+
+                        ; verticalish part of circle
+   ALIGN 2
+circle_blank2_jump3:
+   mov BYTE PTR [di+bx], al     ; draw pixel above axiscircle_blank2_patch2:
+   mov BYTE PTR [di], al        ; draw pixel below axis
+
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, increment x
+   shr ax, 1
+   cmp ax, si
+   jle circle_blank2_x4
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle_blank2_jump3
+   jmp circle_blank2_donev3   ; done verticalish
+
+circle_blank2_x3:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle_blank2_jump3
+   jmp circle_blank2_donev3   ; done verticalish
+
+
+      ALIGN 2
+circle_blank2_jump4:
+   mov BYTE PTR [di+bx], al      ; draw pixel above axis
+   mov BYTE PTR [di], al         ; draw pixel below axis
+
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, increment x
+   shr ax, 1
+   cmp ax, si
+   jle circle_blank2_x1
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle_blank2_jump4
+   jmp circle_blank2_donev4   ; done verticalish
+  
+circle_blank2_x4:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle_blank2_jump4
+   jmp circle_blank2_donev4   ; done verticalish
+
+
+   ALIGN 2
+circle_blank2_jump2:
+   mov BYTE PTR [di+bx], al     ; draw pixel above axis
+   mov BYTE PTR [di], al        ; draw pixel below axis
+   
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, increment x
+   shr ax, 1
+   cmp ax, si
+   jle circle_blank2_x3
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle_blank2_jump2
+   jmp circle_blank2_donev2   ; done verticalish
+
+circle_blank2_x2:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle_blank2_jump2
+   jmp circle_blank2_donev2   ; done verticalish
+
+   
+   ALIGN 2
+circle_blank2_jump1:
+   mov BYTE PTR [di+bx], al     ; draw pixel above axis
+   mov BYTE PTR [di], al        ; draw pixel below axis
+
+   add di, sp           ; update offset
+   xor sp, bp           ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   add si, cx           ; D += dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   mov ax, dx           ; if dx/2 <= D, increment x
+   shr ax, 1
+   cmp ax, si
+   jle circle_blank2_x2
+
+   cmp dx, cx           ; check if done verticalish
+   jae circle_blank2_jump1
+   jmp circle_blank2_donev1   ; done verticalish
+   
+circle_blank2_x1:
+   inc di               ; inc offset byte
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   sub si, dx           ; D -= dx
+   sub dx, 25           ; dx -= s'^2 (= 25)
+
+   cmp dx, cx           ; check if done verticalish 
+   jae circle_blank2_jump1
+
+                        ; horizontalish part of circle
+circle_blank2_donev1:
+
+   dec sp
+   mov bp, 0ffb0h
+   neg si               ; D = -D
+   jmp circle_blank2_h1   
+
+circle_blank2_donev2:
+
+   dec sp
+   mov bp, 0ffb0h
+   neg si               ; D = -D
+   jmp circle_blank2_h2   
+
+circle_blank2_donev3:
+
+   dec sp
+   mov bp, 0ffb0h
+   neg si               ; D = -D
+   jmp circle_blank2_h3   
+
+circle_blank2_donev4:
+
+   dec sp
+   mov bp, 0ffb0h
+   neg si               ; D = -D
+   jmp circle_blank2_h4   
+
+
+circle_blank2_doneh2:
+
+   mov [di+bx], al
+   mov [di], al
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+
+
+circle_blank2_h1:
+
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   add si, dx           ; D += dx
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+
+   jge circle_blank2_skip_y1
+
+   mov [di+bx], al
+   stosb
+
+   sub si, cx           ; D -= dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   add di, sp           ; update offset
+   xor sp, 0ffb0h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+circle_blank2_skip_y1:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   jle circle_blank2_doneh2  ; don't double last pixel
+
+
+circle_blank2_h2:
+
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   add si, dx           ; D += dx
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle_blank2_skip_y2
+   
+   mov [di+bx], al
+   stosb
+   
+   sub si, cx           ; D -= dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   add di, sp           ; update offset
+   xor sp, 0ffb0h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+circle_blank2_skip_y2:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   jle circle_blank2_doneh2 ; don't double last pixel
+   
+   
+circle_blank2_h3:
+
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   add si, dx           ; D += dx
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle_blank2_skip_y3
+   
+   mov [di+bx], al
+   stosb
+
+   sub si, cx           ; D -= dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   add di, sp           ; update offset
+   xor sp, 0ffb0h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+circle_blank2_skip_y3:
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   jle circle_blank2_doneh1 ; don't double last pixel
+
+
+circle_blank2_h4:
+
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   add si, dx           ; D += dx
+
+   mov [di+bx], al
+   stosb
+   dec di
+
+   mov bp, cx           ; if dy/2 < D, increment y
+   shr bp, 1
+   cmp bp, si
+   jge circle_blank2_skip_y4
+   
+   inc di
+
+   sub si, cx           ; D -= dy
+   add cx, 72           ; dy += 2r'^2 (= 72)
+
+   add di, sp           ; update offset
+   xor sp, 0ffb0h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+circle_blank2_skip_y4:
+   inc di
+   sub dx, 25           ; dx -= s'^2 (= 25)
+   jle circle_blank2_doneh1_skip ; skip extra bytes and doubled pixel
+
+   jmp circle_blank2_h1
+
+circle_blank2_doneh1:
+
+   mov [di+bx], al
+   mov [di], al
+
+circle_blank2_doneh1_skip:
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+_cga_draw_circle_blank2 ENDP
 
    END
