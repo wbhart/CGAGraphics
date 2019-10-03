@@ -6193,7 +6193,7 @@ circle_xor2_patch9:
    mov al, [di]
 circle_xor2_skip_y1:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle_xor2_doneh2
+   jle circle_xor2_doneh2
 
 
 circle_xor2_h2:
@@ -6222,7 +6222,7 @@ circle_xor2_patch10:
    mov al, [di]
 circle_xor2_skip_y2:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle_xor2_doneh2
+   jle circle_xor2_doneh2
    
    
 circle_xor2_h3:
@@ -6251,7 +6251,7 @@ circle_xor2_patch11:
    mov al, [di]
 circle_xor2_skip_y3:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle_xor2_doneh1
+   jle circle_xor2_doneh1
 
 
 circle_xor2_h4:
@@ -6282,7 +6282,7 @@ circle_xor2_patch12:
 circle_xor2_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle_xor2_doneh1_skip ; skip extra bytes
+   jle circle_xor2_doneh1_skip ; skip extra bytes
 
    jmp circle_xor2_h1
 
