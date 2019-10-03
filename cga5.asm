@@ -4768,13 +4768,11 @@ circle_blank1_y_even:
    shr dl, 1
    xor al, dl
    xor al, 1         
-   shl al, 1            ; multiply x mod 4 by 46 bytes
+   shl al, 1            ; multiply x mod 4 by 48 bytes
+   shl al, 1
+   shl al, 1
+   shl al, 1
    mov si, ax
-   shl al, 1
-   add si, ax
-   shl al, 1
-   add si, ax
-   shl al, 1
    shl al, 1
    add si, ax
 
@@ -6903,13 +6901,11 @@ circle_blank2_y_even:
    shr dl, 1
    xor al, dl
    xor al, 3          
-   shl al, 1            ; multiply x mod 4 by 46 bytes
+   shl al, 1            ; multiply x mod 4 by 48 bytes
+   shl al, 1
+   shl al, 1
+   shl al, 1
    mov si, ax
-   shl al, 1
-   add si, ax
-   shl al, 1
-   add si, ax
-   shl al, 1
    shl al, 1
    add si, ax
 
