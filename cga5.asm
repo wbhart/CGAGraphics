@@ -4966,7 +4966,7 @@ circle2_patch12:
    mov al, [di]
 circle2_skip_y1:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_doneh2
+   jle circle2_doneh2 ; don't double last pixel
 
 
 circle2_h2:
@@ -4996,7 +4996,7 @@ circle2_patch11:
    mov al, [di]
 circle2_skip_y2:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_doneh2
+   jle circle2_doneh2 ; don't double last pixel
    
    
 circle2_h3:
@@ -5026,7 +5026,7 @@ circle2_patch10:
    mov al, [di]
 circle2_skip_y3:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_doneh1
+   jle circle2_doneh1 ; don't double last pixel
 
 
 circle2_h4:
@@ -5058,7 +5058,7 @@ circle2_patch9:
 circle2_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_doneh1_skip ; skip extra byte
+   jle circle2_doneh1_skip ; skip extra byte and doubled pixel
 
    jmp circle2_h1
 
@@ -5368,7 +5368,7 @@ circle2_00_h1:
    mov al, [di]
 circle2_00_skip_y1:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_00_doneh2
+   jle circle2_00_doneh2 ; don't double last pixel
 
 
 circle2_00_h2:
@@ -5396,7 +5396,7 @@ circle2_00_h2:
    mov al, [di]
 circle2_00_skip_y2:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_00_doneh2
+   jle circle2_00_doneh2 ; don't double last pixel
    
    
 circle2_00_h3:
@@ -5424,7 +5424,7 @@ circle2_00_h3:
    mov al, [di]
 circle2_00_skip_y3:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_00_doneh1
+   jle circle2_00_doneh1 ; don't double last pixel
 
 
 circle2_00_h4:
@@ -5454,7 +5454,7 @@ circle2_00_h4:
 circle2_00_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_00_doneh1_skip ; skip extra byte
+   jle circle2_00_doneh1_skip ; skip extra byte and doubled pixel
 
    jmp circle2_00_h1
 
@@ -5764,7 +5764,7 @@ circle2_11_h1:
    mov al, [di]
 circle2_11_skip_y1:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_11_doneh2
+   jle circle2_11_doneh2 ; don't double last pixel
 
 
 circle2_11_h2:
@@ -5792,7 +5792,7 @@ circle2_11_h2:
    mov al, [di]
 circle2_11_skip_y2:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_11_doneh2
+   jle circle2_11_doneh2 ; don't double last pixel
    
    
 circle2_11_h3:
@@ -5820,7 +5820,7 @@ circle2_11_h3:
    mov al, [di]
 circle2_11_skip_y3:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_11_doneh1
+   jle circle2_11_doneh1 ; don't double last pixel
 
 
 circle2_11_h4:
@@ -5850,7 +5850,7 @@ circle2_11_h4:
 circle2_11_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jl circle2_11_doneh1_skip ; skip extra byte
+   jle circle2_11_doneh1_skip ; skip extra byte and doubled pixel
 
    jmp circle2_11_h1
 
@@ -6193,7 +6193,7 @@ circle_xor2_patch9:
    mov al, [di]
 circle_xor2_skip_y1:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jle circle_xor2_doneh2
+   jle circle_xor2_doneh2  ; don't double last pixel
 
 
 circle_xor2_h2:
@@ -6222,7 +6222,7 @@ circle_xor2_patch10:
    mov al, [di]
 circle_xor2_skip_y2:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jle circle_xor2_doneh2
+   jle circle_xor2_doneh2 ; don't double last pixel
    
    
 circle_xor2_h3:
@@ -6251,7 +6251,7 @@ circle_xor2_patch11:
    mov al, [di]
 circle_xor2_skip_y3:
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jle circle_xor2_doneh1
+   jle circle_xor2_doneh1 ; don't double last pixel
 
 
 circle_xor2_h4:
@@ -6282,7 +6282,7 @@ circle_xor2_patch12:
 circle_xor2_skip_y4:
    inc di
    sub dx, 25           ; dx -= s'^2 (= 25)
-   jle circle_xor2_doneh1_skip ; skip extra bytes
+   jle circle_xor2_doneh1_skip ; skip extra bytes and doubled pixel
 
    jmp circle_xor2_h1
 
