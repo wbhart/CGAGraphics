@@ -3921,7 +3921,7 @@ circle1_11_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
-   jz circle_1_11_radius_zero
+   jz circle1_11_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
