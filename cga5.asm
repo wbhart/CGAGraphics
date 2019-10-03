@@ -3067,6 +3067,7 @@ circle1_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
+   jz circle1_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
@@ -3084,7 +3085,28 @@ circle1_y_even:
    mov bp, 0ffb0h
 
    jmp cs:[jmp_addr]
+
+circle1_radius_zero:
+
+   mov cx, [x0]
+   and cl, 3
+   inc cl
+   shl cl, 1
+   mov al, [colour]
+   mov ah, 0fch
+   ror al, cl
+   ror ah, cl
+   and ah, [di]
+   or al, ah
+   stosb
    
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret 
                         ; verticalish part of circle
    ALIGN 2
 circle1_jump2:
@@ -3485,6 +3507,7 @@ circle1_00_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
+   jz circle1_00_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
@@ -3502,7 +3525,24 @@ circle1_00_y_even:
    mov bp, 0c050h
 
    jmp cs:[jmp_addr]
+
+circle1_00_radius_zero:
+
+   mov cx, [x0]
+   and cl, 3
+   inc cl
+   shl cl, 1
+   mov al, 0fch
+   ror al, cl
+   and [di], al
    
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret    
                         ; verticalish part of circle
    ALIGN 2
 circle1_00_jump2:
@@ -3881,6 +3921,7 @@ circle1_11_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
+   jz circle_1_11_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
@@ -3898,7 +3939,24 @@ circle1_11_y_even:
    mov bp, 0c050h
 
    jmp cs:[jmp_addr]
+
+circle1_11_radius_zero:
+
+   mov cx, [x0]
+   and cl, 3
+   inc cl
+   shl cl, 1
+   mov al, 3
+   ror al, cl
+   or [di], al
    
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
                         ; verticalish part of circle
    ALIGN 2
 circle1_11_jump2:
@@ -4300,6 +4358,7 @@ circle_xor1_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
+   jz circle_xor1_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
@@ -4317,7 +4376,24 @@ circle_xor1_y_even:
    mov bp, 0c050h
 
    jmp cs:[jmp_addr]
-   
+
+circle_xor1_radius_zero:
+
+   mov cx, [x0]
+   and cl, 3
+   inc cl
+   shl cl, 1
+   mov al, [colour]
+   ror al, cl
+   xor [di], al
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
                         ; verticalish part of circle
    ALIGN 2
 circle_xor1_jump2:
@@ -4729,6 +4805,7 @@ circle2_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
+   jz circle2_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
@@ -4747,6 +4824,15 @@ circle2_y_even:
 
    jmp cs:[jmp_addr]
 
+circle2_radius_zero:
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
 
                         ; verticalish part of circle
    ALIGN 2
@@ -5147,6 +5233,7 @@ circle2_00_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
+   jz circle2_00_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
@@ -5165,6 +5252,15 @@ circle2_00_y_even:
 
    jmp cs:[jmp_addr]
 
+circle2_00_radius_zero:
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
 
                         ; verticalish part of circle
    ALIGN 2
@@ -5543,6 +5639,7 @@ circle2_11_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
+   jz circle2_11_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
@@ -5561,6 +5658,15 @@ circle2_11_y_even:
 
    jmp cs:[jmp_addr]
 
+circle2_11_radius_zero:
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
 
                         ; verticalish part of circle
    ALIGN 2
@@ -5963,6 +6069,7 @@ circle_xor2_y_even:
 
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
+   jz circle_xor2_radius_zero
    mov ax, dx
    shl ax, 1
    shl ax, 1
@@ -5981,6 +6088,15 @@ circle_xor2_y_even:
 
    jmp cs:[jmp_addr]
 
+circle_xor2_radius_zero:
+
+   mov WORD PTR sp, cs:[sp_save]
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
 
                         ; verticalish part of circle
    ALIGN 2
