@@ -4795,6 +4795,19 @@ circle_blank1_y_even:
    shl ah, 1
    add al, ah
 
+   mov BYTE PTR cs:[circle_blank1_patch1 + 2], al
+   mov BYTE PTR cs:[circle_blank1_patch2 + 2], al
+   mov BYTE PTR cs:[circle_blank1_patch3 + 2], al
+   mov BYTE PTR cs:[circle_blank1_patch4 + 2], al
+   mov BYTE PTR cs:[circle_blank1_patch5 + 2], al
+   mov BYTE PTR cs:[circle_blank1_patch6 + 2], al
+   mov BYTE PTR cs:[circle_blank1_patch7 + 2], al
+   mov BYTE PTR cs:[circle_blank1_patch8 + 2], al
+   mov BYTE PTR cs:[circle_blank1_patch9 + 1], al
+   mov BYTE PTR cs:[circle_blank1_patch10 + 1], al
+   mov BYTE PTR cs:[circle_blank1_patch11 + 1], al
+   mov BYTE PTR cs:[circle_blank1_patch12 + 1], al
+
    mov dx, [r]          ; deltax = 2c*r = 2*s'^2*r = 50*r
    shl dx, 1
    jz circle_blank1_radius_zero
@@ -4830,8 +4843,10 @@ circle_blank1_radius_zero:
                         ; verticalish part of circle
    ALIGN 2
 circle_blank1_jump2:
-   mov BYTE PTR [di+bx], al     ; draw pixel above axis
-   mov BYTE PTR [di], al        ; draw pixel below axis
+circle_blank1_patch1:
+   mov BYTE PTR [di+bx], 0     ; draw pixel above axis
+circle_blank1_patch2:
+   mov BYTE PTR [di], 0        ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -4861,8 +4876,10 @@ circle_blank1_x2:
    
    ALIGN 2
 circle_blank1_jump1:
-   mov BYTE PTR [di+bx], al     ; draw pixel above axis
-   mov BYTE PTR [di], al        ; draw pixel below axis
+circle_blank1_patch3:
+   mov BYTE PTR [di+bx], 0     ; draw pixel above axis
+circle_blank1_patch4:
+   mov BYTE PTR [di], 0        ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -4892,8 +4909,10 @@ circle_blank1_x1:
 
    ALIGN 2
 circle_blank1_jump3:
-   mov BYTE PTR [di+bx], al      ; draw pixel above axis
-   mov BYTE PTR [di], al         ; draw pixel below axis
+circle_blank1_patch5:
+   mov BYTE PTR [di+bx], 0      ; draw pixel above axis
+circle_blank1_patch6:
+   mov BYTE PTR [di], 0         ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -4923,8 +4942,10 @@ circle_blank1_x3:
 
       ALIGN 2
 circle_blank1_jump4:
-   mov BYTE PTR [di+bx], al    ; draw pixel above axis
-   mov BYTE PTR [di], al       ; draw pixel below axis
+circle_blank1_patch7:
+   mov BYTE PTR [di+bx], 0    ; draw pixel above axis
+circle_blank1_patch8:
+   mov BYTE PTR [di], 0       ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -4955,6 +4976,8 @@ circle_blank1_x4:
                         ; horizontalish part of circle
 circle_blank1_donev4:
 
+circle_blank1_patch9:
+   mov al, 0
    dec sp
    mov bp, 0ffb0h
    neg si               ; D = -D
@@ -4962,6 +4985,8 @@ circle_blank1_donev4:
 
 circle_blank1_donev1:
 
+circle_blank1_patch10:
+   mov al, 0
    dec sp
    mov bp, 0ffb0h
    neg si               ; D = -D
@@ -4969,6 +4994,8 @@ circle_blank1_donev1:
 
 circle_blank1_donev2:
 
+circle_blank1_patch11:
+   mov al, 0
    dec sp
    mov bp, 0ffb0h
    neg si               ; D = -D
@@ -4976,6 +5003,8 @@ circle_blank1_donev2:
 
 circle_blank1_donev3:
 
+circle_blank1_patch12:
+   mov al, 0
    dec sp
    mov bp, 0ffb0h
    neg si               ; D = -D
@@ -6912,6 +6941,19 @@ circle_blank2_y_even:
    shl ah, 1
    add al, ah
 
+   mov BYTE PTR cs:[circle_blank2_patch1 + 2], al
+   mov BYTE PTR cs:[circle_blank2_patch2 + 2], al
+   mov BYTE PTR cs:[circle_blank2_patch3 + 2], al
+   mov BYTE PTR cs:[circle_blank2_patch4 + 2], al
+   mov BYTE PTR cs:[circle_blank2_patch5 + 2], al
+   mov BYTE PTR cs:[circle_blank2_patch6 + 2], al
+   mov BYTE PTR cs:[circle_blank2_patch7 + 2], al
+   mov BYTE PTR cs:[circle_blank2_patch8 + 2], al
+   mov BYTE PTR cs:[circle_blank2_patch9 + 1], al
+   mov BYTE PTR cs:[circle_blank2_patch10 + 1], al
+   mov BYTE PTR cs:[circle_blank2_patch11 + 1], al
+   mov BYTE PTR cs:[circle_blank2_patch12 + 1], al
+
    mov cx, 36           ; deltay = r'^2 = 36
    xor si, si           ; D = 0
    xor bx, bx           ; distance between lines above and below axis
@@ -6934,8 +6976,10 @@ circle_blank2_radius_zero:
                         ; verticalish part of circle
    ALIGN 2
 circle_blank2_jump3:
-   mov BYTE PTR [di+bx], al     ; draw pixel above axiscircle_blank2_patch2:
-   mov BYTE PTR [di], al        ; draw pixel below axis
+circle_blank2_patch1:
+   mov BYTE PTR [di+bx], 0     ; draw pixel above axiscircle_blank2_patch2:
+circle_blank2_patch2:
+   mov BYTE PTR [di], 0        ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -6965,8 +7009,10 @@ circle_blank2_x3:
 
       ALIGN 2
 circle_blank2_jump4:
-   mov BYTE PTR [di+bx], al      ; draw pixel above axis
-   mov BYTE PTR [di], al         ; draw pixel below axis
+circle_blank2_patch3:
+   mov BYTE PTR [di+bx], 0      ; draw pixel above axis
+circle_blank2_patch4:
+   mov BYTE PTR [di], 0         ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -6996,8 +7042,10 @@ circle_blank2_x4:
 
    ALIGN 2
 circle_blank2_jump2:
-   mov BYTE PTR [di+bx], al     ; draw pixel above axis
-   mov BYTE PTR [di], al        ; draw pixel below axis
+circle_blank2_patch5:
+   mov BYTE PTR [di+bx], 0     ; draw pixel above axis
+circle_blank2_patch6:
+   mov BYTE PTR [di], 0        ; draw pixel below axis
    
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -7027,8 +7075,10 @@ circle_blank2_x2:
    
    ALIGN 2
 circle_blank2_jump1:
-   mov BYTE PTR [di+bx], al     ; draw pixel above axis
-   mov BYTE PTR [di], al        ; draw pixel below axis
+circle_blank2_patch7:
+   mov BYTE PTR [di+bx], 0     ; draw pixel above axis
+circle_blank2_patch8:
+   mov BYTE PTR [di], 0        ; draw pixel below axis
 
    add di, sp           ; update offset
    xor sp, bp           ; update offset update for odd<->even
@@ -7058,6 +7108,8 @@ circle_blank2_x1:
                         ; horizontalish part of circle
 circle_blank2_donev1:
 
+circle_blank2_patch9:
+   mov al, 0
    dec sp
    mov bp, 0ffb0h
    neg si               ; D = -D
@@ -7065,6 +7117,8 @@ circle_blank2_donev1:
 
 circle_blank2_donev2:
 
+circle_blank2_patch10:
+   mov al, 0
    dec sp
    mov bp, 0ffb0h
    neg si               ; D = -D
@@ -7072,6 +7126,8 @@ circle_blank2_donev2:
 
 circle_blank2_donev3:
 
+circle_blank2_patch11:
+   mov al, 0
    dec sp
    mov bp, 0ffb0h
    neg si               ; D = -D
@@ -7079,6 +7135,8 @@ circle_blank2_donev3:
 
 circle_blank2_donev4:
 
+circle_blank2_patch12:
+   mov al, 0
    dec sp
    mov bp, 0ffb0h
    neg si               ; D = -D
