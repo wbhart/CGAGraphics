@@ -7425,14 +7425,14 @@ ellipse1_n1:
    rcl bx, 1
    loop ellipse1_n1
 
-   mov BYTE PTR cs:[ellipse1_patch6 + 2], al
-   mov BYTE PTR cs:[ellipse1_patch8 + 2], al
-   mov BYTE PTR cs:[ellipse1_patch15 + 2], al
-   mov BYTE PTR cs:[ellipse1_patch17 + 2], al
-   mov BYTE PTR cs:[ellipse1_patch19 + 2], al
-   mov BYTE PTR cs:[ellipse1_patch21 + 2], al
-   mov BYTE PTR cs:[ellipse1_patch28 + 2], al
-   mov BYTE PTR cs:[ellipse1_patch30 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch6 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch8 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch15 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch17 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch19 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch21 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch28 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch30 + 1], al
 
    mov BYTE PTR cs:[ellipse1_patch38 + 2], al
    mov BYTE PTR cs:[ellipse1_patch42 + 2], al
