@@ -7383,26 +7383,26 @@ ellipse1_jump_done:
 
    mov ah, [colour]     ; patch colours in
    mov al, ah
-   mov BYTE PTR cs:[ellipse1_patch23 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch24 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch23 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch24 + 2], al
    mov WORD PTR cs:[ellipse1_patch37 + 1], ax
    ror ah, 1
    ror ah, 1
    mov al, ah
-   mov BYTE PTR cs:[ellipse1_patch32 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch33 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch32 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch33 + 2], al
    mov WORD PTR cs:[ellipse1_patch58 + 1], ax
    ror ah, 1
    ror ah, 1
    mov al, ah
-   mov BYTE PTR cs:[ellipse1_patch1 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch2 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch1 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch2 + 2], al
    mov WORD PTR cs:[ellipse1_patch51 + 1], ax
    ror ah, 1
    ror ah, 1
    mov al, ah 
-   mov BYTE PTR cs:[ellipse1_patch10 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch11 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch10 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch11 + 2], al
    mov WORD PTR cs:[ellipse1_patch44 + 1], ax
 
 
