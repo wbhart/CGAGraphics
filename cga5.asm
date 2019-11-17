@@ -7960,14 +7960,12 @@ ellipse1_patch60:
 
    mov [di+bx], ah
    mov [di], al
-   dec di
 
    mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
    jge ellipse1_skip_y1
    
-   inc di
    mov bp, es
    sub ch, cl           ; D -= dy
    sbb si, bp
