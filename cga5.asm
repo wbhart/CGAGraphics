@@ -7741,8 +7741,8 @@ ellipse1_donev4:
    mov sp, dx
    mov dl, al
    neg ch               ; D = -D
+   adc si, 0
    neg si
-   sbb si, 0
    jmp ellipse1_h4   
 
 ellipse1_donev1:
@@ -7752,8 +7752,8 @@ ellipse1_donev1:
    mov sp, dx
    mov dl, al
    neg ch               ; D = -D
+   adc si, 0
    neg si
-   sbb si, 0
    mov ah, [di+bx]
    mov al, [di]
    jmp ellipse1_h1   
@@ -7765,8 +7765,8 @@ ellipse1_donev2:
    mov sp, dx
    mov dl, al
    neg ch               ; D = -D
+   adc si, 0
    neg si
-   sbb si, 0
    mov ah, [di+bx]
    mov al, [di]
    jmp ellipse1_h2   
@@ -7778,8 +7778,8 @@ ellipse1_donev3:
    mov sp, dx
    mov dl, al
    neg ch               ; D = -D
+   adc si, 0
    neg si
-   sbb si, 0
    mov ah, [di+bx]
    mov al, [di]
    jmp ellipse1_h3   
@@ -7819,6 +7819,7 @@ ellipse1_patch39:
    add ch, dl           ; D += dx
    adc si, sp                     
 
+   mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
    jge ellipse1_skip_y4
@@ -7842,8 +7843,8 @@ ellipse1_patch41:
 
    mov ah, [di+bx]
    mov al, [di]
-ellipse1_skip_y4:
-   mov es, bp          
+   mov es, bp
+ellipse1_skip_y4:          
 
 ellipse1_patch42:
    sub dl, 012h         ; dx -= s^2
@@ -7865,6 +7866,7 @@ ellipse1_patch46:
    add ch, dl           ; D += dx
    adc si, sp                     
 
+   mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
    jge ellipse1_skip_y3
@@ -7888,8 +7890,8 @@ ellipse1_patch48:
 
    mov ah, [di+bx]
    mov al, [di]
-ellipse1_skip_y3:
    mov es, bp
+ellipse1_skip_y3:
  
 ellipse1_patch49:
    sub dl, 012h         ; dx -= s^2
@@ -7910,6 +7912,7 @@ ellipse1_patch53:
    add ch, dl           ; D += dx
    adc si, sp
 
+   mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
    jge ellipse1_skip_y2
@@ -7933,8 +7936,8 @@ ellipse1_patch55:
 
    mov ah, [di+bx]
    mov al, [di]
-ellipse1_skip_y2:
    mov es, bp
+ellipse1_skip_y2:
  
 ellipse1_patch56:
    sub dl, 012h         ; dx -= s^2
@@ -7959,6 +7962,7 @@ ellipse1_patch60:
    mov [di], al
    dec di
 
+   mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
    jge ellipse1_skip_y1
@@ -7978,9 +7982,9 @@ ellipse1_patch62:
    mov ss, ax
    sub bx, 80           ; decrement/increment y lines
 
+   mov es, bp
 ellipse1_skip_y1:
    dec di
-   mov es, bp
  
 ellipse1_patch63:
    sub dl, 012h         ; dx -= s^2
