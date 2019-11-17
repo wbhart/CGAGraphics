@@ -7356,8 +7356,8 @@ ellipse1_y_even:
 
 
                         ; compute jump offset    
-   and ax, 3            ; deal with scrambled layout
    xor si, si
+   and ax, 3            ; deal with scrambled layout
    jnz ellipse1_j1
    lea si, ellipse1_jump1
    mov WORD PTR cs:[jmp_addr], si
@@ -7425,14 +7425,14 @@ ellipse1_n1:
    rcl bx, 1
    loop ellipse1_n1
 
-   mov BYTE PTR cs:[ellipse1_patch6 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch8 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch15 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch17 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch19 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch21 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch28 + 1], al
-   mov BYTE PTR cs:[ellipse1_patch30 + 1], al
+   mov BYTE PTR cs:[ellipse1_patch6 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch8 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch15 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch17 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch19 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch21 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch28 + 2], al
+   mov BYTE PTR cs:[ellipse1_patch30 + 2], al
 
    mov BYTE PTR cs:[ellipse1_patch38 + 2], al
    mov BYTE PTR cs:[ellipse1_patch42 + 2], al
@@ -7452,14 +7452,14 @@ ellipse1_n1:
    mov WORD PTR cs:[ellipse1_patch29 + 2], bx
    mov WORD PTR cs:[ellipse1_patch31 + 2], bx
 
-   mov WORD PTR cs:[ellipse1_patch7 + 39], bx
-   mov WORD PTR cs:[ellipse1_patch7 + 43], bx
-   mov WORD PTR cs:[ellipse1_patch7 + 46], bx
-   mov WORD PTR cs:[ellipse1_patch7 + 50], bx
-   mov WORD PTR cs:[ellipse1_patch7 + 53], bx
-   mov WORD PTR cs:[ellipse1_patch7 + 57], bx
-   mov WORD PTR cs:[ellipse1_patch7 + 60], bx
-   mov WORD PTR cs:[ellipse1_patch7 + 64], bx
+   mov WORD PTR cs:[ellipse1_patch39 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch43 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch46 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch50 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch53 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch57 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch60 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch64 + 2], bx
 
    mov cx, [r]          ; deltax = 2c*r = 2*(s^2 << n)*r 
    mul cl
