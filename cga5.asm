@@ -7357,21 +7357,27 @@ ellipse1_y_even:
 
                         ; compute jump offset    
    and ax, 3            ; deal with scrambled layout
+   xor si, si
    jnz ellipse1_j1
-   mov WORD PTR cs:[jmp_addr], ellipse1_jump1
+   lea si, ellipse1_jump1
+   mov WORD PTR cs:[jmp_addr], si
    jmp ellipse1_jump_done
 ellipse1_j1:
    dec ax
    jnz ellipse1_j2
-   mov WORD PTR cs:[jmp_addr], ellipse1_jump2
+   lea si, ellipse1_jump2
+   mov WORD PTR cs:[jmp_addr], si
    jmp ellipse1_jump_done
 ellipse1_j2:
    dec ax
    jnz ellipse1_j3
-   mov WORD PTR cs:[jmp_addr], ellipse1_jump3
+   lea si, ellipse1_jump3
+   mov WORD PTR cs:[jmp_addr], si
    jmp ellipse1_jump_done
 ellipse1_j3:
-   mov WORD PTR cs:[jmp_addr], ellipse1_jump3
+   lea si, ellipse1_jump4
+   mov WORD PTR cs:[jmp_addr], si
+   
 
 ellipse1_jump_done:
 
