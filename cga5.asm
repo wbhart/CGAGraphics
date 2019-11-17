@@ -7308,7 +7308,7 @@ _cga_draw_circle_blank2 ENDP
 
    PUBLIC _cga_draw_ellipse1
 _cga_draw_ellipse1 PROC
-   ARG x0:WORD, y0:WORD, r:WORD, colour:BYTE
+   ARG x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE
    ; ellipse with centre (x0, y0) and semiradius in the x-direction of r
    ; and semiradius in the y-direction of s
    ; draws only the right side of the ellipse
@@ -7358,20 +7358,20 @@ ellipse1_y_even:
                         ; compute jump offset    
    and ax, 3            ; deal with scrambled layout
    jnz ellipse1_j1
-   mov cs:[jmp_addr], ellipse1_jump1
+   mov WORD PTR cs:[jmp_addr], ellipse1_jump1
    jmp ellipse1_jump_done
 ellipse1_j1:
    dec ax
    jnz ellipse1_j2
-   mov cs:[jmp_addr], ellipse1_jump2
+   mov WORD PTR cs:[jmp_addr], ellipse1_jump2
    jmp ellipse1_jump_done
 ellipse1_j2:
    dec ax
    jnz ellipse1_j3
-   mov cs:[jmp_addr], ellipse1_jump3
+   mov WORD PTR cs:[jmp_addr], ellipse1_jump3
    jmp ellipse1_jump_done
 ellipse1_j3:
-   mov cs:[jmp_addr], ellipse1_jump3
+   mov WORD PTR cs:[jmp_addr], ellipse1_jump3
 
 ellipse1_jump_done:
 
@@ -7724,10 +7724,6 @@ ellipse1_patch36:
    cmp dx, bp           ; check if done verticalish
    jae ellipse1_jump1
    jmp ellipse1_donev1  ; done verticalish
-
-
-
-
 
 
 
