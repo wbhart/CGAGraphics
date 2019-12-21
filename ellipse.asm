@@ -1416,7 +1416,7 @@ ellipse2_doneh2_skip:
    ret   
 _cga_draw_ellipse2 ENDP
 
-   _ellipse_data DB 5, 6, 0, 8, 34, 74, 85, 237, 190, 6, 9, 8, 16, 41, 85, 173, 109, 119, 223, 223, 255
+   _ellipse_data DB 6, 5, 0, 8, 34, 74, 85, 237, 190, 9, 6, 8, 16, 41, 85, 173, 109, 119, 223, 223, 255
 
    PUBLIC _cga_draw_ellipse_precomp1
 _cga_draw_ellipse_precomp1 PROC
@@ -1425,7 +1425,7 @@ _cga_draw_ellipse_precomp1 PROC
    ; and semiradius in the y-direction of s
    ; draws only the right side of the ellipse
    ; di, di+bx offsets of points above and below axis, ax: accum
-   ; sp: yinc, dh: iter/16, cx: iter upto 16, bp: index into cs array
+   ; sp: yinc, dh: iter/8, cx: iter upto 8, bp: index into cs array
    ; dl: direction bits 
    push bp
    mov bp, sp
@@ -1514,21 +1514,21 @@ ellipse_precomp1_jump_done:
 
    lea bp, _ellipse_data
 
-   mov dh, [bp]
+   mov dh, cs:[bp]
    inc bp
-   mov cl, [bp]
+   mov cl, cs:[bp]
    inc bp
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp 
 
    jmp cs:[jmp_addr] 
                         ; part of horizontalish part moved to shorten jump
 ellipse_precomp1_donev3:
-   mov dh, [bp]
+   mov dh, cs:[bp]
    inc bp
-   mov cl, [bp]
+   mov cl, cs:[bp]
    inc bp
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    mov ah, [di+bx]
    mov al, [di]
@@ -1558,7 +1558,7 @@ ellipse_precomp1_x3:
    mov cl, 8
    dec dh                      ; check if done verticalish
    jz ellipse_precomp1_donev3  ; done verticalish
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    loop ellipse_precomp1_jump3
 
@@ -1589,7 +1589,7 @@ ellipse_precomp1_x4:
    mov cl, 8
    dec dh                      ; check if done verticalish
    jz ellipse_precomp1_donev4  ; done verticalish
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    loop ellipse_precomp1_jump4
 
@@ -1614,7 +1614,7 @@ ellipse_precomp1_x2:
    mov cl, 8
    dec dh                      ; check if done verticalish
    jz ellipse_precomp1_donev2  ; done verticalish
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    loop ellipse_precomp1_jump2
 
@@ -1640,27 +1640,27 @@ ellipse_precomp1_x1:
    mov cl, 8
    dec dh                      ; check if done verticalish
    jz ellipse_precomp1_donev1  ; done verticalish
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    loop ellipse_precomp1_jump1
 
                         ; horizontalish part of ellipse
    
 ellipse_precomp1_donev4:
-   mov dh, [bp]
+   mov dh, cs:[bp]
    inc bp
-   mov cl, [bp]
+   mov cl, cs:[bp]
    inc bp
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    jmp ellipse_precomp1_h4   
 
 ellipse_precomp1_donev2:
-   mov dh, [bp]
+   mov dh, cs:[bp]
    inc bp
-   mov cl, [bp]
+   mov cl, cs:[bp]
    inc bp
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    mov ah, [di+bx]
    mov al, [di]
@@ -1668,11 +1668,11 @@ ellipse_precomp1_donev2:
 
 ellipse_precomp1_donev1:
 
-   mov dh, [bp]
+   mov dh, cs:[bp]
    inc bp
-   mov cl, [bp]
+   mov cl, cs:[bp]
    inc bp
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    mov ah, [di+bx]
    mov al, [di]
@@ -1695,7 +1695,7 @@ ellipse_precomp1_doneh1:
 
 ellipse_precomp1_byte4:
    mov cl, 8
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp1_doneh1  ; done horizontalish
@@ -1703,7 +1703,7 @@ ellipse_precomp1_byte4:
 
 ellipse_precomp1_byte3:
    mov cl, 8
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp1_doneh1  ; done horizontalish
@@ -1805,7 +1805,7 @@ ellipse_precomp1_skip_y1:
 
 ellipse_precomp1_byte2:
    mov cl, 8
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp1_doneh2  ; done horizontalish
@@ -1813,7 +1813,7 @@ ellipse_precomp1_byte2:
 
 ellipse_precomp1_byte1:
    mov cl, 8
-   mov dl, [bp]
+   mov dl, cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp1_doneh2_skip  ; done horizontalish
