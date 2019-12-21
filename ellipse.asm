@@ -1416,6 +1416,8 @@ ellipse2_doneh2_skip:
    ret   
 _cga_draw_ellipse2 ENDP
 
+   _ellipse_data DB 5, 6, 0, 8, 34, 74, 85, 237, 190, 6, 9, 8, 16, 41, 85, 173, 109, 119, 223, 223, 255
+
    PUBLIC _cga_draw_ellipse_precomp1
 _cga_draw_ellipse_precomp1 PROC
    ARG x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE

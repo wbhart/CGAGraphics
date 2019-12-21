@@ -5,8 +5,6 @@
    jmp_addr   DW ?
    ydelta_xor DW ?
    sp_save    DW ?
-   ss_save    DW ?
-   iter_save  DW ?
 
    PUBLIC _cga_draw_circle1
 _cga_draw_circle1 PROC
