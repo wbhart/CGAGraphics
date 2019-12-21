@@ -1523,6 +1523,16 @@ ellipse_precomp1_jump_done:
 
    jmp cs:[jmp_addr] 
                         ; verticalish part of ellipse
+ellipse_precomp1_x1:
+   loop ellipse_precomp1_jump1
+   mov cl, 8
+   dec dh                      ; check if done verticalish
+   jz ellipse_precomp1_donev1  ; done verticalish
+   mov dl, [bp]
+   inc bp
+   loop ellipse_precomp1_jump1
+   jmp ellipse_precomp1_donev4:
+
    ALIGN 2
 ellipse_precomp1_jump2:
    mov ah, [di+bx]      ; draw pixel above axis
@@ -1621,39 +1631,9 @@ ellipse_precomp1_patch4:
 
    shr dl, 1
    jc ellipse_precomp1_x4
-
-ellipse_precomp1_x1:
-   loop ellipse_precomp1_jump1
-   mov cl, 8
-   dec dh                      ; check if done verticalish
-   jz ellipse_precomp1_donev1  ; done verticalish
-   mov dl, [bp]
-   inc bp
-   loop ellipse_precomp1_jump1
-
+   jmp ellipse_precomp1_x1
 
                         ; horizontalish part of ellipse
-ellipse_precomp1_donev4:
-   mov dh, [bp]
-   inc bp
-   mov cl, [bp]
-   inc bp
-   mov dl, [bp]
-   inc bp
-   jmp ellipse_precomp1_h4   
-
-ellipse_precomp1_donev1:
-
-   mov dh, [bp]
-   inc bp
-   mov cl, [bp]
-   inc bp
-   mov dl, [bp]
-   inc bp
-   mov ah, [di+bx]
-   mov al, [di]
-   jmp ellipse_precomp1_h1   
-
 ellipse_precomp1_donev2:
    mov dh, [bp]
    inc bp
@@ -1675,6 +1655,27 @@ ellipse_precomp1_donev3:
    mov ah, [di+bx]
    mov al, [di]
    jmp ellipse_precomp1_h3   
+   
+ellipse_precomp1_donev4:
+   mov dh, [bp]
+   inc bp
+   mov cl, [bp]
+   inc bp
+   mov dl, [bp]
+   inc bp
+   jmp ellipse_precomp1_h4   
+
+ellipse_precomp1_donev1:
+
+   mov dh, [bp]
+   inc bp
+   mov cl, [bp]
+   inc bp
+   mov dl, [bp]
+   inc bp
+   mov ah, [di+bx]
+   mov al, [di]
+   jmp ellipse_precomp1_h1   
 
 
 ellipse_precomp1_doneh1:
