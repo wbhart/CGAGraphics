@@ -1522,6 +1522,18 @@ ellipse_precomp1_jump_done:
    inc bp 
 
    jmp cs:[jmp_addr] 
+                        ; part of horizontalish part moved to shorten jump
+ellipse_precomp1_donev3:
+   mov dh, [bp]
+   inc bp
+   mov cl, [bp]
+   inc bp
+   mov dl, [bp]
+   inc bp
+   mov ah, [di+bx]
+   mov al, [di]
+   jmp ellipse_precomp1_h3   
+
                         ; verticalish part of ellipse
 
    ALIGN 2
@@ -1633,16 +1645,6 @@ ellipse_precomp1_x1:
    loop ellipse_precomp1_jump1
 
                         ; horizontalish part of ellipse
-ellipse_precomp1_donev3:
-   mov dh, [bp]
-   inc bp
-   mov cl, [bp]
-   inc bp
-   mov dl, [bp]
-   inc bp
-   mov ah, [di+bx]
-   mov al, [di]
-   jmp ellipse_precomp1_h3   
    
 ellipse_precomp1_donev4:
    mov dh, [bp]
