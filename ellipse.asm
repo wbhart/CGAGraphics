@@ -1416,6 +1416,21 @@ ellipse2_doneh2_skip:
    ret   
 _cga_draw_ellipse2 ENDP
 
+   ; precomputed ellipse data in format
+   ; m, n, b1, b2, b3, ..., bm, q, r, c1, c2, c3, ..., cq
+   ; if the number of pixels in the verticalish part of the ellipse if s then
+   ; s - 1 = 8*m + n where n lies in [1, 8]
+   ; if the number of pixels in the horizontalish part of the ellipse is t then
+   ; t = 8*q + r where r lies in [1, 8]
+   ; the low n bits of b1 are used first, then each of the bits of the remaining bi 
+   ; always starting with the least significant bit
+   ; the bits specify when a move should be made horizontally, for each pixel in
+   ; the verticalish part, after the first pixel is drawn
+   ; then the horizontalish part is specified with the low r bits of c1 being used
+   ; first, then the bits of the other ci 
+   ; the bits specify when a vertical move is NOT made in the horizontalish part
+   ; starting with the first pixel of the horizontalish part 
+   
    _ellipse_data DB 7, 5, 0, 8, 34, 74, 85, 237, 190, 10, 6, 8, 16, 41, 85, 173, 109, 119, 223, 223, 255
 
    PUBLIC _cga_draw_ellipse_precomp1
@@ -2112,7 +2127,7 @@ ellipse_precomp2_byte1:
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp2_doneh1  ; done horizontalish
-   jmp ellipse_precomp2_h1
+   jmp ellipse_precomp2_h2
 
 ellipse_precomp2_byte2:
    mov cl, 8
