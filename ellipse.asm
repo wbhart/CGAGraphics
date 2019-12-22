@@ -1416,7 +1416,7 @@ ellipse2_doneh2_skip:
    ret   
 _cga_draw_ellipse2 ENDP
 
-   _ellipse_data DB 6, 5, 0, 8, 34, 74, 85, 237, 190, 9, 6, 8, 16, 41, 85, 173, 109, 119, 223, 223, 255
+   _ellipse_data DB 7, 5, 0, 8, 34, 74, 85, 237, 190, 10, 6, 8, 16, 41, 85, 173, 109, 119, 223, 223, 255
 
    PUBLIC _cga_draw_ellipse_precomp1
 _cga_draw_ellipse_precomp1 PROC
@@ -1578,9 +1578,7 @@ ellipse_precomp1_patch3:
 
    shr dl, 1
    jc ellipse_precomp1_x3
-
-   loop ellipse_precomp1_jump4   ; check if done verticalish
-   jmp ellipse_precomp1_donev4  ; done verticalish
+   inc di
 
 ellipse_precomp1_x4:
    dec di
@@ -1741,7 +1739,7 @@ ellipse_precomp1_patch6:
    or ax, 0c0ch                     
 
    shr dl, 1
-   jge ellipse_precomp1_skip_y3
+   jc ellipse_precomp1_skip_y3
    
    mov [di+bx], ah
    mov [di], al
@@ -1771,7 +1769,7 @@ ellipse_precomp1_patch7:
 
    add di, sp
    xor sp, 0c050h       ; update offset update for odd<->even
-  sub bx, 80           ; decrement/increment y lines
+   sub bx, 80           ; decrement/increment y lines
 
    mov ah, [di+bx]
    mov al, [di]
@@ -1834,5 +1832,422 @@ ellipse_precomp1_doneh2_skip:
    pop bp
    ret   
 _cga_draw_ellipse_precomp1 ENDP
+
+   PUBLIC _cga_draw_ellipse_precomp2
+_cga_draw_ellipse_precomp2 PROC
+   ARG x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE
+   ; ellipse with centre (x0, y0) and semiradius in the x-direction of r
+   ; and semiradius in the y-direction of s
+   ; draws only the right side of the ellipse
+   ; di, di+bx offsets of points above and below axis, ax: accum
+   ; sp: yinc, dh: iter/8, cx: iter upto 8, bp: index into cs array
+   ; dl: direction bits 
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
+
+   mov ax, 0b800h       ; set DS to segment for CGA memory
+   mov ds, ax
+
+   cli                  ; save and free up sp and ss
+   mov WORD PTR cs:[sp_save], sp
+
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
+   shr ax, 1
+   mov sp, 8192         ; also compute ydelta
+   jnc ellipse_precomp2_y_even
+   mov sp, -8112
+ellipse_precomp2_y_even:
+   sbb di, 0
+   and di, 8192
+   shl ax, 1            
+   shl ax, 1
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+
+   mov dx, [x0]         ; adjust offset for column x0 + r
+   sub dx, [r]
+   mov ax, dx
+   shr dx, 1            
+   shr dx, 1
+   add di, dx
+
+                        ; compute jump offset    
+   and ax, 3            ; deal with scrambled layout
+   jnz ellipse_precomp2_j1
+   lea si, ellipse_precomp2_jump1
+   mov WORD PTR cs:[jmp_addr], si
+   jmp ellipse_precomp2_jump_done
+ellipse_precomp2_j1:
+   dec ax
+   jnz ellipse_precomp2_j2
+   lea si, ellipse_precomp2_jump2
+   mov WORD PTR cs:[jmp_addr], si
+   jmp ellipse_precomp2_jump_done
+ellipse_precomp2_j2:
+   dec ax
+   jnz ellipse_precomp2_j3
+   lea si, ellipse_precomp2_jump3
+   mov WORD PTR cs:[jmp_addr], si
+   jmp ellipse_precomp2_jump_done
+ellipse_precomp2_j3:
+   lea si, ellipse_precomp2_jump4
+   mov WORD PTR cs:[jmp_addr], si
+   
+
+ellipse_precomp2_jump_done:
+
+   mov ah, [colour]     ; patch colours in
+   mov al, ah
+   mov WORD PTR cs:[ellipse_precomp2_patch3 + 1], ax
+   mov WORD PTR cs:[ellipse_precomp2_patch5 + 1], ax
+   ror ah, 1
+   ror ah, 1
+   mov al, ah
+   mov WORD PTR cs:[ellipse_precomp2_patch4 + 1], ax
+   mov WORD PTR cs:[ellipse_precomp2_patch8 + 1], ax
+   ror ah, 1
+   ror ah, 1
+   mov al, ah
+   mov WORD PTR cs:[ellipse_precomp2_patch1 + 1], ax
+   mov WORD PTR cs:[ellipse_precomp2_patch7 + 1], ax
+   ror ah, 1
+   ror ah, 1
+   mov al, ah 
+   mov WORD PTR cs:[ellipse_precomp2_patch2 + 1], ax
+   mov WORD PTR cs:[ellipse_precomp2_patch6 + 1], ax
+
+   xor bx, bx           ; distance between lines above and below axis
+   xor ch, ch           ; loop uses cx, not cl
+
+   lea bp, _ellipse_data
+
+   mov dh, BYTE PTR cs:[bp]
+   inc bp
+   mov cl, BYTE PTR cs:[bp]
+   inc bp
+   mov dl, BYTE PTR cs:[bp]
+   inc bp 
+
+   jmp cs:[jmp_addr] 
+                        ; part of horizontalish part moved to shorten jump
+ellipse_precomp2_donev3:
+   mov dh, BYTE PTR cs:[bp]
+   inc bp
+   mov cl, BYTE PTR cs:[bp]
+   inc bp
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   mov ah, [di+bx]
+   mov al, [di]
+   jmp ellipse_precomp2_h3   
+
+                        ; verticalish part of ellipse
+
+   ALIGN 2
+ellipse_precomp2_jump3:
+   mov ah, [di+bx]      ; draw pixel above axis
+   mov al, [di]         ; draw pixel below axis
+   and ax, 0f3f3h
+ellipse_precomp2_patch2:
+   or ax, 0c0ch
+   mov [di+bx], ah
+   mov [di], al
+
+   add di, sp           ; update offset
+   xor sp, 0c050h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   shr dl, 1
+   jc ellipse_precomp2_x4
+
+ellipse_precomp2_x3:
+   loop ellipse_precomp2_jump3
+   mov cl, 8
+   dec dh                      ; check if done verticalish
+   jz ellipse_precomp2_donev3  ; done verticalish
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp ellipse_precomp2_jump3
+
+   ALIGN 2
+ellipse_precomp2_jump4:
+   mov ah, [di+bx]      ; draw pixel above axis
+   mov al, [di]         ; draw pixel below axis
+   and ax, 0fcfch
+ellipse_precomp2_patch3:
+   or ax, 0303h
+   mov [di+bx], ah
+   mov [di], al
+
+   add di, sp           ; update offset
+   xor sp, 0c050h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   shr dl, 1
+   jc ellipse_precomp2_x1
+
+ellipse_precomp2_x4:
+   loop ellipse_precomp2_jump4
+   mov cl, 8
+   dec dh                      ; check if done verticalish
+   jz ellipse_precomp2_donev4  ; done verticalish
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp ellipse_precomp2_jump4
+
+   ALIGN 2
+ellipse_precomp2_jump2:
+   mov ah, [di+bx]      ; draw pixel above axis
+   mov al, [di]         ; draw pixel below axis
+   and ax, 0cfcfh
+ellipse_precomp2_patch1:
+   or ax, 03030h
+   mov [di+bx], ah
+   mov [di], al
+
+   add di, sp           ; update offset
+   xor sp, 0c050h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   shr dl, 1
+   jc ellipse_precomp2_x3
+
+ellipse_precomp2_x2:
+   loop ellipse_precomp2_jump2
+   mov cl, 8
+   dec dh                      ; check if done verticalish
+   jz ellipse_precomp2_donev2  ; done verticalish
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp ellipse_precomp2_jump2
+
+   ALIGN 2
+ellipse_precomp2_jump1:
+   mov ah, [di+bx]      ; draw pixel above axis
+   mov al, [di]         ; draw pixel below axis
+   and ax, 03f3fh
+ellipse_precomp2_patch4:
+   or ax, 0c0c0h
+   mov [di+bx], ah
+   mov [di], al
+
+   add di, sp           ; update offset
+   xor sp, 0c050h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   shr dl, 1
+   jc ellipse_precomp2_x2
+   dec di
+
+ellipse_precomp2_x1:
+   inc di
+   loop ellipse_precomp2_jump1
+   mov cl, 8
+   dec dh                      ; check if done verticalish
+   jz ellipse_precomp2_donev1  ; done verticalish
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp ellipse_precomp2_jump1
+
+                        ; horizontalish part of ellipse
+   
+ellipse_precomp2_donev4:
+   mov dh, BYTE PTR cs:[bp]
+   inc bp
+   mov cl, BYTE PTR cs:[bp]
+   inc bp
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   mov ah, [di+bx]
+   mov al, [di]
+   jmp ellipse_precomp2_h4   
+
+ellipse_precomp2_donev2:
+   mov dh, BYTE PTR cs:[bp]
+   inc bp
+   mov cl, BYTE PTR cs:[bp]
+   inc bp
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   mov ah, [di+bx]
+   mov al, [di]
+   jmp ellipse_precomp2_h2   
+
+ellipse_precomp2_donev1:
+
+   mov dh, BYTE PTR cs:[bp]
+   inc bp
+   mov cl, BYTE PTR cs:[bp]
+   inc bp
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp ellipse_precomp2_h1   
+
+
+ellipse_precomp2_doneh1:
+   mov [di+bx], ah
+   mov [di], al
+
+   mov WORD PTR sp, cs:[sp_save]
+   sti
+   
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+
+
+ellipse_precomp2_byte1:
+   mov cl, 8
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   dec dh                      ; check if done horizontalish
+   jz ellipse_precomp2_doneh1  ; done horizontalish
+   jmp ellipse_precomp2_h1
+
+ellipse_precomp2_byte2:
+   mov cl, 8
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   dec dh                      ; check if done horizontalish
+   jz ellipse_precomp2_doneh1  ; done horizontalish
+   jmp ellipse_precomp2_h3
+
+
+ellipse_precomp2_h1:
+   mov ah, [di+bx]
+   mov al, [di]
+   and ax, 03f3fh
+ellipse_precomp2_patch8:
+   or ax, 0c0c0h
+
+   mov [di+bx], ah
+   mov [di], al
+
+   shr dl, 1
+   jc ellipse_precomp2_skip_y1
+
+   add di, sp
+   xor sp, 0c050h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines
+
+ellipse_precomp2_skip_y1:
+   dec cl
+   jz ellipse_precomp2_byte1 ; skip extra byte
+
+
+ellipse_precomp2_h2:
+   and ax, 0cfcfh
+ellipse_precomp2_patch7:
+   or ax, 03030h
+
+   shr dl, 1
+   jc ellipse_precomp2_skip_y2
+   
+   mov [di+bx], ah
+   mov [di], al
+
+   add di, sp
+   xor sp, 0c050h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines
+
+   mov ah, [di+bx]
+   mov al, [di]
+
+ellipse_precomp2_skip_y2:
+   dec cl
+   jz ellipse_precomp2_byte2
+
+
+ellipse_precomp2_h3:
+   and ax, 0f3f3h
+ellipse_precomp2_patch6:
+   or ax, 0c0ch                     
+
+   shr dl, 1
+   jc ellipse_precomp2_skip_y3
+   
+   mov [di+bx], ah
+   mov [di], al
+
+   add di, sp
+   xor sp, 0c050h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   mov ah, [di+bx]
+   mov al, [di]
+
+ellipse_precomp2_skip_y3:
+   dec cl
+   jz ellipse_precomp2_byte3
+
+
+ellipse_precomp2_h4:
+   and ax, 0fcfch
+ellipse_precomp2_patch5:
+   or ax, 0303h                     
+
+   shr dl, 1
+   jc ellipse_precomp2_skip_y4
+   
+   mov [di+bx], ah
+   mov [di], al
+   
+   add di, sp
+   xor sp, 0c050h       ; update offset update for odd<->even
+   sub bx, 80           ; decrement/increment y lines 
+
+   mov ah, [di+bx]
+   mov al, [di]
+
+ellipse_precomp2_skip_y4:
+   inc di          
+   dec cl
+   jz ellipse_precomp2_byte4
+
+   jmp ellipse_precomp2_h1
+
+
+ellipse_precomp2_byte3:
+   mov cl, 8
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   dec dh                      ; check if done horizontalish
+   jz ellipse_precomp2_doneh2  ; done horizontalish
+   jmp ellipse_precomp2_h4
+   
+
+ellipse_precomp2_byte4:
+   mov cl, 8
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   dec dh                      ; check if done horizontalish
+   jz ellipse_precomp2_doneh2_skip  ; done horizontalish
+   jmp ellipse_precomp2_h1
+
+
+ellipse_precomp2_doneh2:
+   mov [di+bx], ah
+   mov [di], al
+
+ellipse_precomp2_doneh2_skip:
+   mov WORD PTR sp, cs:[sp_save]
+   sti
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+_cga_draw_ellipse_precomp2 ENDP
 
    END
