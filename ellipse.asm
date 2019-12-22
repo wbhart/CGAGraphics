@@ -2130,15 +2130,18 @@ ellipse_precomp2_h1:
 ellipse_precomp2_patch8:
    or ax, 0c0c0h
 
-   mov [di+bx], ah
-   mov [di], al
-
    shr dl, 1
    jc ellipse_precomp2_skip_y1
+
+   mov [di+bx], ah
+   mov [di], al
 
    add di, sp
    xor sp, 0c050h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines
+
+   mov ah, [di+bx]
+   mov al, [di]
 
 ellipse_precomp2_skip_y1:
    dec cl
@@ -2196,18 +2199,15 @@ ellipse_precomp2_h4:
 ellipse_precomp2_patch5:
    or ax, 0303h                     
 
-   shr dl, 1
-   jc ellipse_precomp2_skip_y4
-   
    mov [di+bx], ah
    mov [di], al
+   
+   shr dl, 1
+   jc ellipse_precomp2_skip_y4
    
    add di, sp
    xor sp, 0c050h       ; update offset update for odd<->even
    sub bx, 80           ; decrement/increment y lines 
-
-   mov ah, [di+bx]
-   mov al, [di]
 
 ellipse_precomp2_skip_y4:
    inc di          
