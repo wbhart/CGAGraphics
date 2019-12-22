@@ -1514,21 +1514,21 @@ ellipse_precomp1_jump_done:
 
    lea bp, _ellipse_data
 
-   mov dh, cs:[bp]
+   mov dh, BYTE PTR cs:[bp]
    inc bp
-   mov cl, cs:[bp]
+   mov cl, BYTE PTR cs:[bp]
    inc bp
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp 
 
    jmp cs:[jmp_addr] 
                         ; part of horizontalish part moved to shorten jump
 ellipse_precomp1_donev3:
-   mov dh, cs:[bp]
+   mov dh, BYTE PTR cs:[bp]
    inc bp
-   mov cl, cs:[bp]
+   mov cl, BYTE PTR cs:[bp]
    inc bp
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
    mov ah, [di+bx]
    mov al, [di]
@@ -1558,9 +1558,9 @@ ellipse_precomp1_x3:
    mov cl, 8
    dec dh                      ; check if done verticalish
    jz ellipse_precomp1_donev3  ; done verticalish
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
-   loop ellipse_precomp1_jump3
+   jmp ellipse_precomp1_jump3
 
    ALIGN 2
 ellipse_precomp1_jump4:
@@ -1582,17 +1582,17 @@ ellipse_precomp1_patch3:
    loop ellipse_precomp1_jump4   ; check if done verticalish
    jmp ellipse_precomp1_donev4  ; done verticalish
 
-   ALIGN 2
 ellipse_precomp1_x4:
    dec di
    loop ellipse_precomp1_jump4
    mov cl, 8
    dec dh                      ; check if done verticalish
    jz ellipse_precomp1_donev4  ; done verticalish
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
-   loop ellipse_precomp1_jump4
+   jmp ellipse_precomp1_jump4
 
+   ALIGN 2
 ellipse_precomp1_jump2:
    mov ah, [di+bx]      ; draw pixel above axis
    mov al, [di]         ; draw pixel below axis
@@ -1614,9 +1614,9 @@ ellipse_precomp1_x2:
    mov cl, 8
    dec dh                      ; check if done verticalish
    jz ellipse_precomp1_donev2  ; done verticalish
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
-   loop ellipse_precomp1_jump2
+   jmp ellipse_precomp1_jump2
 
    ALIGN 2
 ellipse_precomp1_jump1:
@@ -1640,27 +1640,27 @@ ellipse_precomp1_x1:
    mov cl, 8
    dec dh                      ; check if done verticalish
    jz ellipse_precomp1_donev1  ; done verticalish
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
-   loop ellipse_precomp1_jump1
+   jmp ellipse_precomp1_jump1
 
                         ; horizontalish part of ellipse
    
 ellipse_precomp1_donev4:
-   mov dh, cs:[bp]
+   mov dh, BYTE PTR cs:[bp]
    inc bp
-   mov cl, cs:[bp]
+   mov cl, BYTE PTR cs:[bp]
    inc bp
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
    jmp ellipse_precomp1_h4   
 
 ellipse_precomp1_donev2:
-   mov dh, cs:[bp]
+   mov dh, BYTE PTR cs:[bp]
    inc bp
-   mov cl, cs:[bp]
+   mov cl, BYTE PTR cs:[bp]
    inc bp
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
    mov ah, [di+bx]
    mov al, [di]
@@ -1668,11 +1668,11 @@ ellipse_precomp1_donev2:
 
 ellipse_precomp1_donev1:
 
-   mov dh, cs:[bp]
+   mov dh, BYTE PTR cs:[bp]
    inc bp
-   mov cl, cs:[bp]
+   mov cl, BYTE PTR cs:[bp]
    inc bp
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
    mov ah, [di+bx]
    mov al, [di]
@@ -1695,7 +1695,7 @@ ellipse_precomp1_doneh1:
 
 ellipse_precomp1_byte4:
    mov cl, 8
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp1_doneh1  ; done horizontalish
@@ -1703,7 +1703,7 @@ ellipse_precomp1_byte4:
 
 ellipse_precomp1_byte3:
    mov cl, 8
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp1_doneh1  ; done horizontalish
@@ -1805,7 +1805,7 @@ ellipse_precomp1_skip_y1:
 
 ellipse_precomp1_byte2:
    mov cl, 8
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp1_doneh2  ; done horizontalish
@@ -1813,7 +1813,7 @@ ellipse_precomp1_byte2:
 
 ellipse_precomp1_byte1:
    mov cl, 8
-   mov dl, cs:[bp]
+   mov dl, BYTE PTR cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
    jz ellipse_precomp1_doneh2_skip  ; done horizontalish
