@@ -1450,7 +1450,7 @@ _get_ellipse_data ENDP
 
    PUBLIC _cga_draw_ellipse_precomp1
 _cga_draw_ellipse_precomp1 PROC
-   ARG x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE
+   ARG x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE, arr:WORD
    ; ellipse with centre (x0, y0) and semiradius in the x-direction of r
    ; and semiradius in the y-direction of s
    ; draws only the right side of the ellipse
@@ -1539,7 +1539,7 @@ ellipse_precomp1_jump_done:
    mov WORD PTR cs:[ellipse_precomp1_patch2 + 1], ax
    mov WORD PTR cs:[ellipse_precomp1_patch6 + 1], ax
 
-   lea bp, _ellipse_data
+   mov bp, [arr]
 
    mov dh, BYTE PTR cs:[bp] ; outer loop
    inc bp
@@ -1933,7 +1933,7 @@ _cga_draw_ellipse_precomp1 ENDP
 
    PUBLIC _cga_draw_ellipse_precomp2
 _cga_draw_ellipse_precomp2 PROC
-   ARG x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE
+   ARG x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE, arr:WORD
    ; ellipse with centre (x0, y0) and semiradius in the x-direction of r
    ; and semiradius in the y-direction of s
    ; draws only the right side of the ellipse
@@ -2022,7 +2022,7 @@ ellipse_precomp2_jump_done:
    mov WORD PTR cs:[ellipse_precomp2_patch2 + 1], ax
    mov WORD PTR cs:[ellipse_precomp2_patch6 + 1], ax
 
-   lea bp, _ellipse_data
+   mov bp, [arr]
 
    mov dh, BYTE PTR cs:[bp]
    inc bp
@@ -2418,7 +2418,7 @@ _cga_draw_ellipse_precomp2 ENDP
 
    PUBLIC _cga_draw_ellipse_precompute
 _cga_draw_ellipse_precompute PROC
-   ARG r:WORD, s:WORD
+   ARG arr:WORD, r:WORD, s:WORD
    ; precompute ellipse with semiradius in the x-direction of r
    ; and semiradius in the y-direction of s
    ; di: offset of array, ch: direction bits, cl: inner loop count,
@@ -2492,6 +2492,7 @@ ellipse_precompute_n2:
    rcl ax, 1
    loop ellipse_precompute_n2
 
+   mov di, [arr]
 
    mov BYTE PTR cs:[ellipse_precompute_patch1 + 2], bh
    mov BYTE PTR cs:[ellipse_precompute_patch9 + 2], bh
@@ -2512,7 +2513,6 @@ ellipse_precompute_n2:
    mov cl, 8
 
    xor ch, ch           ; set up direction bits and array pointer
-   lea di, _ellipse_data
    add di, 2
 
                         ; verticalish part of ellipse
