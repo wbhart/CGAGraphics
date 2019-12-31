@@ -15,6 +15,7 @@ _cga_draw_ellipse1 PROC
    ; di, di+bx offsets of points above and below axis, ah:accum
    ; dx:deltax (hi16), sp:yinc, bp:deltay (hi16),
    ; al: deltax (lo8), ch: D (lo8), cl: deltay (lo8), si: D (hi16)
+   ; The idea to use the high 16 bits for branches is due to Reenigne
    push bp
    mov bp, sp
    push di
@@ -720,6 +721,7 @@ _cga_draw_ellipse2 PROC
    ; di, di+bx offsets of points above and below axis, ah:accum
    ; dx:deltax (hi16), sp:yinc, bp:deltay (hi16),
    ; al: deltax (lo8), ch: D (lo8), cl: deltay (lo8), si: D (hi16)
+   ; The idea to use the high 16 bits for branches is due to Reenigne
    push bp
    mov bp, sp
    push di
