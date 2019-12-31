@@ -1524,17 +1524,37 @@ ellipse_precomp1_jump_done:
    mov WORD PTR cs:[ellipse_precomp1_patch2 + 1], ax
    mov WORD PTR cs:[ellipse_precomp1_patch6 + 1], ax
 
-   xor bx, bx           ; distance between lines above and below axis
-   xor ch, ch           ; loop uses cx, not cl
-
    lea bp, _ellipse_data
 
    mov dh, BYTE PTR cs:[bp] ; outer loop
    inc bp
-   mov cl, BYTE PTR cs:[bp] ; inner loop (usually 8)
+
+   mov cl, BYTE PTR cs:[bp] ; inner loop verticalish
+   mov BYTE PTR cs:[ellipse_precomp1_patch9 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch10 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch11 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch12 + 2], cl
+
+   mov bx, bp
+   add bl, dh
+   adc bh, 0
+   mov cl, BYTE PTR cs:[bx + 4] ; inner loop horizontalish
+   mov BYTE PTR cs:[ellipse_precomp1_patch13 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch14 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch15 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch16 + 2], cl
+   
+   cmp dh, 0
+   je ellipse_precomp1_skip8v:
+   mov cl, 8
+ellipse_precomp1_skip8v:
+
    inc bp
    mov dl, BYTE PTR cs:[bp] ; first byte of data
    inc bp 
+
+   xor bx, bx           ; distance between lines above and below axis
+   xor ch, ch           ; loop uses cx, not cl
 
    jmp cs:[jmp_addr] 
                         ; part of horizontalish part moved to shorten jump
@@ -1542,6 +1562,10 @@ ellipse_precomp1_donev3:
    mov dh, BYTE PTR cs:[bp]
    inc bp
    mov cl, BYTE PTR cs:[bp]
+   cmp dh, 0
+   je ellipse_precomp1_skip8h1
+   mov cl, 8
+ellipse_precomp1_skip8h1:
    inc bp
    mov dl, BYTE PTR cs:[bp]
    inc bp
@@ -1679,6 +1703,10 @@ ellipse_precomp1_donev4:
    mov dh, BYTE PTR cs:[bp]
    inc bp
    mov cl, BYTE PTR cs:[bp]
+   cmp dh, 0
+   je ellipse_precomp1_skip8h2
+   mov cl, 8
+ellipse_precomp1_skip8h2:
    inc bp
    mov dl, BYTE PTR cs:[bp]
    inc bp
@@ -1688,6 +1716,10 @@ ellipse_precomp1_donev2:
    mov dh, BYTE PTR cs:[bp]
    inc bp
    mov cl, BYTE PTR cs:[bp]
+   cmp dh, 0
+   je ellipse_precomp1_skip8h3
+   mov cl, 8
+ellipse_precomp1_skip8h3:
    inc bp
    mov dl, BYTE PTR cs:[bp]
    inc bp
@@ -1700,6 +1732,10 @@ ellipse_precomp1_donev1:
    mov dh, BYTE PTR cs:[bp]
    inc bp
    mov cl, BYTE PTR cs:[bp]
+   cmp dh, 0
+   je ellipse_precomp1_skip8h4
+   mov cl, 8
+ellipse_precomp1_skip8h4:
    inc bp
    mov dl, BYTE PTR cs:[bp]
    inc bp
