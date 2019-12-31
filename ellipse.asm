@@ -2403,4 +2403,290 @@ ellipse_precomp2_doneh2_skip:
    ret   
 _cga_draw_ellipse_precomp2 ENDP
 
+   PUBLIC _cga_draw_ellipse_precompute
+_cga_draw_ellipse_precompute PROC
+   ARG r:WORD, s:WORD
+   ; precompute ellipse with semiradius in the x-direction of r
+   ; and semiradius in the y-direction of s
+   ; di: offset of array, ch: direction bits, cl: inner loop count,
+   ; ah: accum, dx: deltax (hi16), sp: outer loop count, bp: deltay (hi16),
+   ; al: deltax (lo8), bh: D (lo8), bl: deltay (lo8), si: D (hi16)
+   ; The idea to use the high 16 bits for branches is due to Reenigne
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
+
+   cli                  ; save and free up sp and ss
+   mov WORD PTR cs:[sp_save], sp
+   mov ax, ss
+   mov WORD PTR cs:[ss_save], ax
+
+
+   mov ax, [r]          ; n = max(1, 7 - (r + s + 1)/32)
+   add ax, [s]
+   inc ax
+   mov cl, 5
+   shr ax, cl
+   mov cx, 7
+   sub cl, al
+   adc cl, 0            ; loop will also repeat at least once
+
+   mov ax, [s]          ; c = s^2
+   mul al               
+   mov bl, ah           ; c << n in bx:al
+   xor bh, bh
+   mov dl, cl           ; save n
+ellipse_precompute_n1:
+   shl al, 1
+   rcl bx, 1
+   loop ellipse_precompute_n1
+
+   mov BYTE PTR cs:[ellipse_precompute_patch3 + 1], al
+   mov BYTE PTR cs:[ellipse_precompute_patch5 + 1], al
+   mov BYTE PTR cs:[ellipse_precompute_patch7 + 1], al
+   mov BYTE PTR cs:[ellipse_precompute_patch11 + 1], al
+   mov BYTE PTR cs:[ellipse_precompute_patch13 + 1], al
+
+   mov WORD PTR cs:[ellipse_precompute_patch4 + 2], bx
+   mov WORD PTR cs:[ellipse_precompute_patch6 + 2], bx
+   mov WORD PTR cs:[ellipse_precompute_patch8 + 2], bx
+   mov WORD PTR cs:[ellipse_precompute_patch12 + 2], bx
+   mov WORD PTR cs:[ellipse_precompute_patch14 + 2], bx
+
+   mov cx, [r]          ; deltax = 2c*r = 2*(s^2 << n)*r 
+   mul cl
+   mov cl, dl
+   mov si, ax
+   mov ax, [r]
+   mul bx
+   mov dx, ax
+   mov bx, si
+   add dl, bh
+   adc dh, 0
+   shl bl, 1
+   rcl dx, 1            ; dx:bl = deltax
+   
+   mov ax, [r]          ; ax:bh = 2a
+   mul al
+   mov bh, al
+   mov al, ah
+   xor ah, ah
+   inc cl
+ellipse_precompute_n2:
+   shl bh, 1
+   rcl ax, 1
+   loop ellipse_precompute_n2
+
+
+   mov BYTE PTR cs:[ellipse_precompute_patch1 + 2], bh
+   mov BYTE PTR cs:[ellipse_precompute_patch9 + 2], bh
+
+   mov WORD PTR cs:[ellipse_precompute_patch2 + 2], ax
+   mov WORD PTR cs:[ellipse_precompute_patch10 + 2], ax
+
+   shr ax, 1
+   rcr bh, 1
+   mov bp, ax
+   mov al, bl           ; dx:al = delta x
+   mov bl, bh           ; bp:cl = delta y = a
+   
+   xor si, si           ; si:bh = D = 0
+   xor bh, bh
+
+   xor sp, sp           ; set up inner/outer loop counters
+   mov cl, 8
+
+   xor ch, ch           ; set up direction bits and array pointer
+   lea di, _ellipse_data
+   add di, 2
+
+                        ; verticalish part of ellipse
+ellipse_precompute_jump:
+   add bh, bl           ; D += dy
+   adc si, bp
+ellipse_precompute_patch1:          
+   add bl, 012h         ; dy += 2r^2
+ellipse_precompute_patch2:
+   adc bp, 01234h
+
+   shr dx, 1            ; if dx/2 <= D, decrement x
+   lahf
+   cmp dx, si
+   jle ellipse_precompute_x
+
+   sahf
+   rcl dx, 1
+
+   clc
+   rcr ch, 1
+
+   cmp dx, bp           ; check if done verticalish
+   jae ellipse_precompute_jump
+   jmp ellipse_precompute_donev  ; done verticalish
+
+ellipse_precompute_x:
+   sahf
+   rcl dx, 1
+
+   stc
+   rcr ch, 1
+   dec cl
+   jnz ellipse_precompute_nosave1
+
+   mov cl, 8
+   mov BYTE PTR cs:[di], ch
+   inc sp
+   inc di
+
+ellipse_precompute_nosave1:
+ellipse_precompute_patch3: 
+   sub al, 012h         ; dx -= s^2
+ellipse_precompute_patch4: 
+   sbb dx, 01234h
+   sub bh, al           ; D -= dx
+   sbb si, dx
+ellipse_precompute_patch5: 
+   sub al, 012h         ; dx -= s^2
+ellipse_precompute_patch6: 
+   sbb dx, 01234h
+
+   dec cl
+   jnz ellipse_precompute_nosave2
+
+   mov cl, 8
+   mov BYTE PTR cs:[di], ch
+   inc sp
+   inc di
+
+ellipse_precompute_nosave2:
+
+   cmp dx, bp           ; check if done verticalish 
+   jae ellipse_precompute_jump
+
+                        ; horizontalish part of ellipse
+ellipse_precompute_donev:
+                        ; write final bits, outer and inner loop values
+
+   cmp cl, 8
+   jne ellipse_precompute_nz1
+   xor cl, cl
+   dec sp
+   dec di
+ellipse_precompute_nz1:
+   shr ch, cl
+   mov BYTE PTR cs:[di], ch
+   
+   sub cl, 8
+   neg cl
+   sub di, sp
+   dec di
+   mov BYTE PTR cs:[di], cl
+   dec di
+   mov cx, sp
+   mov BYTE PTR cs:[di], cl
+   add di, sp
+   add di, 5
+
+   xor sp, sp           ; set up inner/outer loop counters
+   mov cl, 8
+
+   xor ch, ch           ; set up direction bits and array pointer
+
+   neg bh               ; D = -D
+   adc si, 0
+   neg si 
+
+
+ellipse_precompute_patch7:
+   sub al, 012h         ; dx -= s^2
+ellipse_precompute_patch8:
+   sbb dx, 01234h
+   add bh, al           ; D += dx
+   adc si, dx                     
+
+   shr bp, 1            ; if dy/2 < D, increment y
+   lahf
+   cmp bp, si
+   jge ellipse_precompute_skip_y4
+   
+   sahf
+   rcl bp, 1
+
+   sub bh, bl           ; D -= dy
+   sbb si, bp
+ellipse_precompute_patch9:
+   add bl, 012h         ; dy += 2r^2
+ellipse_precompute_patch10:
+   adc bp, 01234h
+
+   dec cl
+   jnz ellipse_precompute_nosave3
+
+   mov cl, 8
+   mov BYTE PTR cs:[di], ch
+   inc sp
+   inc di
+
+ellipse_precompute_nosave3:
+
+ellipse_precompute_patch11:
+   sub al, 012h         ; dx -= s^2
+ellipse_precompute_patch12:
+   sbb dx, 01234h
+   jge ellipse_precompute_h
+
+ellipse_precompute_skip_y4:          
+
+   sahf
+   rcl bp, 1
+
+   dec cl
+   jnz ellipse_precompute_nosave4
+
+   mov cl, 8
+   mov BYTE PTR cs:[di], ch
+   inc sp
+   inc di
+
+ellipse_precompute_nosave4:
+
+ellipse_precompute_patch13:
+   sub al, 012h         ; dx -= s^2
+ellipse_precompute_patch14:
+   sbb dx, 01234h
+   jge ellipse_precompute_h
+
+
+   cmp cl, 8            ; write final bits, outer and inner loop values
+   jne ellipse_precompute_nz2
+   xor cl, cl
+   dec sp
+   dec di
+ellipse_precompute_nz2:
+   shr ch, cl
+   mov BYTE PTR cs:[di], ch
+   
+   sub cl, 8
+   neg cl
+   sub di, sp
+   dec di
+   mov BYTE PTR cs:[di], cl
+   dec di
+   mov cx, sp
+   mov BYTE PTR cs:[di], cl
+
+
+   mov WORD PTR sp, cs:[sp_save]
+   mov WORD PTR ss, cs:[ss_save]
+   sti
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+_cga_draw_ellipse_precompute ENDP
+
    END
