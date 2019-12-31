@@ -1431,7 +1431,7 @@ _cga_draw_ellipse2 ENDP
    ; the bits specify when a vertical move is NOT made in the horizontalish part
    ; starting with the first pixel of the horizontalish part 
 
-   _ellipse_data DB 6, 5, 0, 65, 68, 169, 170, 221, 23, 9, 6, 2, 68, 74, 85, 107, 219, 221, 247, 247, 63
+   _ellipse_data DB 6, 5, 0, 65, 68, 169, 170, 221, 23, 9, 6, 8, 68, 74, 85, 107, 219, 221, 247, 247, 63
 
    PUBLIC _cga_draw_ellipse_precomp1
 _cga_draw_ellipse_precomp1 PROC
