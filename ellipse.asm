@@ -1428,12 +1428,25 @@ _cga_draw_ellipse2 ENDP
    ; always starting with the least significant bit
    ; the bits specify when a move should be made horizontally, for each pixel in
    ; the verticalish part, after the first pixel is drawn
-   ; then the horizontalish part is specified with the low r bits of c1 being used
-   ; first, then the bits of the other ci 
+   ; then the horizontalish part is specified with the the bits of the ci being
+   ; used, then the low r bits of c being used
    ; the bits specify when a vertical move is NOT made in the horizontalish part
    ; starting with the first pixel of the horizontalish part 
 
    _ellipse_data DB 6, 5, 0, 65, 68, 169, 170, 221, 23, 9, 6, 8, 68, 74, 85, 107, 219, 221, 247, 247, 63
+
+   PUBLIC _get_ellipse_data
+_get_ellipse_data PROC
+   ARG i:WORD
+   push bp
+   mov bp, sp
+   lea bx, _ellipse_data
+   add bx, [i]
+   mov al, BYTE PTR cs:[bx]
+   xor ah, ah
+   pop bp
+   ret
+_get_ellipse_data ENDP
 
    PUBLIC _cga_draw_ellipse_precomp1
 _cga_draw_ellipse_precomp1 PROC
@@ -2522,6 +2535,16 @@ ellipse_precompute_patch2:
    clc
    rcr ch, 1
 
+   dec cl
+   jnz ellipse_precompute_nosave1
+
+   mov cl, 8
+   mov BYTE PTR cs:[di], ch
+   inc sp
+   inc di
+
+ellipse_precompute_nosave1:
+
    cmp dx, bp           ; check if done verticalish
    jae ellipse_precompute_jump
    jmp ellipse_precompute_donev  ; done verticalish
@@ -2532,15 +2555,7 @@ ellipse_precompute_x:
 
    stc
    rcr ch, 1
-   dec cl
-   jnz ellipse_precompute_nosave1
 
-   mov cl, 8
-   mov BYTE PTR cs:[di], ch
-   inc sp
-   inc di
-
-ellipse_precompute_nosave1:
 ellipse_precompute_patch3: 
    sub al, 012h         ; dx -= s^2
 ellipse_precompute_patch4: 
@@ -2622,6 +2637,9 @@ ellipse_precompute_patch9:
 ellipse_precompute_patch10:
    adc bp, 01234h
 
+   clc
+   rcr ch, 1
+   
    dec cl
    jnz ellipse_precompute_nosave3
 
@@ -2642,6 +2660,9 @@ ellipse_precompute_skip_y4:
 
    sahf
    rcl bp, 1
+
+   stc
+   rcr ch, 1
 
    dec cl
    jnz ellipse_precompute_nosave4
