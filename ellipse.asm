@@ -1533,16 +1533,16 @@ ellipse_precomp1_jump_done:
    add bl, dh
    adc bh, 0
    mov cl, BYTE PTR cs:[bx + 4] ; inner loop horizontalish
-   mov BYTE PTR cs:[ellipse_precomp1_patch13 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch14 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch15 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch16 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch13 + 1], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch14 + 1], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch15 + 1], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch16 + 1], cl
 
    mov cl, BYTE PTR cs:[bp] ; inner loop verticalish
-   mov BYTE PTR cs:[ellipse_precomp1_patch9 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch10 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch11 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch12 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch9 + 1], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch10 + 1], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch11 + 1], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch12 + 1], cl
    
    cmp dh, 0
    je ellipse_precomp1_skip8v
