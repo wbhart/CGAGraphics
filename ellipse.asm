@@ -1417,12 +1417,12 @@ ellipse2_doneh2_skip:
 _cga_draw_ellipse2 ENDP
 
    ; precomputed ellipse data in format
-   ; m, n, b1, b2, b3, ..., bm, q, r, c1, c2, c3, ..., cq
+   ; m, n, b1, b2, b3, ..., bm, b, q, r, c1, c2, c3, ..., cq, c
    ; if the number of pixels in the verticalish part of the ellipse if s then
    ; s - 1 = 8*m + n where n lies in [1, 8]
    ; if the number of pixels in the horizontalish part of the ellipse is t then
    ; t = 8*q + r where r lies in [1, 8]
-   ; the low n bits of b1 are used first, then each of the bits of the remaining bi 
+   ; the bits of the bi are used first, finally the low n bits of b are used last 
    ; always starting with the least significant bit
    ; the bits specify when a move should be made horizontally, for each pixel in
    ; the verticalish part, after the first pixel is drawn
