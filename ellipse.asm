@@ -1431,7 +1431,7 @@ _cga_draw_ellipse2 ENDP
    ; the bits specify when a vertical move is NOT made in the horizontalish part
    ; starting with the first pixel of the horizontalish part 
 
-   _ellipse_data DB 7, 5, 0, 8, 34, 74, 85, 237, 190, 10, 6, 8, 16, 41, 85, 173, 109, 119, 223, 223, 255
+   _ellipse_data DB 6, 5, 0, 65, 18, 82, 175, 109, 30, 9, 6, 32, 64, 165, 86, 181, 181, 223, 127, 127, 63
 
    PUBLIC _cga_draw_ellipse_precomp1
 _cga_draw_ellipse_precomp1 PROC
@@ -1529,12 +1529,6 @@ ellipse_precomp1_jump_done:
    mov dh, BYTE PTR cs:[bp] ; outer loop
    inc bp
 
-   mov cl, BYTE PTR cs:[bp] ; inner loop verticalish
-   mov BYTE PTR cs:[ellipse_precomp1_patch9 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch10 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch11 + 2], cl
-   mov BYTE PTR cs:[ellipse_precomp1_patch12 + 2], cl
-
    mov bx, bp
    add bl, dh
    adc bh, 0
@@ -1543,9 +1537,15 @@ ellipse_precomp1_jump_done:
    mov BYTE PTR cs:[ellipse_precomp1_patch14 + 2], cl
    mov BYTE PTR cs:[ellipse_precomp1_patch15 + 2], cl
    mov BYTE PTR cs:[ellipse_precomp1_patch16 + 2], cl
+
+   mov cl, BYTE PTR cs:[bp] ; inner loop verticalish
+   mov BYTE PTR cs:[ellipse_precomp1_patch9 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch10 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch11 + 2], cl
+   mov BYTE PTR cs:[ellipse_precomp1_patch12 + 2], cl
    
    cmp dh, 0
-   je ellipse_precomp1_skip8v:
+   je ellipse_precomp1_skip8v
    mov cl, 8
 ellipse_precomp1_skip8v:
 
