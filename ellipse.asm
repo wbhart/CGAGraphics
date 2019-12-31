@@ -1430,7 +1430,7 @@ _cga_draw_ellipse2 ENDP
    ; first, then the bits of the other ci 
    ; the bits specify when a vertical move is NOT made in the horizontalish part
    ; starting with the first pixel of the horizontalish part 
-   
+
    _ellipse_data DB 7, 5, 0, 8, 34, 74, 85, 237, 190, 10, 6, 8, 16, 41, 85, 173, 109, 119, 223, 223, 255
 
    PUBLIC _cga_draw_ellipse_precomp1
@@ -1529,11 +1529,11 @@ ellipse_precomp1_jump_done:
 
    lea bp, _ellipse_data
 
-   mov dh, BYTE PTR cs:[bp]
+   mov dh, BYTE PTR cs:[bp] ; outer loop
    inc bp
-   mov cl, BYTE PTR cs:[bp]
+   mov cl, BYTE PTR cs:[bp] ; inner loop (usually 8)
    inc bp
-   mov dl, BYTE PTR cs:[bp]
+   mov dl, BYTE PTR cs:[bp] ; first byte of data
    inc bp 
 
    jmp cs:[jmp_addr] 
@@ -1570,9 +1570,13 @@ ellipse_precomp1_patch2:
 
 ellipse_precomp1_x3:
    loop ellipse_precomp1_jump3
-   mov cl, 8
    dec dh                      ; check if done verticalish
-   jz ellipse_precomp1_donev3  ; done verticalish
+   jl ellipse_precomp1_donev3  ; done verticalish
+ellipse_precomp1_patch9:
+   mov cl, 012h
+   jz ellipse_precomp1_skip8_1
+   mov cl, 8
+ellipse_precomp1_skip8_1:
    mov dl, BYTE PTR cs:[bp]
    inc bp
    jmp ellipse_precomp1_jump3
@@ -1598,9 +1602,13 @@ ellipse_precomp1_patch3:
 ellipse_precomp1_x4:
    dec di
    loop ellipse_precomp1_jump4
-   mov cl, 8
    dec dh                      ; check if done verticalish
-   jz ellipse_precomp1_donev4  ; done verticalish
+   jl ellipse_precomp1_donev4  ; done verticalish
+ellipse_precomp1_patch10:
+   mov cl, 012h
+   jz ellipse_precomp1_skip8_2
+   mov cl, 8
+ellipse_precomp1_skip8_2:
    mov dl, BYTE PTR cs:[bp]
    inc bp
    jmp ellipse_precomp1_jump4
@@ -1624,9 +1632,13 @@ ellipse_precomp1_patch1:
 
 ellipse_precomp1_x2:
    loop ellipse_precomp1_jump2
-   mov cl, 8
    dec dh                      ; check if done verticalish
-   jz ellipse_precomp1_donev2  ; done verticalish
+   jl ellipse_precomp1_donev2  ; done verticalish
+ellipse_precomp1_patch11:
+   mov cl, 012h
+   jz ellipse_precomp1_skip8_3
+   mov cl, 8
+ellipse_precomp1_skip8_3:
    mov dl, BYTE PTR cs:[bp]
    inc bp
    jmp ellipse_precomp1_jump2
@@ -1650,9 +1662,13 @@ ellipse_precomp1_patch4:
 
 ellipse_precomp1_x1:
    loop ellipse_precomp1_jump1
-   mov cl, 8
    dec dh                      ; check if done verticalish
-   jz ellipse_precomp1_donev1  ; done verticalish
+   jl ellipse_precomp1_donev1  ; done verticalish
+ellipse_precomp1_patch12:
+   mov cl, 012h
+   jz ellipse_precomp1_skip8_4
+   mov cl, 8
+ellipse_precomp1_skip8_4:
    mov dl, BYTE PTR cs:[bp]
    inc bp
    jmp ellipse_precomp1_jump1
@@ -1707,19 +1723,27 @@ ellipse_precomp1_doneh1:
 
 
 ellipse_precomp1_byte4:
-   mov cl, 8
    mov dl, BYTE PTR cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
-   jz ellipse_precomp1_doneh1  ; done horizontalish
+   jl ellipse_precomp1_doneh1  ; done horizontalish
+ellipse_precomp1_patch13:
+   mov cl, 012h
+   jz ellipse_precomp1_skip8_5
+   mov cl, 8
+ellipse_precomp1_skip8_5:
    jmp ellipse_precomp1_h3
 
 ellipse_precomp1_byte3:
-   mov cl, 8
    mov dl, BYTE PTR cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
-   jz ellipse_precomp1_doneh1  ; done horizontalish
+   jl ellipse_precomp1_doneh1  ; done horizontalish
+ellipse_precomp1_patch14:
+   mov cl, 012h
+   jz ellipse_precomp1_skip8_6
+   mov cl, 8
+ellipse_precomp1_skip8_6:
    jmp ellipse_precomp1_h2
 
 
@@ -1817,19 +1841,27 @@ ellipse_precomp1_skip_y1:
 
 
 ellipse_precomp1_byte2:
-   mov cl, 8
    mov dl, BYTE PTR cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
-   jz ellipse_precomp1_doneh2  ; done horizontalish
+   jl ellipse_precomp1_doneh2  ; done horizontalish
+ellipse_precomp1_patch15:
+   mov cl, 012h
+   jz ellipse_precomp1_skip8_7
+   mov cl, 8
+ellipse_precomp1_skip8_7:
    jmp ellipse_precomp1_h1
 
 ellipse_precomp1_byte1:
-   mov cl, 8
    mov dl, BYTE PTR cs:[bp]
    inc bp
    dec dh                      ; check if done horizontalish
-   jz ellipse_precomp1_doneh2_skip  ; done horizontalish
+   jl ellipse_precomp1_doneh2_skip  ; done horizontalish
+ellipse_precomp1_patch16:
+   mov cl, 012h
+   jz ellipse_precomp1_skip8_8
+   mov cl, 8
+ellipse_precomp1_skip8_8:
    jmp ellipse_precomp1_h4
 
 
