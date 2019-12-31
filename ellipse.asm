@@ -2598,6 +2598,7 @@ ellipse_precompute_nz1:
    adc si, 0
    neg si 
 
+ellipse_precompute_h:
 
 ellipse_precompute_patch7:
    sub al, 012h         ; dx -= s^2
