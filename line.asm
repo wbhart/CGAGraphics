@@ -2981,7 +2981,7 @@ _cga_draw_line_blank3 ENDP
 _cga_draw_line_precomp1 PROC
    ARG x0:WORD, y0:WORD, colour:BYTE, arr:WORD
    ; verticalish line with starting point (x0, y0)
-   ; draws only left moving lines
+   ; draws only downward, left moving lines
    ; di: offset of points, ax: accum
    ; sp: yinc, dh: iter/8, cx: iter upto 8, bp: index into cs array
    ; dl: direction bits 
@@ -3099,7 +3099,7 @@ line_precomp1_jump3:
    mov al, [di]         ; draw pixel
    and al, 0f3h
 line_precomp1_patch2:
-   or ax, 0ch
+   or al, 0ch
    mov [di], al
 
    add di, sp           ; update offset
@@ -3153,9 +3153,9 @@ line_precomp1_skip8_2:
    ALIGN 2
 line_precomp1_jump2:
    mov al, [di]         ; draw pixel
-   and ax, 0cfh
+   and al, 0cfh
 line_precomp1_patch1:
-   or ax, 030h
+   or al, 030h
    mov [di], al
 
    add di, sp           ; update offset
@@ -3180,9 +3180,9 @@ line_precomp1_skip8_3:
    ALIGN 2
 line_precomp1_jump1:
    mov al, [di]         ; draw pixel
-   and ax, 03fh
+   and al, 03fh
 line_precomp1_patch4:
-   or ax, 0c0h
+   or al, 0c0h
    mov [di], al
 
    add di, sp           ; update offset
