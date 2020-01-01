@@ -2979,7 +2979,7 @@ _cga_draw_line_blank3 ENDP
 
    PUBLIC _cga_draw_line_precomp1
 _cga_draw_line_precomp1 PROC
-   ARG x0:WORD, y0:WORD, colour:BYTE, arr:WORD
+   ARG x0:WORD, y0:WORD, colour:BYTE, arr_data:WORD
    ; verticalish line with starting point (x0, y0)
    ; draws only downward, left moving lines
    ; di: offset of points, ax: accum
@@ -3058,7 +3058,7 @@ line_precomp1_jump_done:
    ror ah, 1
    mov BYTE PTR cs:[line_precomp1_patch2 + 1], ah
 
-   mov bp, [arr]
+   mov bp, [arr_data]
 
    mov dh, BYTE PTR cs:[bp] ; outer loop
    inc bp
