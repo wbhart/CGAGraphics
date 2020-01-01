@@ -1,5 +1,11 @@
-cgademo.exe: cgademo.c cga.obj
-	tcc -G -O -Z cgademo cga.obj
+cgademo3.exe: cgademo3.c line.obj circle.obj ellipse.obj
+	tcc -G -O -Z cgademo3 line.obj circle.obj ellipse.obj
 
-cga.obj: cga.asm
-	tasm /mx cga.asm
+line.obj: line.asm
+	tasm /mx line.asm
+
+circle.obj: circle.asm
+	tasm /mx circle.asm
+
+ellipse.obj: ellipse.asm
+	tasm /mx ellipse.asm
