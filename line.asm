@@ -2977,4 +2977,245 @@ line_blank3_done:
    ret
 _cga_draw_line_blank3 ENDP
 
+   PUBLIC _cga_draw_line_precomp1
+_cga_draw_line_precomp1 PROC
+   ARG x0:WORD, y0:WORD, colour:BYTE, arr:WORD
+   ; verticalish line with starting point (x0, y0)
+   ; draws only left moving lines
+   ; di: offset of points, ax: accum
+   ; sp: yinc, dh: iter/8, cx: iter upto 8, bp: index into cs array
+   ; dl: direction bits 
+   push bp
+   mov bp, sp
+   push di
+   push si
+   push ds
+
+   mov ax, 0b800h       ; set DS to segment for CGA memory
+   mov ds, ax
+
+   cli                  ; save and free up sp and ss
+   mov WORD PTR cs:[sp_save], sp
+
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di           
+   shr ax, 1
+   mov sp, 8192         ; also compute ydelta
+   jnc line_precomp1_y_even
+   mov sp, -8112
+line_precomp1_y_even:
+   sbb di, 0
+   and di, 8192
+   shl ax, 1            
+   shl ax, 1
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+   shl ax, 1
+   shl ax, 1
+   add di, ax
+
+   mov dx, [x0]         ; adjust offset for column x0
+   mov ax, dx
+   shr dx, 1            
+   shr dx, 1
+   add di, dx
+
+                        ; compute jump offset    
+   and ax, 3            ; deal with scrambled layout
+   jnz line_precomp1_j1
+   lea si, line_precomp1_jump1
+   mov WORD PTR cs:[jmp_addr], si
+   jmp line_precomp1_jump_done
+line_precomp1_j1:
+   dec ax
+   jnz line_precomp1_j2
+   lea si, line_precomp1_jump2
+   mov WORD PTR cs:[jmp_addr], si
+   jmp line_precomp1_jump_done
+line_precomp1_j2:
+   dec ax
+   jnz line_precomp1_j3
+   lea si, line_precomp1_jump3
+   mov WORD PTR cs:[jmp_addr], si
+   jmp line_precomp1_jump_done
+line_precomp1_j3:
+   lea si, line_precomp1_jump4
+   mov WORD PTR cs:[jmp_addr], si
+   
+
+line_precomp1_jump_done:
+
+   mov ah, [colour]     ; patch colours in
+   mov BYTE PTR cs:[line_precomp1_patch3 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line_precomp1_patch4 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line_precomp1_patch1 + 1], ah
+   ror ah, 1
+   ror ah, 1
+   mov BYTE PTR cs:[line_precomp1_patch2 + 1], ah
+
+   mov bp, [arr]
+
+   mov dh, BYTE PTR cs:[bp] ; outer loop
+   inc bp
+
+   mov cl, BYTE PTR cs:[bp] ; inner loop
+   mov BYTE PTR cs:[line_precomp1_patch9 + 1], cl
+   mov BYTE PTR cs:[line_precomp1_patch10 + 1], cl
+   mov BYTE PTR cs:[line_precomp1_patch11 + 1], cl
+   mov BYTE PTR cs:[line_precomp1_patch12 + 1], cl
+   
+   cmp dh, 0
+   je line_precomp1_skip8v
+   mov cl, 8
+line_precomp1_skip8v:
+
+   inc bp
+   mov dl, BYTE PTR cs:[bp] ; first byte of data
+   inc bp 
+
+   xor ch, ch           ; loop uses cx, not cl
+
+   jmp cs:[jmp_addr] 
+                        ; part of horizontalish part moved to shorten jump
+line_precomp1_done2:
+
+   mov WORD PTR sp, cs:[sp_save]
+   sti
+   
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret  
+                        ; start drawing line
+
+   ALIGN 2
+line_precomp1_jump3:
+   mov al, [di]         ; draw pixel
+   and al, 0f3h
+line_precomp1_patch2:
+   or ax, 0ch
+   mov [di], al
+
+   add di, sp           ; update offset
+   xor sp, 0c050h       ; update offset update for odd<->even
+
+   shr dl, 1
+   jc line_precomp1_x2
+
+line_precomp1_x3:
+   loop line_precomp1_jump3
+   dec dh                      ; check if done verticalish
+   jl line_precomp1_done2  ; done
+line_precomp1_patch9:
+   mov cl, 012h
+   jz line_precomp1_skip8_1
+   mov cl, 8
+line_precomp1_skip8_1:
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp line_precomp1_jump3
+
+   ALIGN 2
+line_precomp1_jump4:
+   mov al, [di]         ; draw pixel
+   and al, 0fch
+line_precomp1_patch3:
+   or al, 03h
+   mov [di], al
+
+   add di, sp           ; update offset
+   xor sp, 0c050h       ; update offset update for odd<->even
+
+   shr dl, 1
+   jc line_precomp1_x3
+   inc di
+
+line_precomp1_x4:
+   dec di
+   loop line_precomp1_jump4
+   dec dh                      ; check if done verticalish
+   jl line_precomp1_done1  ; done
+line_precomp1_patch10:
+   mov cl, 012h
+   jz line_precomp1_skip8_2
+   mov cl, 8
+line_precomp1_skip8_2:
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp line_precomp1_jump4
+
+   ALIGN 2
+line_precomp1_jump2:
+   mov al, [di]         ; draw pixel
+   and ax, 0cfh
+line_precomp1_patch1:
+   or ax, 030h
+   mov [di], al
+
+   add di, sp           ; update offset
+   xor sp, 0c050h       ; update offset update for odd<->even
+
+   shr dl, 1
+   jc line_precomp1_x1
+
+line_precomp1_x2:
+   loop line_precomp1_jump2
+   dec dh                      ; check if done verticalish
+   jl line_precomp1_done1  ; done
+line_precomp1_patch11:
+   mov cl, 012h
+   jz line_precomp1_skip8_3
+   mov cl, 8
+line_precomp1_skip8_3:
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp line_precomp1_jump2
+
+   ALIGN 2
+line_precomp1_jump1:
+   mov al, [di]         ; draw pixel
+   and ax, 03fh
+line_precomp1_patch4:
+   or ax, 0c0h
+   mov [di], al
+
+   add di, sp           ; update offset
+   xor sp, 0c050h       ; update offset update for odd<->even
+
+   shr dl, 1
+   jc line_precomp1_x4
+
+line_precomp1_x1:
+   loop line_precomp1_jump1
+   dec dh                      ; check if done verticalish
+   jl line_precomp1_done1  ; done
+line_precomp1_patch12:
+   mov cl, 012h
+   jz line_precomp1_skip8_4
+   mov cl, 8
+line_precomp1_skip8_4:
+   mov dl, BYTE PTR cs:[bp]
+   inc bp
+   jmp line_precomp1_jump1
+
+                        ; done drawing line
+
+line_precomp1_done1:
+
+   mov WORD PTR sp, cs:[sp_save]
+   sti
+   
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret   
+_cga_draw_line_precomp1 ENDP
+
    END
