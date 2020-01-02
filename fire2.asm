@@ -41,7 +41,7 @@ cga_fire2_more_rand:
    mov ax, ds            ; copy random values in final row of array
    mov es, ax
    mov cx, 80
-   rep stosw
+   rep movsw
    
    push si
    
@@ -72,6 +72,8 @@ cga_fire2_loop80_15:
    add ax, bp
    shr ax, cl
    mov [si-159], ax     ; write values
+   shr al, 1
+   shr ah, 1
    shl al, cl
    add al, ah
    stosb                ; draw pixel
@@ -115,6 +117,8 @@ cga_fire2_loop80_5:
    shr ax, 1
    shr ax, 1
    mov [si-159], ax     ; write values
+   shr al, 1
+   shr ah, 1
    pop cx
    shl al, cl
    add al, ah
@@ -165,6 +169,8 @@ cga_fire2_loop80_2:
    shr ax, 1
    shr ax, 1
    mov [si-159], ax     ; write values
+   shr al, 1
+   shr ah, 1
    shl al, cl
    add al, ah
    stosb                ; draw pixel
