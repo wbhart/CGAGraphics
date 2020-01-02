@@ -79,6 +79,8 @@ cga_fire_loop50:
    and al, 15
 
 cga_fire_loop26:
+   push cx
+
    add ah, bl         ; compute sums
    add al, ah
    add ah, bh
@@ -157,7 +159,11 @@ cga_fire_loop26:
    shr bh, 1
    and dl, 15
 
-   loop cga_fire_loop26
+   pop cx
+   dec cx
+   jcxz cga_fire_loop26_done
+   jmp cga_fire_loop26
+cga_fire_loop26_done:
 
                       ; extra two iterations   
    add ah, bl         ; compute sums
