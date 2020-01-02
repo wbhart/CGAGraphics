@@ -90,7 +90,7 @@ cga_fire2_odd15:
 
    pop cx
    dec ch
-   jnz cga_fire2_loop_15
+   jnz cga_fire2_loop15
 
 
    mov ch, 5
@@ -134,7 +134,7 @@ cga_fire2_odd5:
 
    pop cx
    dec ch
-   jnz cga_fire2_loop_5
+   jnz cga_fire2_loop5
 
 
    mov ch, 2
@@ -183,7 +183,7 @@ cga_fire2_odd2:
 
    pop cx
    dec ch
-   jnz cga_fire2_loop_2
+   jnz cga_fire2_loop2
 
    pop si
    pop di
