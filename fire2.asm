@@ -45,6 +45,7 @@ cga_fire2_more_rand:
    
    push si
    
+   mov si, di
    sub si, 3521         ; move to start of fire array
 
    mov ax, 0b800h       ; set up CGA segment and offset
@@ -53,7 +54,9 @@ cga_fire2_more_rand:
    
    lodsw                ; load initial al, ah, dl, dh values
    mov dx, [si]
-
+   inc si
+   inc si
+   
    mov cl, 4            ; used for shifts by a nibble
 
    mov ch, 15
@@ -71,8 +74,8 @@ cga_fire2_loop80_15:
    shl ax, 1
    add ax, bp
    shr ax, cl
-   and al, 31
-   mov [si-159], ax     ; write values
+   and al, 15
+   mov [si-163], ax     ; write values
    shr al, 1
    shr ah, 1
    shl al, cl
@@ -113,12 +116,12 @@ cga_fire2_loop80_5:
    add al, cl
    rcr al, 1            ; may have been overflow
    add ah, ch
-   rcr al, 1            ; may have been overflow
+   rcr ah, 1            ; may have been overflow
    shr ax, 1
    shr ax, 1
    shr ax, 1
    and al, 31
-   mov [si-159], ax     ; write values
+   mov [si-163], ax     ; write values
    shr al, 1
    shr ah, 1
    pop cx
@@ -171,7 +174,7 @@ cga_fire2_loop80_2:
    shr ax, 1
    shr ax, 1
    and al, 31
-   mov [si-159], ax     ; write values
+   mov [si-163], ax     ; write values
    shr al, 1
    shr ah, 1
    shl al, cl
