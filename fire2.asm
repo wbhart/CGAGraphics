@@ -71,6 +71,7 @@ cga_fire2_loop80_15:
    shl ax, 1
    add ax, bp
    shr ax, cl
+   and al, 31
    mov [si-159], ax     ; write values
    shr al, 1
    shr ah, 1
@@ -116,6 +117,7 @@ cga_fire2_loop80_5:
    shr ax, 1
    shr ax, 1
    shr ax, 1
+   and al, 31
    mov [si-159], ax     ; write values
    shr al, 1
    shr ah, 1
@@ -168,6 +170,7 @@ cga_fire2_loop80_2:
    shr ax, 1
    shr ax, 1
    shr ax, 1
+   and al, 31
    mov [si-159], ax     ; write values
    shr al, 1
    shr ah, 1
