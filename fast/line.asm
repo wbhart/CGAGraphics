@@ -4,6 +4,7 @@
 
    jmp_addr       DW ?
    line_hd_jmptab DW line_hd0, line_hd1, line_hd2, line_hd3
+   line_hu_jmptab DW line_hu0, line_hu1, line_hu2, line_hu3
    line_vd_jmptab DW line_vd_loop1, line_vd_loop2, line_vd_loop3, line_vd_loop4
 
    PUBLIC _cga_draw_line
