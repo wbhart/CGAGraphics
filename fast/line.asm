@@ -20,7 +20,7 @@ _cga_draw_line PROC
 
    mov dx, [x1]         ; compute dx
    sub dx, [x0]
-   jbe line_dx_pos      ; if x1 < x0 switch line endpoints
+   jae line_dx_pos      ; if x1 < x0 switch line endpoints
    mov ax, [x0]         ; line must always be right moving
    xchg ax, [x1]
    mov [x0], ax
@@ -182,7 +182,7 @@ line_vd3:
 line_skip_incy_vd3:             
 
    mov al, [di]
-   loop line1_loop
+   loop line_vd0
 
 line_vd_no_iter:
 
@@ -259,7 +259,7 @@ line_hd:
    pop bp
    ret
 
-line_hu:
+line_vu:
 
    pop ds
    pop si
@@ -267,7 +267,7 @@ line_hu:
    pop bp
    ret
 
-line_hd:
+line_hu:
 
    pop ds
    pop si
