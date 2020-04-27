@@ -30,7 +30,8 @@ _cga_draw_line PROC
    neg dx
 line_dx_pos:
 
-   xor di, di           ; compute offset for line y0       
+   mov ax, [y0]         ; compute offset for line y0
+   xor di, di         
    shr ax, 1            ; add 8192 to offset if odd line
    sbb di, 0
    and di, 8192
@@ -267,7 +268,177 @@ line_vu:
    pop bp
    ret
 
-line_hu:
+line_hu:                ; horizontalish, up
+
+   mov si, cs:[line_hu_jmptab + si]
+   mov cs:[jmp_addr], si
+
+   shl ax, 1            ; round x0 down to multiple of 4
+   shl ax, 1
+   mov si, [x1]         ; compute iterations, unrolled by 4
+   sub si, ax
+   inc si
+   push si              ; save iterations for prologue
+   shr si, 1            ; divide iterations by 4
+   shr si, 1
+
+   mov ah, [colour]     ; initial colour shift
+   shl ah, cl
+
+   mov cx, si           ; get iterations
+
+   shl bx, 1            ; compute 2*dy
+   xor si, si           ; D = -dx
+   sub si, dx
+   shl dx, 1            ; compute 2*dx
+
+   mov bp, [y0]         ; compute initial even/odd offset diff
+   shr bp, 1
+   mov bp, 8031
+   jnc line_hu_even
+   sub bp, 16224
+line_hu_even:
+
+   mov al, [di]         ; get initial graphics byte
+
+   cmp cl, 0            ; check for zero iterations
+   je line_hu_no_iter
+
+   jmp WORD PTR cs:[jmp_addr]
+
+line_hu0:
+   and al, 03fh         
+   or al, ah
+   ror ah, 1
+   ror ah, 1
+   add si, bx           ; D += 2*dy
+
+   jle line_skip_incy_hu0
+   stosb                ; draw pixel
+
+   add di, bp           ; odd <-> even line (reenigne's trick)
+   xor bp, 0c0a0h       ; adjust ydelta
+
+   sub si, dx           ; D -= 2*dx
+
+   mov al, [di]
+line_skip_incy_hu0:
+
+line_hu1:
+   and al, 0cfh
+   or al, ah
+   ror ah, 1
+   ror ah, 1
+   add si, bx           ; D += 2*dy
+
+   jle line_skip_incy_hu1
+   stosb                ; draw pixel(s)
+
+   add di, bp           ; odd <-> even line (reenigne's trick)
+   xor bp, 0c0a0h       ; adjust ydelta
+
+   sub si, dx           ; D -= 2*dx
+
+   mov al, [di]
+line_skip_incy_hu1:
+
+line_hu2:
+   and al, 0f3h
+   or al, ah
+   ror ah, 1
+   ror ah, 1
+   add si, bx           ; D += 2*dy
+
+   jle line_skip_incy_hu2
+   stosb                ; draw pixel(s)
+
+   add di, bp           ; odd <-> even line (reenigne's trick)
+   xor bp, 0c0a0h       ; adjust ydelta
+
+   sub si, dx           ; D -= 2*dx
+
+   mov al, [di]
+line_skip_incy_hu2:             
+
+line_hu3:
+   and al, 0fch
+   or al, ah
+   ror ah, 1
+   ror ah, 1
+   add si, bx           ; D += 2*dy
+   stosb
+   
+   jle line_skip_incy_hu3
+   add di, bp           ; odd <-> even line (reenigne's trick)
+   xor bp, 0c0a0h       ; adjust ydelta
+
+   sub si, dx           ; D -= 2*dx
+   inc di
+line_skip_incy_hu3:             
+
+   mov al, [di]
+   loop line_hu0
+
+line_hu_no_iter:
+
+   pop cx               ; do remaining iterations (0-3)
+   and cl, 03h
+
+   cmp cl, 0
+   je line_hu_done                   
+
+   and al, 03fh         
+   or al, ah
+   ror ah, 1
+   ror ah, 1
+   add si, bx           ; D += 2*dy
+
+   stosb                ; draw pixel
+
+   jle line_skip_incy_hu4
+
+   add di, bp           ; odd <-> even line (reenigne's trick)
+   xor bp, 0c0a0h       ; adjust ydelta
+
+   sub si, dx           ; D -= 2*dx
+
+   mov al, [di]
+   inc di
+line_skip_incy_hu4:
+   dec di
+
+   dec cl
+   jz line_hu_done
+
+   and al, 0cfh         
+   or al, ah
+   ror ah, 1
+   ror ah, 1
+   add si, bx           ; D += 2*dy
+
+   stosb                ; draw pixel
+
+   jle line_skip_incy_hu5
+ 
+   add di, bp           ; odd <-> even line (reenigne's trick)
+   xor bp, 0c0a0h       ; adjust ydelta
+
+   sub si, dx           ; D -= 2*dx
+
+   mov al, [di]
+   inc di
+line_skip_incy_hu5:
+   dec di
+
+   dec cl
+   jz line_hu_done
+
+   and al, 0f3h         
+   or al, ah
+
+   stosb                ; draw pixel
+
+line_hu_done:        
 
    pop ds
    pop si
