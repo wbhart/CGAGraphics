@@ -3,7 +3,7 @@
    .CODE
 
    jmp_addr       DW ?
-   line_vd_jmptab DW line_vd0, line_vd1, line_vd2, line_vd3
+   line_hd_jmptab DW line_hd0, line_hd1, line_hd2, line_hd3
 
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
@@ -70,12 +70,12 @@ line_down:
 
    cmp bx, dx
    
-   ja line_vd
-   jmp line_hd   
+   jb line_hd
+   jmp line_vd   
 
-line_vd:                ; verticalish, down
+line_hd:                ; horizontalish, down
 
-   mov si, cs:[line_vd_jmptab + si]
+   mov si, cs:[line_hd_jmptab + si]
    mov cs:[jmp_addr], si
 
    shl ax, 1            ; round x0 down to multiple of 4
@@ -100,25 +100,25 @@ line_vd:                ; verticalish, down
    mov bp, [y0]         ; compute initial even/odd offset diff
    shr bp, 1
    mov bp, 8191
-   jnc line_vd_even
+   jnc line_hd_even
    sub bp, 16304
-line_vd_even:
+line_hd_even:
 
    mov al, [di]         ; get initial graphics byte
 
    cmp cl, 0            ; check for zero iterations
-   je line_vd_no_iter
+   je line_hd_no_iter
 
    jmp WORD PTR cs:[jmp_addr]
 
-line_vd0:
+line_hd0:
    and al, 03fh         
    or al, ah
    ror ah, 1
    ror ah, 1
    add si, bx           ; D += 2*dy
 
-   jle line_skip_incy_vd0
+   jle line_skip_incy_hd0
    stosb                ; draw pixel
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -127,16 +127,16 @@ line_vd0:
    sub si, dx           ; D -= 2*dx
 
    mov al, [di]
-line_skip_incy_vd0:
+line_skip_incy_hd0:
 
-line_vd1:
+line_hd1:
    and al, 0cfh
    or al, ah
    ror ah, 1
    ror ah, 1
    add si, bx           ; D += 2*dy
 
-   jle line_skip_incy_vd1
+   jle line_skip_incy_hd1
    stosb                ; draw pixel(s)
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -145,16 +145,16 @@ line_vd1:
    sub si, dx           ; D -= 2*dx
 
    mov al, [di]
-line_skip_incy_vd1:
+line_skip_incy_hd1:
 
-line_vd2:
+line_hd2:
    and al, 0f3h
    or al, ah
    ror ah, 1
    ror ah, 1
    add si, bx           ; D += 2*dy
 
-   jle line_skip_incy_vd2
+   jle line_skip_incy_hd2
    stosb                ; draw pixel(s)
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -163,9 +163,9 @@ line_vd2:
    sub si, dx           ; D -= 2*dx
 
    mov al, [di]
-line_skip_incy_vd2:             
+line_skip_incy_hd2:             
 
-line_vd3:
+line_hd3:
    and al, 0fch
    or al, ah
    ror ah, 1
@@ -173,24 +173,24 @@ line_vd3:
    add si, bx           ; D += 2*dy
    stosb
    
-   jle line_skip_incy_vd3
+   jle line_skip_incy_hd3
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, 0ffb0h       ; adjust ydelta
 
    sub si, dx           ; D -= 2*dx
    inc di
-line_skip_incy_vd3:             
+line_skip_incy_hd3:             
 
    mov al, [di]
-   loop line_vd0
+   loop line_hd0
 
-line_vd_no_iter:
+line_hd_no_iter:
 
    pop cx               ; do remaining iterations (0-3)
    and cl, 03h
 
    cmp cl, 0
-   je line_vd_done                   
+   je line_hd_done                   
 
    and al, 03fh         
    or al, ah
@@ -200,7 +200,7 @@ line_vd_no_iter:
 
    stosb                ; draw pixel
 
-   jle line_skip_incy_vd4
+   jle line_skip_incy_hd4
 
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, 0ffb0h       ; adjust ydelta
@@ -209,11 +209,11 @@ line_vd_no_iter:
 
    mov al, [di]
    inc di
-line_skip_incy_vd4:
+line_skip_incy_hd4:
    dec di
 
    dec cl
-   jz line_vd_done
+   jz line_hd_done
 
    and al, 0cfh         
    or al, ah
@@ -223,7 +223,7 @@ line_skip_incy_vd4:
 
    stosb                ; draw pixel
 
-   jle line_skip_incy_vd5
+   jle line_skip_incy_hd5
  
    add di, bp           ; odd <-> even line (reenigne's trick)
    xor bp, 0ffb0h       ; adjust ydelta
@@ -232,18 +232,18 @@ line_skip_incy_vd4:
 
    mov al, [di]
    inc di
-line_skip_incy_vd5:
+line_skip_incy_hd5:
    dec di
 
    dec cl
-   jz line_vd_done
+   jz line_hd_done
 
    and al, 0f3h         
    or al, ah
 
    stosb                ; draw pixel
 
-line_vd_done:        
+line_hd_done:        
  
    pop ds
    pop si
@@ -251,7 +251,7 @@ line_vd_done:
    pop bp
    ret
 
-line_hd:
+line_vd:
 
    pop ds
    pop si
