@@ -5,9 +5,8 @@
    jmp_addr       DW ?
    line_hd_jmptab DW line_hd0, line_hd1, line_hd2, line_hd3
    line_hu_jmptab DW line_hu0, line_hu1, line_hu2, line_hu3
-   line_vd_jmptab DW line_vd_loop1, line_vd_loop2, line_vd_loop3, line_vd_loop4
-   line_vu_jmptab DW line_vu_loop1, line_vu_loop2, line_vu_loop3, line_vu_loop4,
-         line_vu_incx11+4, line_vu_incx21+4, line_vu_incx31+4, line_vu_incx41+4
+   line_vd_jmptab DW line_vd_loop1, line_vd_loop2, line_vd_loop3, line_vd_loop4, line_vd_incx11+4, line_vd_incx21+4, line_vd_incx31+4, line_vd_incx41+4
+   line_vu_jmptab DW line_vu_loop1, line_vu_loop2, line_vu_loop3, line_vu_loop4, line_vu_incx11+4, line_vu_incx21+4, line_vu_incx31+4, line_vu_incx41+4
 
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
@@ -276,6 +275,11 @@ line_vd:                ; verticalish, down
    and si, 3
    shl si, 1
 
+   test [y0], 1
+   jz line_vd_even
+   add si, 8
+   sub di, 8192         ; addressing below assumes we started on even line
+line_vd_even:
    mov si, cs:[line_vd_jmptab + si]
    mov cs:[jmp_addr], si
 
@@ -475,8 +479,9 @@ line_vu:                ; verticalish, up
    shl si, 1
 
    test [y0], 1
-   jc line_vu_even
+   jz line_vu_even
    add si, 8
+   sub di, 8112         ; addressing below assumes we started on even line
 line_vu_even:
    mov si, cs:[line_vu_jmptab + si]
    mov cs:[jmp_addr], si
