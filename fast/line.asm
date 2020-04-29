@@ -6,7 +6,8 @@
    line_hd_jmptab DW line_hd0, line_hd1, line_hd2, line_hd3
    line_hu_jmptab DW line_hu0, line_hu1, line_hu2, line_hu3
    line_vd_jmptab DW line_vd_loop1, line_vd_loop2, line_vd_loop3, line_vd_loop4
-   line_vu_jmptab DW line_vu_loop1, line_vu_loop2, line_vu_loop3, line_vu_loop4
+   line_vu_jmptab DW line_vu_loop1, line_vu_loop2, line_vu_loop3, line_vu_loop4,
+         line_vu_incx11+4, line_vu_incx21+4, line_vu_incx31+4, line_vu_incx41+4
 
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
@@ -473,6 +474,10 @@ line_vu:                ; verticalish, up
    and si, 3
    shl si, 1
 
+   test [y0], 1
+   jc line_vu_even
+   add si, 8
+line_vu_even:
    mov si, cs:[line_vu_jmptab + si]
    mov cs:[jmp_addr], si
 
@@ -500,8 +505,8 @@ line_vu_iter:
    shl bp, 1            ; compute 2*dy
    sub dx, bp           ; compute 2*dx - 2*dy
 
-   mov bx, 8112
-   sub di, 8112         ; compensate for first addition of 8112
+   mov bx, -8112
+   add di, 8112         ; compensate for first subtraction of 8112
 
    jmp cs:[jmp_addr]
 
