@@ -113,8 +113,9 @@ line_hd:                ; horizontalish, down
    mov bp, [y0]         ; compute initial even/odd offset diff
    shr bp, 1
    mov bp, 8191
-   jnc line_hd_even
+   jnc line_hd_even_no_iter:
    sub bp, 16304
+line_hd_even_noiter:
 
    dec cl
    jnz line_hd_not0
@@ -714,17 +715,47 @@ line_hu:                ; horizontalish, up
    sub si, dx
    shl dx, 1            ; compute 2*dx
 
+   mov al, [di]         ; get initial graphics byte
+
+   cmp cl, 0            ; check for zero iterations
+   jne line_hu_iter
+
+   mov cx, [x0]
+   and cl, 3
+   inc cl
+
+   mov bp, [y0]         ; compute initial even/odd offset diff
+   shr bp, 1
+   mov bp, 8111
+   jnc line_hu_even_noiter
+   sub bp, 16304
+line_hu_even_noiter:
+
+   dec cl
+   jnz line_hu_not0
+   jmp line_hu_noiter0
+line_hu_not0:
+
+   dec cl
+   jnz line_hu_not1
+   pop cx
+   and cl, 3
+   jmp line_hu_noiter1
+line_hu_not1:
+
+   pop cx
+   and cl, 3
+   dec cl
+   jmp line_hu_noiter2
+
+line_hu_iter:
+
    mov bp, [y0]         ; compute initial even/odd offset diff
    shr bp, 1
    mov bp, 8111
    jnc line_hu_even
    sub bp, 16304
 line_hu_even:
-
-   mov al, [di]         ; get initial graphics byte
-
-   cmp cl, 0            ; check for zero iterations
-   je line_hu_no_iter
 
    jmp WORD PTR cs:[jmp_addr]
 
@@ -801,7 +832,7 @@ line_skip_incy_hu3:
    mov al, [di]
    loop line_hu0
 
-line_hu_no_iter:
+line_hu_no_iter0:
 
    pop cx               ; do remaining iterations (0-3)
    and cl, 03h
@@ -829,6 +860,7 @@ line_hu_no_iter:
 line_skip_incy_hu4:
    dec di
 
+line_hu_no_iter1:
    dec cl
    jz line_hu_done
 
@@ -852,6 +884,7 @@ line_skip_incy_hu4:
 line_skip_incy_hu5:
    dec di
 
+line_hu_no_iter2:
    dec cl
    jz line_hu_done
 
