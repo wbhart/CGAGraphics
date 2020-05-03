@@ -113,7 +113,7 @@ line_hd:                ; horizontalish, down
    mov bp, [y0]         ; compute initial even/odd offset diff
    shr bp, 1
    mov bp, 8191
-   jnc line_hd_even_no_iter:
+   jnc line_hd_even_no_iter
    sub bp, 16304
 line_hd_even_no_iter:
 
