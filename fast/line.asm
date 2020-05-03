@@ -115,24 +115,24 @@ line_hd:                ; horizontalish, down
    mov bp, 8191
    jnc line_hd_even_no_iter:
    sub bp, 16304
-line_hd_even_noiter:
+line_hd_even_no_iter:
 
    dec cl
    jnz line_hd_not0
-   jmp line_hd_noiter0
+   jmp line_hd_no_iter0
 line_hd_not0:
 
    dec cl
    jnz line_hd_not1
    pop cx
    and cl, 3
-   jmp line_hd_noiter1
+   jmp line_hd_no_iter1
 line_hd_not1:
 
    pop cx
    and cl, 3
    dec cl
-   jmp line_hd_noiter2
+   jmp line_hd_no_iter2
 
 line_hd_iter:
 
@@ -727,26 +727,26 @@ line_hu:                ; horizontalish, up
    mov bp, [y0]         ; compute initial even/odd offset diff
    shr bp, 1
    mov bp, 8111
-   jnc line_hu_even_noiter
+   jnc line_hu_even_no_iter
    sub bp, 16304
-line_hu_even_noiter:
+line_hu_even_no_iter:
 
    dec cl
    jnz line_hu_not0
-   jmp line_hu_noiter0
+   jmp line_hu_no_iter0
 line_hu_not0:
 
    dec cl
    jnz line_hu_not1
    pop cx
    and cl, 3
-   jmp line_hu_noiter1
+   jmp line_hu_no_iter1
 line_hu_not1:
 
    pop cx
    and cl, 3
    dec cl
-   jmp line_hu_noiter2
+   jmp line_hu_no_iter2
 
 line_hu_iter:
 
