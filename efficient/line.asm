@@ -10,15 +10,15 @@
 
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
-   ARG x0:WORD, y0:WORD, x1:WORD, y1:WORD, colour:BYTE
+   ARG buff:DWORD, x0:WORD, y0:WORD, x1:WORD, y1:WORD, colour:BYTE
    push bp
    mov bp, sp
    push di
    push si
    push ds
 
-   mov ax, 0b800h       ; set ES to segment for CGA memory
-   mov es, ax
+   les di, buff         ; set ES to segment for graphics memory (CGA or buffer)
+   mov ax, es
    mov ds, ax           ; reflect in DS
 
    mov dx, [x1]         ; compute dx
