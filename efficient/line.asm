@@ -53,10 +53,10 @@ line_dx_pos:
 
    mov si, [x0]         ; compute 2*(x0 mod 4)
    and si, 3
-   inc si
    shl si, 1
 
-   mov cx, si           ; compute colour shift
+   mov cx, 6            ; compute colour shift
+   sub cx, si
 
    mov bx, [y1]         ; compute dy
    sub bx, [y0]
@@ -92,7 +92,7 @@ line_hd:                ; horizontalish, down
    shr si, 1
 
    mov ah, [colour]     ; initial colour shift
-   ror ah, cl
+   shl ah, cl
 
    mov cx, si           ; get iterations
 
@@ -299,7 +299,7 @@ line_vd:                ; verticalish, down
    shr si, 1            ; divide iterations by 2
 
    mov ah, [colour]     ; compute shifted colour
-   ror ah, cl
+   shl ah, cl
 
    mov cx, si           ; get iterations
 
@@ -502,7 +502,7 @@ line_vu:                ; verticalish, up
    shr si, 1            ; divide iterations by 2
 
    mov ah, [colour]     ; compute shifted colour
-   ror ah, cl
+   shl ah, cl
 
    mov cx, si           ; get iterations
 
@@ -706,7 +706,7 @@ line_hu:                ; horizontalish, up
    shr si, 1
 
    mov ah, [colour]     ; initial colour shift
-   ror ah, cl
+   shl ah, cl
 
    mov cx, si           ; get iterations
 
