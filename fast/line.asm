@@ -961,7 +961,7 @@ line_vu:                ; verticalish, up
    shr ax, 1
 
    jc line_vu_even
-   add si, 8
+   add si, 32
    sub di, 8112         ; addressing below assumes we started on even line
 line_vu_even:
 
@@ -1128,7 +1128,7 @@ line_vu_incx22_1:
    sub di, 81
 
    loop line_vu_loop2_1
-   mov ax, 01cfh
+   mov ax, 010cfh
    jmp line_vu_no_iter
 
 line_vu_loop1_1:
