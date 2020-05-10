@@ -5,8 +5,8 @@
    jmp_addr       DW ?
    line_hd_jmptab DW line_hd0_0, line_hd0_1, line_hd0_2, line_hd0_3, line_hd1_0, line_hd1_1, line_hd1_2, line_hd1_3, line_hd2_0, line_hd2_1, line_hd2_2, line_hd2_3, line_hd3_0, line_hd3_1, line_hd3_2, line_hd3_3 
    line_hu_jmptab DW line_hu0_0, line_hu0_1, line_hu0_2, line_hu0_3, line_hu1_0, line_hu1_1, line_hu1_2, line_hu1_3, line_hu2_0, line_hu2_1, line_hu2_2, line_hu2_3, line_hu3_0, line_hu3_1, line_hu3_2, line_hu3_3 
-   line_vd_jmptab DW line_vd_loop1, line_vd_loop2, line_vd_loop3, line_vd_loop4, line_vd_incx11+4, line_vd_incx21+4, line_vd_incx31+4, line_vd_incx41+4
-   line_vu_jmptab DW line_vu_loop1, line_vu_loop2, line_vu_loop3, line_vu_loop4, line_vu_incx11+4, line_vu_incx21+4, line_vu_incx31+4, line_vu_incx41+4
+   line_vd_jmptab DW line_vd_loop1_0, line_vd_loop2_0, line_vd_loop3_0, line_vd_loop4_0, line_vd_loop1_1, line_vd_loop2_1, line_vd_loop3_1, line_vd_loop4_1, line_vd_loop1_2, line_vd_loop2_2, line_vd_loop3_2, line_vd_loop4_2, line_vd_loop1_3, line_vd_loop2_3, line_vd_loop3_3, line_vd_loop4_3, line_vd_incx11_0+4, line_vd_incx21_0+4, line_vd_incx31_0+4, line_vd_incx41_0+4, line_vd_incx11_1+4, line_vd_incx21_1+4, line_vd_incx31_1+4, line_vd_incx41_1+4, line_vd_incx11_2+4, line_vd_incx21_2+4, line_vd_incx31_2+4, line_vd_incx41_2+4, line_vd_incx11_3+4, line_vd_incx21_3+4, line_vd_incx31_3+4, line_vd_incx41_3+4
+   line_vu_jmptab DW line_vu_loop1_0, line_vu_loop2_0, line_vu_loop3_0, line_vu_loop4_0, line_vu_loop1_1, line_vu_loop2_1, line_vu_loop3_1, line_vu_loop4_1, line_vu_loop1_2, line_vu_loop2_2, line_vu_loop3_2, line_vu_loop4_2, line_vu_loop1_3, line_vu_loop2_3, line_vu_loop3_3, line_vu_loop4_3, line_vu_incx11_0+4, line_vu_incx21_0+4, line_vu_incx31_0+4, line_vu_incx41_0+4, line_vu_incx11_1+4, line_vu_incx21_1+4, line_vu_incx31_1+4, line_vu_incx41_1+4, line_vu_incx11_2+4, line_vu_incx21_2+4, line_vu_incx31_2+4, line_vu_incx41_2+4, line_vu_incx11_3+4, line_vu_incx21_3+4, line_vu_incx31_3+4, line_vu_incx41_3+4
 
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
@@ -480,9 +480,30 @@ line_hd_done:
 
 line_vd:                ; verticalish, down
 
-   mov ax, [y0]         ; round y0 down to multiple of 2
+   mov ax, [y0]         ; start rounding y0 down to multiple of 2
    shr ax, 1
-   shl ax, 1
+
+   jnc line_vd_even     ; deal with odd starting line
+   add si, 32
+   sub di, 8192         ; addressing below assumes we started on even line
+line_vd_even:
+
+   shl ax, 1            ; finish rounding y0 down to multiple of 2
+
+   mov ah, cl           ; save cl
+
+   xor cx, cx           ; compute colour jump
+   mov cl, [colour]
+   shl cl, 1
+   shl cl, 1
+   shl cl, 1
+   add si, cx
+
+   mov si, cs:[line_vd_jmptab + si]
+   mov cs:[jmp_addr], si
+
+   mov cl, ah           ; restore cl and ah
+   xor ah, ah
 
    mov si, [y1]         ; compute iterations
    sub si, ax
@@ -493,18 +514,6 @@ line_vd:                ; verticalish, down
    shl ah, cl
 
    mov cx, si           ; get iterations
-
-   mov si, [x0]         ; get x0 mod 4
-   and si, 3
-   shl si, 1
-
-   test [y0], 1
-   jz line_vd_even
-   add si, 8
-   sub di, 8192         ; addressing below assumes we started on even line
-line_vd_even:
-   mov si, cs:[line_vd_jmptab + si]
-   mov cs:[jmp_addr], si
 
    push bp
 
@@ -535,132 +544,436 @@ line_vd_iter:
 
    jmp cs:[jmp_addr]
 
-line_vd_loop2:
+line_vd_loop2_0:
 
    mov al, [bx+di]      ; reenigne's trick
    and al, 0cfh
-   or al, ah
    mov [bx+di], al
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vd_incx31
+   jg line_vd_incx31_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx21+4
-line_vd_incx21:
+   jmp line_vd_incx21_0+4
+line_vd_incx21_0:
 
-   ror ah, 1
-   ror ah, 1
    mov al, [di]
    and al, 0cfh
-   or al, ah
    stosb
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vd_incx32
+   jg line_vd_incx32_0
    add si, bp           ; D += 2*dy  
-   jmp line_vd_incx22+4
-line_vd_incx22:
-   ror ah, 1
-   ror ah, 1
+   jmp line_vd_incx22_0+4
+line_vd_incx22_0:
    add di, 79
 
-   loop line_vd_loop2
-   mov al, 0cfh
+   loop line_vd_loop2_0
+   mov ax, 0cfh
    jmp line_vd_no_iter
 
-line_vd_loop1:
+line_vd_loop1_0:
 
    mov al, [bx+di]      ; reenigne's trick
    and al, 03fh
-   or al, ah
    mov [bx+di], al
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vd_incx21
+   jg line_vd_incx21_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx11+4
-line_vd_incx11:
+   jmp line_vd_incx11_0+4
+line_vd_incx11_0:
 
-   ror ah, 1
-   ror ah, 1
    mov al, [di]
    and al, 03fh
-   or al, ah
    stosb
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vd_incx22
+   jg line_vd_incx22_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx12+4
-line_vd_incx12:
-   ror ah, 1
-   ror ah, 1
+   jmp line_vd_incx12_0+4
+line_vd_incx12_0:
    add di, 79
 
-   loop line_vd_loop1
-   mov al, 03fh
+   loop line_vd_loop1_0
+   mov ax, 03fh
    jmp line_vd_no_iter
 
-line_vd_loop3:
+line_vd_loop3_0:
 
    mov al, [bx+di]      ; reenigne's trick
    and al, 0f3h
-   or al, ah
    mov [bx+di], al
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vd_incx41
+   jg line_vd_incx41_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx31+4
-line_vd_incx31:
+   jmp line_vd_incx31_0+4
+line_vd_incx31_0:
 
-   ror ah, 1
-   ror ah, 1
    mov al, [di]
    and al, 0f3h
-   or al, ah
    stosb
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vd_incx42
+   jg line_vd_incx42_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx32+4
-line_vd_incx32:
-   ror ah, 1
-   ror ah, 1
+   jmp line_vd_incx32_0+4
+line_vd_incx32_0:
    add di, 79
 
-   loop line_vd_loop3
-   mov al, 0f3h
+   loop line_vd_loop3_0
+   mov ax, 0f3h
    jmp line_vd_no_iter
 
-line_vd_loop4:
+line_vd_loop4_0:
 
    mov al, [bx+di]      ; reenigne's trick
    and al, 0fch
-   or al, ah
    mov [bx+di], al
    inc di               ; move to next byte, maybe?
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vd_incx11
+   jg line_vd_incx11_0
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx41+4
-line_vd_incx41:
+   jmp line_vd_incx41_0+4
+line_vd_incx41_0:
 
-   ror ah, 1
-   ror ah, 1
    mov al, [di]
    and al, 0fch
-   or al, ah
    stosb
    inc di               ; move to next byte, maybe?
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vd_incx12
+   jg line_vd_incx12_0
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx42+4
-line_vd_incx42:
-   ror ah, 1
-   ror ah, 1
+   jmp line_vd_incx42_0+4
+line_vd_incx42_0:
    add di, 79
 
-   loop line_vd_loop4
-   mov al, 0fch
+   loop line_vd_loop4_0
+   mov ax, 0fch
+   jmp line_vd_no_iter
+
+line_vd_loop2_1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0cfh
+   or al, 010h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx31_1
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx21_1+4
+line_vd_incx21_1:
+
+   mov al, [di]
+   and al, 0cfh
+   or al, 010h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx32_1
+   add si, bp           ; D += 2*dy  
+   jmp line_vd_incx22_1+4
+line_vd_incx22_1:
+   add di, 79
+
+   loop line_vd_loop2_1
+   mov ax, 010cfh
+   jmp line_vd_no_iter
+
+line_vd_loop1_1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 03fh
+   or al, 040h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx21_1
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx11_1+4
+line_vd_incx11_1:
+
+   mov al, [di]
+   and al, 03fh
+   or al, 040h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx22_1
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx12_1+4
+line_vd_incx12_1:
+   add di, 79
+
+   loop line_vd_loop1_1
+   mov ax, 0403fh
+   jmp line_vd_no_iter
+
+line_vd_loop3_1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0f3h
+   or al, 04h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx41_1
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx31_1+4
+line_vd_incx31_1:
+
+   mov al, [di]
+   and al, 0f3h
+   or al, 04h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx42_1
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx32_1+4
+line_vd_incx32_1:
+   add di, 79
+
+   loop line_vd_loop3_1
+   mov ax, 04f3h
+   jmp line_vd_no_iter
+
+line_vd_loop4_1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0fch
+   or al, 01h
+   mov [bx+di], al
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx11_1
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx41_1+4
+line_vd_incx41_1:
+
+   mov al, [di]
+   and al, 0fch
+   or al, 01h
+   stosb
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx12_1
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx42_1+4
+line_vd_incx42_1:
+   add di, 79
+
+   loop line_vd_loop4_1
+   mov ax, 01fch
+   jmp line_vd_no_iter
+
+line_vd_loop2_2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0cfh
+   or al, 020h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx31_2
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx21_2+4
+line_vd_incx21_2:
+
+   mov al, [di]
+   and al, 0cfh
+   or al, 020h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx32_2
+   add si, bp           ; D += 2*dy  
+   jmp line_vd_incx22_2+4
+line_vd_incx22_2:
+   add di, 79
+
+   loop line_vd_loop2_2
+   mov ax, 020cfh
+   jmp line_vd_no_iter
+
+line_vd_loop1_2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 03fh
+   or al, 080h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx21_2
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx11_2+4
+line_vd_incx11_2:
+
+   mov al, [di]
+   and al, 03fh
+   or al, 080h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx22_2
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx12_2+4
+line_vd_incx12_2:
+   add di, 79
+
+   loop line_vd_loop1_2
+   mov ax, 0803fh
+   jmp line_vd_no_iter
+
+line_vd_loop3_2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0f3h
+   or al, 08h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx41_2
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx31_2+4
+line_vd_incx31_2:
+
+   mov al, [di]
+   and al, 0f3h
+   or al, 08h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx42_2
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx32_2+4
+line_vd_incx32_2:
+   add di, 79
+
+   loop line_vd_loop3_2
+   mov ax, 08f3h
+   jmp line_vd_no_iter
+
+line_vd_loop4_2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0fch
+   or al, 02h
+   mov [bx+di], al
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx11_2
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx41_2+4
+line_vd_incx41_2:
+
+   mov al, [di]
+   and al, 0fch
+   or al, 02h
+   stosb
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx12_2
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx42_2+4
+line_vd_incx42_2:
+   add di, 79
+
+   loop line_vd_loop4_2
+   mov ax, 02fch
+   jmp line_vd_no_iter
+
+line_vd_loop2_3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   or al, 030h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx31_3
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx21_3+4
+line_vd_incx21_3:
+
+   mov al, [di]
+   or al, 030h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx32_3
+   add si, bp           ; D += 2*dy  
+   jmp line_vd_incx22_3+4
+line_vd_incx22_3:
+   add di, 79
+
+   loop line_vd_loop2_3
+   mov ax, 030cfh
+   jmp line_vd_no_iter
+
+line_vd_loop1_3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   or al, 0c0h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx21_3
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx11_3+4
+line_vd_incx11_3:
+
+   mov al, [di]
+   or al, 0c0h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx22_3
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx12_3+4
+line_vd_incx12_3:
+   add di, 79
+
+   loop line_vd_loop1_3
+   mov ax, 0c03fh
+   jmp line_vd_no_iter
+
+line_vd_loop3_3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   or al, 0ch
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx41_3
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx31_3+4
+line_vd_incx31_3:
+
+   mov al, [di]
+   or al, 0ch
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx42_3
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx32_3+4
+line_vd_incx32_3:
+   add di, 79
+
+   loop line_vd_loop3_3
+   mov ax, 0cf3h
+   jmp line_vd_no_iter
+
+line_vd_loop4_3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   or al, 03h
+   mov [bx+di], al
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx11_3
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx41_3+4
+line_vd_incx41_3:
+
+   mov al, [di]
+   or al, 03h
+   stosb
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vd_incx12_3
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vd_incx42_3+4
+line_vd_incx42_3:
+   add di, 79
+
+   loop line_vd_loop4_3
+   mov ax, 03fch
 
 line_vd_no_iter:
 
@@ -681,10 +994,31 @@ line_vd_done:
 
 line_vu:                ; verticalish, up
 
-   mov ax, [y0]         ; round y0 up to multiple of 2
+   mov ax, [y0]         ; start rounding y0 up to multiple of 2
    inc ax
    shr ax, 1
-   shl ax, 1
+
+   jc line_vu_even
+   add si, 8
+   sub di, 8112         ; addressing below assumes we started on even line
+line_vu_even:
+
+   shl ax, 1            ; finish rounding y0 up to multiple of 2
+
+   mov ah, cl           ; save cl
+
+   xor cx, cx           ; compute colour jump
+   mov cl, [colour]
+   shl cl, 1
+   shl cl, 1
+   shl cl, 1
+   add si cx
+
+   mov si, cs:[line_vu_jmptab + si]
+   mov cs:[jmp_addr], si
+
+   mov cl, ah           ; restore cl and ah
+   xor ah, ah
 
    mov si, [y1]         ; compute iterations
    sub si, ax
@@ -696,18 +1030,6 @@ line_vu:                ; verticalish, up
    shl ah, cl
 
    mov cx, si           ; get iterations
-
-   mov si, [x0]         ; get x0 mod 4
-   and si, 3
-   shl si, 1
-
-   test [y0], 1
-   jz line_vu_even
-   add si, 8
-   sub di, 8112         ; addressing below assumes we started on even line
-line_vu_even:
-   mov si, cs:[line_vu_jmptab + si]
-   mov cs:[jmp_addr], si
 
    push bp
 
@@ -738,132 +1060,436 @@ line_vu_iter:
 
    jmp cs:[jmp_addr]
 
-line_vu_loop2:
+line_vu_loop2_0:
 
    mov al, [bx+di]      ; reenigne's trick
    and al, 0cfh
-   or al, ah
    mov [bx+di], al
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vu_incx31
+   jg line_vu_incx31_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx21+4
-line_vu_incx21:
+   jmp line_vu_incx21_0+4
+line_vu_incx21_0:
 
-   ror ah, 1
-   ror ah, 1
    mov al, [di]
    and al, 0cfh
-   or al, ah
    stosb
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vu_incx32
+   jg line_vu_incx32_0
    add si, bp           ; D += 2*dy  
-   jmp line_vu_incx22+4
-line_vu_incx22:
-   ror ah, 1
-   ror ah, 1
+   jmp line_vu_incx22_0+4
+line_vu_incx22_0:
    sub di, 81
 
-   loop line_vu_loop2
-   mov al, 0cfh
+   loop line_vu_loop2_0
+   mov ax, 0cfh
    jmp line_vu_no_iter
 
-line_vu_loop1:
+line_vu_loop1_0:
 
    mov al, [bx+di]      ; reenigne's trick
    and al, 03fh
-   or al, ah
    mov [bx+di], al
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vu_incx21
+   jg line_vu_incx21_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx11+4
-line_vu_incx11:
+   jmp line_vu_incx11_0+4
+line_vu_incx11_0:
 
-   ror ah, 1
-   ror ah, 1
    mov al, [di]
    and al, 03fh
-   or al, ah
    stosb
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vu_incx22
+   jg line_vu_incx22_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx12+4
-line_vu_incx12:
-   ror ah, 1
-   ror ah, 1
+   jmp line_vu_incx12_0+4
+line_vu_incx12_0:
    sub di, 81
 
-   loop line_vu_loop1
-   mov al, 03fh
+   loop line_vu_loop1_0
+   mov ax, 03fh
    jmp line_vu_no_iter
 
-line_vu_loop3:
+line_vu_loop3_0:
 
    mov al, [bx+di]      ; reenigne's trick
    and al, 0f3h
-   or al, ah
    mov [bx+di], al
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vu_incx41
+   jg line_vu_incx41_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx31+4
-line_vu_incx31:
+   jmp line_vu_incx31_0+4
+line_vu_incx31_0:
 
-   ror ah, 1
-   ror ah, 1
    mov al, [di]
    and al, 0f3h
-   or al, ah
    stosb
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vu_incx42
+   jg line_vu_incx42_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx32+4
-line_vu_incx32:
-   ror ah, 1
-   ror ah, 1
+   jmp line_vu_incx32_0+4
+line_vu_incx32_0:
    sub di, 81
 
-   loop line_vu_loop3
-   mov al, 0f3h
+   loop line_vu_loop3_0
+   mov ax, 0f3h
    jmp line_vu_no_iter
 
-line_vu_loop4:
+line_vu_loop4_0:
 
    mov al, [bx+di]      ; reenigne's trick
    and al, 0fch
-   or al, ah
    mov [bx+di], al
    inc di               ; move to next byte, maybe?
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vu_incx11
+   jg line_vu_incx11_0
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx41+4
-line_vu_incx41:
+   jmp line_vu_incx41_0+4
+line_vu_incx41_0:
 
-   ror ah, 1
-   ror ah, 1
    mov al, [di]
    and al, 0fch
-   or al, ah
    stosb
    inc di               ; move to next byte, maybe?
    add si, dx           ; D += 2*dx - 2*dy
-   jg line_vu_incx12
+   jg line_vu_incx12_0
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx42+4
-line_vu_incx42:
-   ror ah, 1
-   ror ah, 1
+   jmp line_vu_incx42_0+4
+line_vu_incx42_0:
    sub di, 81
 
-   loop line_vu_loop4
-   mov al, 0fch
+   loop line_vu_loop4_0
+   mov ax, 0fch
+   jmp line_vu_no_iter
+
+line_vu_loop2_1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0cfh
+   or al, 010h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx31_1
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx21_1+4
+line_vu_incx21_1:
+
+   mov al, [di]
+   and al, 0cfh
+   or al, 010h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx32_1
+   add si, bp           ; D += 2*dy  
+   jmp line_vu_incx22_1+4
+line_vu_incx22_1:
+   sub di, 81
+
+   loop line_vu_loop2_1
+   mov ax, 01cfh
+   jmp line_vu_no_iter
+
+line_vu_loop1_1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 03fh
+   or al, 040h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx21_1
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx11_1+4
+line_vu_incx11_1:
+
+   mov al, [di]
+   and al, 03fh
+   or al, 040h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx22_1
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx12_1+4
+line_vu_incx12_1:
+   sub di, 81
+
+   loop line_vu_loop1_1
+   mov ax, 0403fh
+   jmp line_vu_no_iter
+
+line_vu_loop3_1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0f3h
+   or al, 04h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx41_1
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx31_1+4
+line_vu_incx31_1:
+
+   mov al, [di]
+   and al, 0f3h
+   or al, 04h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx42_1
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx32_1+4
+line_vu_incx32_1:
+   sub di, 81
+
+   loop line_vu_loop3_1
+   mov ax, 04f3h
+   jmp line_vu_no_iter
+
+line_vu_loop4_1:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0fch
+   or al, 01h
+   mov [bx+di], al
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx11_1
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx41_1+4
+line_vu_incx41_1:
+
+   mov al, [di]
+   and al, 0fch
+   or al, 01h
+   stosb
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx12_1
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx42_1+4
+line_vu_incx42_1:
+   sub di, 81
+
+   loop line_vu_loop4_1
+   mov ax, 01fch
+   jmp line_vu_no_iter
+
+line_vu_loop2_2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0cfh
+   or al, 020h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx31_2
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx21_2+4
+line_vu_incx21_2:
+
+   mov al, [di]
+   and al, 0cfh
+   or al, 020h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx32_2
+   add si, bp           ; D += 2*dy  
+   jmp line_vu_incx22_2+4
+line_vu_incx22_2:
+   sub di, 81
+
+   loop line_vu_loop2_2
+   mov ax, 020cfh
+   jmp line_vu_no_iter
+
+line_vu_loop1_2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 03fh
+   or al, 080h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx21_2
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx11_2+4
+line_vu_incx11_2:
+
+   mov al, [di]
+   and al, 03fh
+   or al, 080h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx22_2
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx12_2+4
+line_vu_incx12_2:
+   sub di, 81
+
+   loop line_vu_loop1_2
+   mov ax, 0803fh
+   jmp line_vu_no_iter
+
+line_vu_loop3_2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0f3h
+   or al, 08h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx41_2
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx31_2+4
+line_vu_incx31_2:
+
+   mov al, [di]
+   and al, 0f3h
+   or al, 08h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx42_2
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx32_2+4
+line_vu_incx32_2:
+   sub di, 81
+
+   loop line_vu_loop3_2
+   mov ax, 08f3h
+   jmp line_vu_no_iter
+
+line_vu_loop4_2:
+
+   mov al, [bx+di]      ; reenigne's trick
+   and al, 0fch
+   or al, 02h
+   mov [bx+di], al
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx11_2
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx41_2+4
+line_vu_incx41_2:
+
+   mov al, [di]
+   and al, 0fch
+   or al, 02h
+   stosb
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx12_2
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx42_2+4
+line_vu_incx42_2:
+   sub di, 81
+
+   loop line_vu_loop4_2
+   mov ax, 02fch
+   jmp line_vu_no_iter
+
+line_vu_loop2_3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   or al, 030h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx31_3
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx21_3+4
+line_vu_incx21_3:
+
+   mov al, [di]
+   or al, 030h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx32_3
+   add si, bp           ; D += 2*dy  
+   jmp line_vu_incx22_3+4
+line_vu_incx22_3:
+   sub di, 81
+
+   loop line_vu_loop2_3
+   mov ax, 030cfh
+   jmp line_vu_no_iter
+
+line_vu_loop1_3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   or al, 0c0h
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx21_3
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx11_3+4
+line_vu_incx11_3:
+
+   mov al, [di]
+   or al, 0c0h
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx22_3
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx12_3+4
+line_vu_incx12_3:
+   sub di, 81
+
+   loop line_vu_loop1_3
+   mov ax, 0c03fh
+   jmp line_vu_no_iter
+
+line_vu_loop3_3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   or al, 0ch
+   mov [bx+di], al
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx41_3
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx31_3+4
+line_vu_incx31_3:
+
+   mov al, [di]
+   or al, 0ch
+   stosb
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx42_3
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx32_3+4
+line_vu_incx32_3:
+   sub di, 81
+
+   loop line_vu_loop3_3
+   mov ax, 0cf3h
+   jmp line_vu_no_iter
+
+line_vu_loop4_3:
+
+   mov al, [bx+di]      ; reenigne's trick
+   or al, 03h
+   mov [bx+di], al
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx11_3
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx41_3+4
+line_vu_incx41_3:
+
+   mov al, [di]
+   or al, 03h
+   stosb
+   inc di               ; move to next byte, maybe?
+   add si, dx           ; D += 2*dx - 2*dy
+   jg line_vu_incx12_3
+   dec di
+   add si, bp           ; D += 2*dy
+   jmp line_vu_incx42_3+4
+line_vu_incx42_3:
+   sub di, 81
+
+   loop line_vu_loop4_3
+   mov ax, 03fch
 
 line_vu_no_iter:
 
@@ -1207,7 +1833,7 @@ line_skip_incy_hu3_3:
    mov al, [di]
    loop line_hu0_3
    mov ah, 0c0h
-   
+
 line_hu_no_iter0:
 
    pop cx               ; do remaining iterations (0-3)
