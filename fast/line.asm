@@ -5,10 +5,14 @@
    jmp_addr       DW ?
    line_hd_jmptab DW line_hd0_0, line_hd0_1, line_hd0_2, line_hd0_3, line_hd1_0, line_hd1_1, line_hd1_2, line_hd1_3, line_hd2_0, line_hd2_1, line_hd2_2, line_hd2_3, line_hd3_0, line_hd3_1, line_hd3_2, line_hd3_3 
    line_hu_jmptab DW line_hu0_0, line_hu0_1, line_hu0_2, line_hu0_3, line_hu1_0, line_hu1_1, line_hu1_2, line_hu1_3, line_hu2_0, line_hu2_1, line_hu2_2, line_hu2_3, line_hu3_0, line_hu3_1, line_hu3_2, line_hu3_3 
-   line_vd_jmptab DW line_vd_loop1_0, line_vd_loop2_0, line_vd_loop3_0, line_vd_loop4_0, line_vd_loop1_1, line_vd_loop2_1, line_vd_loop3_1, line_vd_loop4_1, line_vd_loop1_2, line_vd_loop2_2, line_vd_loop3_2, line_vd_loop4_2, line_vd_loop1_3, line_vd_loop2_3, line_vd_loop3_3, line_vd_loop4_3
-                  DW line_vd_incx11_0+4, line_vd_incx21_0+4, line_vd_incx31_0+4, line_vd_incx41_0+4, line_vd_incx11_1+4, line_vd_incx21_1+4, line_vd_incx31_1+4, line_vd_incx41_1+4, line_vd_incx11_2+4, line_vd_incx21_2+4, line_vd_incx31_2+4, line_vd_incx41_2+4, line_vd_incx11_3+4, line_vd_incx21_3+4, line_vd_incx31_3+4, line_vd_incx41_3+4
-   line_vu_jmptab DW line_vu_loop1_0, line_vu_loop2_0, line_vu_loop3_0, line_vu_loop4_0, line_vu_loop1_1, line_vu_loop2_1, line_vu_loop3_1, line_vu_loop4_1, line_vu_loop1_2, line_vu_loop2_2, line_vu_loop3_2, line_vu_loop4_2, line_vu_loop1_3, line_vu_loop2_3, line_vu_loop3_3, line_vu_loop4_3
-                  DW line_vu_incx11_0+4, line_vu_incx21_0+4, line_vu_incx31_0+4, line_vu_incx41_0+4, line_vu_incx11_1+4, line_vu_incx21_1+4, line_vu_incx31_1+4, line_vu_incx41_1+4, line_vu_incx11_2+4, line_vu_incx21_2+4, line_vu_incx31_2+4, line_vu_incx41_2+4, line_vu_incx11_3+4, line_vu_incx21_3+4, line_vu_incx31_3+4, line_vu_incx41_3+4
+   line_vd_jmptab DW line_vd_loop1_0, line_vd_loop2_0, line_vd_loop3_0, line_vd_loop4_0, line_vd_loop1_1, line_vd_loop2_1, line_vd_loop3_1, line_vd_loop4_1
+                  DW line_vd_loop1_2, line_vd_loop2_2, line_vd_loop3_2, line_vd_loop4_2, line_vd_loop1_3, line_vd_loop2_3, line_vd_loop3_3, line_vd_loop4_3
+                  DW line_vd_incx11_0, line_vd_incx21_0, line_vd_incx31_0, line_vd_incx41_0, line_vd_incx11_1, line_vd_incx21_1, line_vd_incx31_1, line_vd_incx41_1
+                  DW line_vd_incx11_2, line_vd_incx21_2, line_vd_incx31_2, line_vd_incx41_2, line_vd_incx11_3, line_vd_incx21_3, line_vd_incx31_3, line_vd_incx41_3
+   line_vu_jmptab DW line_vu_loop1_0, line_vu_loop2_0, line_vu_loop3_0, line_vu_loop4_0, line_vu_loop1_1, line_vu_loop2_1, line_vu_loop3_1, line_vu_loop4_1
+                  DW line_vu_loop1_2, line_vu_loop2_2, line_vu_loop3_2, line_vu_loop4_2, line_vu_loop1_3, line_vu_loop2_3, line_vu_loop3_3, line_vu_loop4_3
+                  DW line_vu_incx11_0, line_vu_incx21_0, line_vu_incx31_0, line_vu_incx41_0, line_vu_incx11_1, line_vu_incx21_1, line_vu_incx31_1, line_vu_incx41_1
+                  DW line_vu_incx11_2, line_vu_incx21_2, line_vu_incx31_2, line_vu_incx41_2, line_vu_incx11_3, line_vu_incx21_3, line_vu_incx31_3, line_vu_incx41_3
 
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
@@ -554,7 +558,6 @@ line_vd_loop2_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx31_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx21_0+4
 line_vd_incx21_0:
 
    mov al, [di]
@@ -563,7 +566,6 @@ line_vd_incx21_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx32_0
    add si, bp           ; D += 2*dy  
-   jmp line_vd_incx22_0+4
 line_vd_incx22_0:
    add di, 79
 
@@ -579,7 +581,6 @@ line_vd_loop1_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx21_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx11_0+4
 line_vd_incx11_0:
 
    mov al, [di]
@@ -588,7 +589,6 @@ line_vd_incx11_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx22_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx12_0+4
 line_vd_incx12_0:
    add di, 79
 
@@ -604,7 +604,6 @@ line_vd_loop3_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx41_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx31_0+4
 line_vd_incx31_0:
 
    mov al, [di]
@@ -613,7 +612,6 @@ line_vd_incx31_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx42_0
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx32_0+4
 line_vd_incx32_0:
    add di, 79
 
@@ -631,7 +629,6 @@ line_vd_loop4_0:
    jg line_vd_incx11_0
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx41_0+4
 line_vd_incx41_0:
 
    mov al, [di]
@@ -642,7 +639,6 @@ line_vd_incx41_0:
    jg line_vd_incx12_0
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx42_0+4
 line_vd_incx42_0:
    add di, 79
 
@@ -659,7 +655,6 @@ line_vd_loop2_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx31_1
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx21_1+4
 line_vd_incx21_1:
 
    mov al, [di]
@@ -669,7 +664,6 @@ line_vd_incx21_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx32_1
    add si, bp           ; D += 2*dy  
-   jmp line_vd_incx22_1+4
 line_vd_incx22_1:
    add di, 79
 
@@ -686,7 +680,6 @@ line_vd_loop1_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx21_1
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx11_1+4
 line_vd_incx11_1:
 
    mov al, [di]
@@ -696,7 +689,6 @@ line_vd_incx11_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx22_1
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx12_1+4
 line_vd_incx12_1:
    add di, 79
 
@@ -713,7 +705,6 @@ line_vd_loop3_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx41_1
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx31_1+4
 line_vd_incx31_1:
 
    mov al, [di]
@@ -723,7 +714,6 @@ line_vd_incx31_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx42_1
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx32_1+4
 line_vd_incx32_1:
    add di, 79
 
@@ -742,7 +732,6 @@ line_vd_loop4_1:
    jg line_vd_incx11_1
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx41_1+4
 line_vd_incx41_1:
 
    mov al, [di]
@@ -754,7 +743,6 @@ line_vd_incx41_1:
    jg line_vd_incx12_1
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx42_1+4
 line_vd_incx42_1:
    add di, 79
 
@@ -771,7 +759,6 @@ line_vd_loop2_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx31_2
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx21_2+4
 line_vd_incx21_2:
 
    mov al, [di]
@@ -781,7 +768,6 @@ line_vd_incx21_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx32_2
    add si, bp           ; D += 2*dy  
-   jmp line_vd_incx22_2+4
 line_vd_incx22_2:
    add di, 79
 
@@ -798,7 +784,6 @@ line_vd_loop1_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx21_2
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx11_2+4
 line_vd_incx11_2:
 
    mov al, [di]
@@ -808,7 +793,6 @@ line_vd_incx11_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx22_2
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx12_2+4
 line_vd_incx12_2:
    add di, 79
 
@@ -825,7 +809,6 @@ line_vd_loop3_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx41_2
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx31_2+4
 line_vd_incx31_2:
 
    mov al, [di]
@@ -835,7 +818,6 @@ line_vd_incx31_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx42_2
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx32_2+4
 line_vd_incx32_2:
    add di, 79
 
@@ -854,7 +836,6 @@ line_vd_loop4_2:
    jg line_vd_incx11_2
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx41_2+4
 line_vd_incx41_2:
 
    mov al, [di]
@@ -866,7 +847,6 @@ line_vd_incx41_2:
    jg line_vd_incx12_2
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx42_2+4
 line_vd_incx42_2:
    add di, 79
 
@@ -882,7 +862,6 @@ line_vd_loop2_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx31_3
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx21_3+4
 line_vd_incx21_3:
 
    mov al, [di]
@@ -891,7 +870,6 @@ line_vd_incx21_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx32_3
    add si, bp           ; D += 2*dy  
-   jmp line_vd_incx22_3+4
 line_vd_incx22_3:
    add di, 79
 
@@ -907,7 +885,6 @@ line_vd_loop1_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx21_3
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx11_3+4
 line_vd_incx11_3:
 
    mov al, [di]
@@ -916,7 +893,6 @@ line_vd_incx11_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx22_3
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx12_3+4
 line_vd_incx12_3:
    add di, 79
 
@@ -932,7 +908,6 @@ line_vd_loop3_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx41_3
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx31_3+4
 line_vd_incx31_3:
 
    mov al, [di]
@@ -941,7 +916,6 @@ line_vd_incx31_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx42_3
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx32_3+4
 line_vd_incx32_3:
    add di, 79
 
@@ -959,7 +933,6 @@ line_vd_loop4_3:
    jg line_vd_incx11_3
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx41_3+4
 line_vd_incx41_3:
 
    mov al, [di]
@@ -970,7 +943,6 @@ line_vd_incx41_3:
    jg line_vd_incx12_3
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx42_3+4
 line_vd_incx42_3:
    add di, 79
 
@@ -1070,7 +1042,6 @@ line_vu_loop2_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx31_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx21_0+4
 line_vu_incx21_0:
 
    mov al, [di]
@@ -1079,7 +1050,6 @@ line_vu_incx21_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx32_0
    add si, bp           ; D += 2*dy  
-   jmp line_vu_incx22_0+4
 line_vu_incx22_0:
    sub di, 81
 
@@ -1095,7 +1065,6 @@ line_vu_loop1_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx21_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx11_0+4
 line_vu_incx11_0:
 
    mov al, [di]
@@ -1104,7 +1073,6 @@ line_vu_incx11_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx22_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx12_0+4
 line_vu_incx12_0:
    sub di, 81
 
@@ -1120,7 +1088,6 @@ line_vu_loop3_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx41_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx31_0+4
 line_vu_incx31_0:
 
    mov al, [di]
@@ -1129,7 +1096,6 @@ line_vu_incx31_0:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx42_0
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx32_0+4
 line_vu_incx32_0:
    sub di, 81
 
@@ -1147,7 +1113,6 @@ line_vu_loop4_0:
    jg line_vu_incx11_0
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx41_0+4
 line_vu_incx41_0:
 
    mov al, [di]
@@ -1158,7 +1123,6 @@ line_vu_incx41_0:
    jg line_vu_incx12_0
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx42_0+4
 line_vu_incx42_0:
    sub di, 81
 
@@ -1175,7 +1139,6 @@ line_vu_loop2_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx31_1
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx21_1+4
 line_vu_incx21_1:
 
    mov al, [di]
@@ -1185,7 +1148,6 @@ line_vu_incx21_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx32_1
    add si, bp           ; D += 2*dy  
-   jmp line_vu_incx22_1+4
 line_vu_incx22_1:
    sub di, 81
 
@@ -1202,7 +1164,6 @@ line_vu_loop1_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx21_1
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx11_1+4
 line_vu_incx11_1:
 
    mov al, [di]
@@ -1212,7 +1173,6 @@ line_vu_incx11_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx22_1
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx12_1+4
 line_vu_incx12_1:
    sub di, 81
 
@@ -1229,7 +1189,6 @@ line_vu_loop3_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx41_1
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx31_1+4
 line_vu_incx31_1:
 
    mov al, [di]
@@ -1239,7 +1198,6 @@ line_vu_incx31_1:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx42_1
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx32_1+4
 line_vu_incx32_1:
    sub di, 81
 
@@ -1258,7 +1216,6 @@ line_vu_loop4_1:
    jg line_vu_incx11_1
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx41_1+4
 line_vu_incx41_1:
 
    mov al, [di]
@@ -1270,7 +1227,6 @@ line_vu_incx41_1:
    jg line_vu_incx12_1
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx42_1+4
 line_vu_incx42_1:
    sub di, 81
 
@@ -1287,7 +1243,6 @@ line_vu_loop2_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx31_2
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx21_2+4
 line_vu_incx21_2:
 
    mov al, [di]
@@ -1297,7 +1252,6 @@ line_vu_incx21_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx32_2
    add si, bp           ; D += 2*dy  
-   jmp line_vu_incx22_2+4
 line_vu_incx22_2:
    sub di, 81
 
@@ -1314,7 +1268,6 @@ line_vu_loop1_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx21_2
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx11_2+4
 line_vu_incx11_2:
 
    mov al, [di]
@@ -1324,7 +1277,6 @@ line_vu_incx11_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx22_2
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx12_2+4
 line_vu_incx12_2:
    sub di, 81
 
@@ -1341,7 +1293,6 @@ line_vu_loop3_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx41_2
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx31_2+4
 line_vu_incx31_2:
 
    mov al, [di]
@@ -1351,7 +1302,6 @@ line_vu_incx31_2:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx42_2
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx32_2+4
 line_vu_incx32_2:
    sub di, 81
 
@@ -1370,7 +1320,6 @@ line_vu_loop4_2:
    jg line_vu_incx11_2
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx41_2+4
 line_vu_incx41_2:
 
    mov al, [di]
@@ -1382,7 +1331,6 @@ line_vu_incx41_2:
    jg line_vu_incx12_2
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx42_2+4
 line_vu_incx42_2:
    sub di, 81
 
@@ -1398,7 +1346,6 @@ line_vu_loop2_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx31_3
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx21_3+4
 line_vu_incx21_3:
 
    mov al, [di]
@@ -1407,7 +1354,6 @@ line_vu_incx21_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx32_3
    add si, bp           ; D += 2*dy  
-   jmp line_vu_incx22_3+4
 line_vu_incx22_3:
    sub di, 81
 
@@ -1423,7 +1369,6 @@ line_vu_loop1_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx21_3
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx11_3+4
 line_vu_incx11_3:
 
    mov al, [di]
@@ -1432,7 +1377,6 @@ line_vu_incx11_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx22_3
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx12_3+4
 line_vu_incx12_3:
    sub di, 81
 
@@ -1448,7 +1392,6 @@ line_vu_loop3_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx41_3
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx31_3+4
 line_vu_incx31_3:
 
    mov al, [di]
@@ -1457,7 +1400,6 @@ line_vu_incx31_3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vu_incx42_3
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx32_3+4
 line_vu_incx32_3:
    sub di, 81
 
@@ -1475,7 +1417,6 @@ line_vu_loop4_3:
    jg line_vu_incx11_3
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx41_3+4
 line_vu_incx41_3:
 
    mov al, [di]
@@ -1486,7 +1427,6 @@ line_vu_incx41_3:
    jg line_vu_incx12_3
    dec di
    add si, bp           ; D += 2*dy
-   jmp line_vu_incx42_3+4
 line_vu_incx42_3:
    sub di, 81
 
