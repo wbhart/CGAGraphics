@@ -289,9 +289,18 @@ line_hd_done:
 
 line_vd:                ; verticalish, down
 
-   mov ax, [y0]         ; round y0 down to multiple of 2
+   mov ax, [y0]         ; start rounding y0 down to multiple of 2
    shr ax, 1
-   shl ax, 1
+
+   jnc line_vd_even     ; deal with odd starting line
+   add si, 8
+   sub di, 8192         ; addressing below assumes we started on even line
+line_vd_even:
+
+   shl ax, 1            ; finish rounding y0 down to multiple of 2
+
+   mov si, cs:[line_vd_jmptab + si]
+   mov cs:[jmp_addr], si
 
    mov si, [y1]         ; compute iterations
    sub si, ax
@@ -302,18 +311,6 @@ line_vd:                ; verticalish, down
    shl ah, cl
 
    mov cx, si           ; get iterations
-
-   mov si, [x0]         ; get x0 mod 4
-   and si, 3
-   shl si, 1
-
-   test [y0], 1
-   jz line_vd_even
-   add si, 8
-   sub di, 8192         ; addressing below assumes we started on even line
-line_vd_even:
-   mov si, cs:[line_vd_jmptab + si]
-   mov cs:[jmp_addr], si
 
    push bp
 
@@ -490,10 +487,19 @@ line_vd_done:
 
 line_vu:                ; verticalish, up
 
-   mov ax, [y0]         ; round y0 up to multiple of 2
+   mov ax, [y0]         ; start rounding y0 up to multiple of 2
    inc ax
    shr ax, 1
-   shl ax, 1
+
+   jc line_vu_even
+   add si, 8
+   sub di, 8112         ; addressing below assumes we started on even line
+line_vu_even:
+
+   shl ax, 1            ; finish rounding y0 up to multiple of 2
+
+   mov si, cs:[line_vu_jmptab + si]
+   mov cs:[jmp_addr], si
 
    mov si, [y1]         ; compute iterations
    sub si, ax
@@ -505,18 +511,6 @@ line_vu:                ; verticalish, up
    shl ah, cl
 
    mov cx, si           ; get iterations
-
-   mov si, [x0]         ; get x0 mod 4
-   and si, 3
-   shl si, 1
-
-   test [y0], 1
-   jz line_vu_even
-   add si, 8
-   sub di, 8112         ; addressing below assumes we started on even line
-line_vu_even:
-   mov si, cs:[line_vu_jmptab + si]
-   mov cs:[jmp_addr], si
 
    push bp
 
