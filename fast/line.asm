@@ -8,11 +8,11 @@
    line_vd_jmptab DW line_vd_loop1_0, line_vd_loop1_1, line_vd_loop1_2, line_vd_loop1_3, line_vd_loop2_0, line_vd_loop2_1, line_vd_loop2_2, line_vd_loop2_3
                   DW line_vd_loop3_0, line_vd_loop3_1, line_vd_loop3_2, line_vd_loop3_3, line_vd_loop4_0, line_vd_loop4_1, line_vd_loop4_2, line_vd_loop4_3
                   DW line_vd_incx11_0, line_vd_incx11_1, line_vd_incx11_2, line_vd_incx11_3, line_vd_incx21_0, line_vd_incx21_1, line_vd_incx21_2, line_vd_incx21_3
-                  DW line_vd_incx31_2, line_vd_incx31_1, line_vd_incx31_2, line_vd_incx31_3, line_vd_incx41_0, line_vd_incx41_1, line_vd_incx41_2, line_vd_incx41_3
+                  DW line_vd_incx31_0, line_vd_incx31_1, line_vd_incx31_2, line_vd_incx31_3, line_vd_incx41_0, line_vd_incx41_1, line_vd_incx41_2, line_vd_incx41_3
    line_vu_jmptab DW line_vu_loop1_0, line_vu_loop1_1, line_vu_loop1_2, line_vu_loop1_3, line_vu_loop2_0, line_vu_loop2_1, line_vu_loop2_2, line_vu_loop2_3
                   DW line_vu_loop3_0, line_vu_loop3_1, line_vu_loop3_2, line_vu_loop3_3, line_vu_loop4_0, line_vu_loop4_1, line_vu_loop4_2, line_vu_loop4_3
                   DW line_vu_incx11_0, line_vu_incx11_1, line_vu_incx11_2, line_vu_incx11_3, line_vu_incx21_0, line_vu_incx21_1, line_vu_incx21_2, line_vu_incx21_3
-                  DW line_vu_incx31_2, line_vu_incx31_1, line_vu_incx31_2, line_vu_incx31_3, line_vu_incx41_0, line_vu_incx41_1, line_vu_incx41_2, line_vu_incx41_3
+                  DW line_vu_incx31_0, line_vu_incx31_1, line_vu_incx31_2, line_vu_incx31_3, line_vu_incx41_0, line_vu_incx41_1, line_vu_incx41_2, line_vu_incx41_3
 
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
