@@ -1012,7 +1012,7 @@ line_vu_even:
    shl cl, 1
    shl cl, 1
    shl cl, 1
-   add si cx
+   add si, cx
 
    mov si, cs:[line_vu_jmptab + si]
    mov cs:[jmp_addr], si
