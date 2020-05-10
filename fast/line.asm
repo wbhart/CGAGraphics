@@ -5,14 +5,14 @@
    jmp_addr       DW ?
    line_hd_jmptab DW line_hd0_0, line_hd0_1, line_hd0_2, line_hd0_3, line_hd1_0, line_hd1_1, line_hd1_2, line_hd1_3, line_hd2_0, line_hd2_1, line_hd2_2, line_hd2_3, line_hd3_0, line_hd3_1, line_hd3_2, line_hd3_3 
    line_hu_jmptab DW line_hu0_0, line_hu0_1, line_hu0_2, line_hu0_3, line_hu1_0, line_hu1_1, line_hu1_2, line_hu1_3, line_hu2_0, line_hu2_1, line_hu2_2, line_hu2_3, line_hu3_0, line_hu3_1, line_hu3_2, line_hu3_3 
-   line_vd_jmptab DW line_vd_loop1_0, line_vd_loop2_0, line_vd_loop3_0, line_vd_loop4_0, line_vd_loop1_1, line_vd_loop2_1, line_vd_loop3_1, line_vd_loop4_1
-                  DW line_vd_loop1_2, line_vd_loop2_2, line_vd_loop3_2, line_vd_loop4_2, line_vd_loop1_3, line_vd_loop2_3, line_vd_loop3_3, line_vd_loop4_3
-                  DW line_vd_incx11_0, line_vd_incx21_0, line_vd_incx31_0, line_vd_incx41_0, line_vd_incx11_1, line_vd_incx21_1, line_vd_incx31_1, line_vd_incx41_1
-                  DW line_vd_incx11_2, line_vd_incx21_2, line_vd_incx31_2, line_vd_incx41_2, line_vd_incx11_3, line_vd_incx21_3, line_vd_incx31_3, line_vd_incx41_3
-   line_vu_jmptab DW line_vu_loop1_0, line_vu_loop2_0, line_vu_loop3_0, line_vu_loop4_0, line_vu_loop1_1, line_vu_loop2_1, line_vu_loop3_1, line_vu_loop4_1
-                  DW line_vu_loop1_2, line_vu_loop2_2, line_vu_loop3_2, line_vu_loop4_2, line_vu_loop1_3, line_vu_loop2_3, line_vu_loop3_3, line_vu_loop4_3
-                  DW line_vu_incx11_0, line_vu_incx21_0, line_vu_incx31_0, line_vu_incx41_0, line_vu_incx11_1, line_vu_incx21_1, line_vu_incx31_1, line_vu_incx41_1
-                  DW line_vu_incx11_2, line_vu_incx21_2, line_vu_incx31_2, line_vu_incx41_2, line_vu_incx11_3, line_vu_incx21_3, line_vu_incx31_3, line_vu_incx41_3
+   line_vd_jmptab DW line_vd_loop1_0, line_vd_loop1_1, line_vd_loop1_2, line_vd_loop1_3, line_vd_loop2_0, line_vd_loop2_1, line_vd_loop2_2, line_vd_loop2_3
+                  DW line_vd_loop3_0, line_vd_loop3_1, line_vd_loop3_2, line_vd_loop3_3, line_vd_loop4_0, line_vd_loop4_1, line_vd_loop4_2, line_vd_loop4_3
+                  DW line_vd_incx11_0, line_vd_incx11_1, line_vd_incx11_2, line_vd_incx11_3, line_vd_incx21_0, line_vd_incx21_1, line_vd_incx21_2, line_vd_incx21_3
+                  DW line_vd_incx31_2, line_vd_incx31_1, line_vd_incx31_2, line_vd_incx31_3, line_vd_incx41_0, line_vd_incx41_1, line_vd_incx41_2, line_vd_incx41_3
+   line_vu_jmptab DW line_vu_loop1_0, line_vu_loop1_1, line_vu_loop1_2, line_vu_loop1_3, line_vu_loop2_0, line_vu_loop2_1, line_vu_loop2_2, line_vu_loop2_3
+                  DW line_vu_loop3_0, line_vu_loop3_1, line_vu_loop3_2, line_vu_loop3_3, line_vu_loop4_0, line_vu_loop4_1, line_vu_loop4_2, line_vu_loop4_3
+                  DW line_vu_incx11_0, line_vu_incx11_1, line_vu_incx11_2, line_vu_incx11_3, line_vu_incx21_0, line_vu_incx21_1, line_vu_incx21_2, line_vu_incx21_3
+                  DW line_vu_incx31_2, line_vu_incx31_1, line_vu_incx31_2, line_vu_incx31_3, line_vu_incx41_0, line_vu_incx41_1, line_vu_incx41_2, line_vu_incx41_3
 
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
@@ -496,20 +496,8 @@ line_vd_even:
 
    shl ax, 1            ; finish rounding y0 down to multiple of 2
 
-   mov ah, cl           ; save cl
-
-   xor cx, cx           ; compute colour jump
-   mov cl, [colour]
-   shl cl, 1
-   shl cl, 1
-   shl cl, 1
-   add si, cx
-
    mov si, cs:[line_vd_jmptab + si]
    mov cs:[jmp_addr], si
-
-   mov cl, ah           ; restore cl and ah
-   xor ah, ah
 
    mov si, [y1]         ; compute iterations
    sub si, ax
@@ -979,20 +967,8 @@ line_vu_even:
 
    shl ax, 1            ; finish rounding y0 up to multiple of 2
 
-   mov ah, cl           ; save cl
-
-   xor cx, cx           ; compute colour jump
-   mov cl, [colour]
-   shl cl, 1
-   shl cl, 1
-   shl cl, 1
-   add si, cx
-
    mov si, cs:[line_vu_jmptab + si]
    mov cs:[jmp_addr], si
-
-   mov cl, ah           ; restore cl and ah
-   xor ah, ah
 
    mov si, [y1]         ; compute iterations
    sub si, ax
