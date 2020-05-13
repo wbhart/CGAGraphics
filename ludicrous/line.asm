@@ -1525,7 +1525,7 @@ line_hu_iter:
 line_hu_even:
 
    cli
-   mov cs:[cs_save], sp
+   mov cs:[sp_save], sp
    mov sp, 0c050h
 
    jmp WORD PTR cs:[jmp_addr]
