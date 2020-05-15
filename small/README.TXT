@@ -7,7 +7,7 @@ amount of code.
    * Focus on code size, not performance, though not to the extreme
    * Generally no duplication of code for speedups
    * Interrupts will not be turned off
-   * No self-modification
+   * Self-modification only if it reduces code size with low overhead
    * Very efficient initialisation of routines
    * No proliferation of functions
    * Generally no approximations in graphics output   

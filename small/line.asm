@@ -64,8 +64,8 @@ line_dx_pos:
 line_goto_hu:
    mov si, 8112
 
-   mov WORD PTR cs:[line_h_xor1], -8272
-   mov WORD PTR cs:[line_h_xor2], -8272 
+   mov WORD PTR cs:[line_h_xor1 + 2], -8272
+   mov WORD PTR cs:[line_h_xor2 + 2], -8272 
 
    jmp line_hu
 
@@ -79,8 +79,8 @@ line_down:
 line_hd:                ; horizontalish, down
    mov si, 8192
 
-   mov WORD PTR cs:[line_h_xor1], -16304
-   mov WORD PTR cs:[line_h_xor2], -16304 
+   mov WORD PTR cs:[line_h_xor1 + 2], -16304
+   mov WORD PTR cs:[line_h_xor2 + 2], -16304 
 
 line_hu:                ; horizontalish, up
 
@@ -201,14 +201,14 @@ line_h_no_iter:
 
 line_h_done:
 
+line_vd:
+line_vu:
+
    pop ds
    pop si
    pop di
    pop bp
    ret
-
-line_vd:
-line_vu:
 
 _cga_draw_line ENDP
 
