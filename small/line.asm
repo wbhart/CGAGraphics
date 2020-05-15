@@ -62,6 +62,11 @@ line_dx_pos:
    jbe line_goto_hu
    jmp line_vu   
 line_goto_hu:
+   mov si, 8112
+
+   mov WORD PTR cs:[line_h_xor1], -8272
+   mov WORD PTR cs:[line_h_xor2], -8272 
+
    jmp line_hu
 
 line_down:
@@ -72,6 +77,12 @@ line_down:
    jmp line_vd   
 
 line_hd:                ; horizontalish, down
+   mov si, 8192
+
+   mov WORD PTR cs:[line_h_xor1], -16304
+   mov WORD PTR cs:[line_h_xor2], -16304 
+
+line_hu:                ; horizontalish, up
 
    mov ax, dx           ; compute iterations
    inc ax
@@ -83,41 +94,41 @@ line_hd:                ; horizontalish, down
    mov ch, 0fch
    rol ch, cl           ; compute initial mask
 
+   mov bp, [y0]         ; compute initial even/odd offset diff
+   shr bp, 1
+   mov bp, si
+   jnc line_h_even
+   sub bp, 16304
+line_h_even:
+
    shl bx, 1            ; compute 2*dy
    xor si, si           ; D = -dx
    sub si, dx
    shl dx, 1            ; compute 2*dx
-   
-   mov bp, [y0]         ; compute initial even/odd offset diff
-   shr bp, 1
-   mov bp, 8192
-   jnc line_hd_even
-   sub bp, 16304
-line_hd_even:
 
    mov cl, al           ; get iterations
 
    cmp cl, 0            ; check for zero iterations
-   je line_hd_no_iter
+   je line_h_no_iter
 
-line_hd_begin:
+line_h_begin:
    add si, bx           ; D += 2*dy
-   jg line_hd_Dgt0      ; if D <= 0
+   jg line_h_Dgt0       ; if D <= 0
 
    mov al, ch           ; get mask
    ror ch, 1            ; rotate mask
    ror ch, 1
 
-   jnc line_hd_3mod4    ; if 0, 1, 2 mod 4
+   jnc line_h_3mod4     ; if 0, 1, 2 mod 4
 
    and al, ch           ; and with mask 
    and al, [di]         ; and with pixel
    or al, ah            ; or with colour
    ror ah, 1            ; rotate colour
    ror ah, 1
-   jmp line_hd_Dcmp_end
+   jmp line_h_Dcmp_end
 
-line_hd_3mod4:          ; else if 3 mod 4
+line_h_3mod4:           ; else if 3 mod 4
    and al, [di]         ; and with pixel
    or al, ah            ; or with colour
    stosb                ; write out
@@ -127,15 +138,16 @@ line_hd_3mod4:          ; else if 3 mod 4
    
    mov al, ch           ; get mask
    and al, [di]         ; and with pixel
-   jmp line_hd_Dcmp_end
+   jmp line_h_Dcmp_end
 
-line_hd_Dgt0:           ; else if D > 0
+line_h_Dgt0:            ; else if D > 0
    mov al, ch           ; get mask
    and al, [di]         ; and with pixel
    or al, ah            ; or with colour
    stosb                ; write out
 
    add di, bp           ; increase y coord
+line_h_xor1:
    xor bp, -16304
         
    ror ah, 1            ; rotate colour
@@ -150,21 +162,22 @@ line_hd_Dgt0:           ; else if D > 0
 
    sub si, dx           ; D -= 2*dx
 
-line_hd_Dcmp_end:
+line_h_Dcmp_end:
 
    or al, ah            ; or with colour
    stosb                ; write out
 
    add si, bx           ; D += 2*dy
 
-   jle line_hd_no_inc   ; if D < 0
+   jle line_h_no_inc    ; if D < 0
 
    add di, bp           ; increase y coord
+line_h_xor2:
    xor bp, -16304
    
    sub si, dx           ; D -= 2*dx
 
-line_hd_no_inc:         ; else D >= 0
+line_h_no_inc:          ; else D >= 0
    ror ah, 1            ; rotate colour
    ror ah, 1
    ror ch, 1            ; rotate mask
@@ -173,169 +186,31 @@ line_hd_no_inc:         ; else D >= 0
    sbb di, 0            ; if not 3 mod 4 reset offset
 
    dec cl
-   jnz line_hd_begin
+   jnz line_h_begin
 
-line_hd_no_iter:
+line_h_no_iter:
 
    pop bx               ; if iterations is odd
    test bl, 1
-   jz line_hd_done
+   jz line_h_done
 
    mov al, ch           ; get mask
    and al, [di]         ; and with pixel
    or al, ah            ; or with colour
    stosb                ; write out
 
-line_hd_done:
-
-line_vd:
-line_vu:
-line_hu:
+line_h_done:
 
    pop ds
    pop si
    pop di
    pop bp
    ret
+
+line_vd:
+line_vu:
+
 _cga_draw_line ENDP
-
-        PUBLIC _cga_draw_line2
-_cga_draw_line2 PROC
-	ARG x0:WORD, y0:WORD, xdiff:WORD, ydiff:WORD, D:WORD, xend:WORD, colour:BYTE
-	; line from (x0, y0) - (xend, ?) including endpoints
-        push bp
-	mov bp, sp
-        push di
-        push si
-        mov ax, 0b800h
-        mov es, ax
-        std
-
-        xor di, di
-        mov ax, [y0]
-        shr ax, 1
-        sbb di, 0
-        and di, 8192
-        shl ax, 1
-        shl ax, 1
-        shl ax, 1        
-        shl ax, 1
-        add di, ax
-        shl ax, 1
-        shl ax, 1
-        add di, ax
-
-        mov bx, [x0]
-        mov ax, [xend]
-        sub ax, bx
-        neg ax
-        inc ax
-        push ax
-        shr ax, 1
-        push bp
-        push ax
-        mov cl, bl
-        mov ch, [colour]
-        inc cl
-        and cl, 3
-        shl cl, 1
-        ror ch, cl
-        mov ah, 0fch
-        ror ah, cl
-        mov cl, ah
-        shr bx, 1
-        shr bx, 1
-        add di, bx
-
-        mov dx, [ydiff]
-        shl dx, 1
-        mov bx, [xdiff]
-        shl bx, 1
-        mov si, [D]
-        sub si, dx
-
-        pop bp
-        cmp bp, 0
-        je line2_end2
-
-line2_begin2:
-        add si, dx
-        jg line2_Dgt0_1
-        mov al, cl
-        rol cl, 1
-        rol cl, 1
-        jnc line2_ine3
-        and al, cl
-        and al, es:[di]
-        or al, ch
-        rol ch, 1
-        rol ch, 1
-        jmp line2_Dcmp_end_1
-line2_ine3:
-        and al, es:[di]
-        or al, ch
-        stosb
-        rol ch, 1
-        rol ch, 1
-        mov al, cl
-        and al, es:[di]
-        jmp line2_Dcmp_end_1
-line2_Dgt0_1:
-        mov al, cl
-        and al, es:[di]
-        or al, ch
-        stosb
-        xor ax, ax
-        sub di, 8112
-        sbb ax, ax
-        and ax, 16304
-        add di, ax
-        rol ch, 1
-        rol ch, 1
-        rol cl, 1
-        rol cl, 1
-        adc di, 0
-        mov al, cl
-        and al, es:[di]
-        sub si, bx        
-line2_Dcmp_end_1:
-        or al, ch
-        stosb
-        add si, dx
-        jle line2_no_inc
-        xor ax, ax
-        sub di, 8112
-        sbb ax, ax
-        and ax, 16304
-        add di, ax
-        sub si, bx        
-line2_no_inc:
-        rol ch, 1
-        rol ch, 1
-        rol cl, 1
-        rol cl, 1
-        adc di, 0
-        dec bp
-        jnz line2_begin2
-line2_end2:
-        pop bp
-
-        pop ax
-        test al, 1
-        jz line2_done
-
-        mov al, cl
-        and al, es:[di]
-        or al, ch
-        stosb
-line2_done:
-
-        cld
-        pop si
-        pop di
-        pop bp
-        ret
-_cga_draw_line2 ENDP
 
         PUBLIC _cga_draw_line3
 _cga_draw_line3 PROC
