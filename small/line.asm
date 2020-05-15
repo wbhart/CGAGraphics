@@ -75,19 +75,19 @@ line_hd:                ; horizontalish, down
 
    mov ax, dx           ; compute iterations
    inc ax
-   push ax              ; save high byte of iterations
+   push ax              ; save iterations
    shr ax, 1            ; we unroll by 2
 
    mov ah, [colour]     ; compute initial colour information
    shl ah, cl
    mov ch, 0fch
-   shl ch, cl           ; compute initial mask
+   rol ch, cl           ; compute initial mask
 
    shl bx, 1            ; compute 2*dy
    xor si, si           ; D = -dx
    sub si, dx
    shl dx, 1            ; compute 2*dx
-
+   
    mov bp, [y0]         ; compute initial even/odd offset diff
    shr bp, 1
    mov bp, 8192
@@ -101,8 +101,8 @@ line_hd_even:
    je line_hd_no_iter
 
 line_hd_begin:
-   add si, dx           ; if D <= 0
-   jg line_hd_Dgt0
+   add si, bx           ; D += 2*dy
+   jg line_hd_Dgt0      ; if D <= 0
 
    mov al, ch           ; get mask
    ror ch, 1            ; rotate mask
@@ -110,15 +110,15 @@ line_hd_begin:
 
    jnc line_hd_3mod4    ; if 0, 1, 2 mod 4
 
-   and al, ch           ; and pixel with mask 
-   and al, [di] 
+   and al, ch           ; and with mask 
+   and al, [di]         ; and with pixel
    or al, ah            ; or with colour
    ror ah, 1            ; rotate colour
    ror ah, 1
    jmp line_hd_Dcmp_end
 
 line_hd_3mod4:          ; else if 3 mod 4
-   and al, [di]         ; and with mask
+   and al, [di]         ; and with pixel
    or al, ah            ; or with colour
    stosb                ; write out
 
@@ -148,20 +148,21 @@ line_hd_Dgt0:           ; else if D > 0
    mov al, ch           ; get mask
    and al, [di]         ; and with pixel
 
-   sub si, bx           ; D -= dy        
+   sub si, dx           ; D -= 2*dx
+
 line_hd_Dcmp_end:
 
    or al, ah            ; or with colour
    stosb                ; write out
 
-   add si, dx           ; D += dx
+   add si, bx           ; D += 2*dy
 
    jle line_hd_no_inc   ; if D < 0
 
    add di, bp           ; increase y coord
    xor bp, -16304
    
-   sub si, bx           ; D -= dy
+   sub si, dx           ; D -= 2*dx
 
 line_hd_no_inc:         ; else D >= 0
    ror ah, 1            ; rotate colour
