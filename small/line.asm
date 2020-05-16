@@ -65,10 +65,10 @@ line_dx_pos:
    mov WORD PTR cs:[line_v_xor2 + 2], -16304
    jmp line_vu   
 line_goto_hu:
-   mov si, 8112
+   mov si, 8111
 
-   mov WORD PTR cs:[line_h_xor1 + 2], -80
-   mov WORD PTR cs:[line_h_xor2 + 2], -80 
+   mov WORD PTR cs:[line_h_xor1 + 2], -16304
+   mov WORD PTR cs:[line_h_xor2 + 2], -16304 
 
    jmp line_hu
 
@@ -80,7 +80,7 @@ line_down:
    jmp line_vd   
 
 line_hd:                ; horizontalish, down
-   mov si, 8192
+   mov si, 8191
 
    mov WORD PTR cs:[line_h_xor1 + 2], -16304
    mov WORD PTR cs:[line_h_xor2 + 2], -16304 
@@ -111,6 +111,8 @@ line_h_even:
 
    mov cl, al           ; get iterations
 
+   mov al, [di]         ; get first pixel
+
    cmp cl, 0            ; check for zero iterations
    je line_h_no_iter
 
@@ -118,34 +120,32 @@ line_h_begin:
    add si, bx           ; D += 2*dy
    jg line_h_Dgt0       ; if D <= 0
 
-   mov al, ch           ; get mask
+   and al, ch           ; and with mask
    ror ch, 1            ; rotate mask
    ror ch, 1
 
    jnc line_h_3mod4     ; if 0, 1, 2 mod 4
 
    and al, ch           ; and with mask 
-   and al, [di]         ; and with pixel
    or al, ah            ; or with colour
    ror ah, 1            ; rotate colour
    ror ah, 1
    jmp line_h_Dcmp_end
 
 line_h_3mod4:           ; else if 3 mod 4
-   and al, [di]         ; and with pixel
    or al, ah            ; or with colour
    stosb                ; write out
 
    ror ah, 1            ; rotate colour
    ror ah, 1
    
-   mov al, ch           ; get mask
+   mov al, [di]
+   and al, ch           ; and with mask
    and al, [di]         ; and with pixel
    jmp line_h_Dcmp_end
 
 line_h_Dgt0:            ; else if D > 0
-   mov al, ch           ; get mask
-   and al, [di]         ; and with pixel
+   and al, ch           ; and with mask
    or al, ah            ; or with colour
    stosb                ; write out
 
@@ -158,35 +158,54 @@ line_h_xor1:
    ror ch, 1            ; rotate mask
    ror ch, 1
 
-   sbb di, 0            ; if not 3 mod 4 reset offset
+   cmc
+   adc di, 0            ; if 3 mod 4 increment offset
 
-   mov al, ch           ; get mask
-   and al, [di]         ; and with pixel
-
+   mov al, [di]         ; get pixel
+   and al, ch           ; and with mask
+   
    sub si, dx           ; D -= 2*dx
 
 line_h_Dcmp_end:
 
    or al, ah            ; or with colour
-   stosb                ; write out
 
    add si, bx           ; D += 2*dy
 
    jle line_h_no_inc    ; if D < 0
 
+   stosb
+
    add di, bp           ; increase y coord
 line_h_xor2:
    xor bp, 01234h
-   
+
    sub si, dx           ; D -= 2*dx
 
-line_h_no_inc:          ; else D >= 0
    ror ah, 1            ; rotate colour
    ror ah, 1
    ror ch, 1            ; rotate mask
    ror ch, 1
-   
-   sbb di, 0            ; if not 3 mod 4 reset offset
+
+   cmc
+   adc di, 0
+
+   mov al, [di]
+
+   dec cl
+   jnz line_h_begin
+
+line_h_no_inc:          ; else D >= 0
+
+   ror ah, 1            ; rotate colour
+   ror ah, 1
+   ror ch, 1            ; rotate mask
+   ror ch, 1
+
+   jc line_h_skip_write
+   stosb
+   mov al, [di]
+line_h_skip_write:
 
    dec cl
    jnz line_h_begin
@@ -197,12 +216,11 @@ line_h_no_iter:
    test bl, 1
    jz line_h_done
 
-   mov al, ch           ; get mask
-   and al, [di]         ; and with pixel
+   and al, ch           ; and with mask
    or al, ah            ; or with colour
-   stosb                ; write out
 
 line_h_done:
+   stosb                ; write out
 
    pop ds
    pop si
@@ -213,8 +231,8 @@ line_h_done:
 line_vd:
    mov si, 8191
 
-   mov WORD PTR cs:[line_v_xor1 + 2], -80
-   mov WORD PTR cs:[line_v_xor2 + 2], -80
+   mov WORD PTR cs:[line_v_xor1 + 2], -16304
+   mov WORD PTR cs:[line_v_xor2 + 2], -16304
 line_vu:
 
    mov ax, bx           ; compute iterations
