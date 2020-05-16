@@ -82,8 +82,8 @@ line_down:
 line_hd:                ; horizontalish, down
    mov si, 8191
 
-   mov WORD PTR cs:[line_h_xor1 + 2], -16304
-   mov WORD PTR cs:[line_h_xor2 + 2], -16304 
+   mov WORD PTR cs:[line_h_xor1 + 2], -80
+   mov WORD PTR cs:[line_h_xor2 + 2], -80 
 
 line_hu:                ; horizontalish, up
 
@@ -141,7 +141,6 @@ line_h_3mod4:           ; else if 3 mod 4
    
    mov al, [di]
    and al, ch           ; and with mask
-   and al, [di]         ; and with pixel
    jmp line_h_Dcmp_end
 
 line_h_Dgt0:            ; else if D > 0
@@ -187,10 +186,10 @@ line_h_xor2:
    ror ch, 1            ; rotate mask
    ror ch, 1
 
-   cmc
+   cmc                  ; if 3 mod 4 increment offset
    adc di, 0
 
-   mov al, [di]
+   mov al, [di]         ; get pixel
 
    dec cl
    jnz line_h_begin
@@ -203,8 +202,8 @@ line_h_no_inc:          ; else D >= 0
    ror ch, 1
 
    jc line_h_skip_write
-   stosb
-   mov al, [di]
+   stosb                ; write out
+   mov al, [di]         ; get pixel
 line_h_skip_write:
 
    dec cl
@@ -231,8 +230,8 @@ line_h_done:
 line_vd:
    mov si, 8191
 
-   mov WORD PTR cs:[line_v_xor1 + 2], -16304
-   mov WORD PTR cs:[line_v_xor2 + 2], -16304
+   mov WORD PTR cs:[line_v_xor1 + 2], -80
+   mov WORD PTR cs:[line_v_xor2 + 2], -80
 line_vu:
 
    mov ax, bx           ; compute iterations
