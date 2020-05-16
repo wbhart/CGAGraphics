@@ -59,15 +59,16 @@ line_dx_pos:
    cmp bx, dx
 
    mov si, 8111
+   mov ax, -16304
 
    jbe line_goto_hu
 
-   mov WORD PTR cs:[line_v_xor1 + 2], -16304
-   mov WORD PTR cs:[line_v_xor2 + 2], -16304
+   mov WORD PTR cs:[line_v_xor1 + 2], ax
+   mov WORD PTR cs:[line_v_xor2 + 2], ax
    jmp line_vu   
 line_goto_hu:
-   mov WORD PTR cs:[line_h_xor1 + 2], -16304
-   mov WORD PTR cs:[line_h_xor2 + 2], -16304
+   mov WORD PTR cs:[line_h_xor1 + 2], ax
+   mov WORD PTR cs:[line_h_xor2 + 2], ax
    jmp line_hu
 
 line_down:
@@ -75,14 +76,14 @@ line_down:
    cmp bx, dx
 
    mov si, 8191
+   mov ax, -80
 
    jb line_hd
    jmp line_vd   
 
 line_hd:                ; horizontalish, down
-   mov WORD PTR cs:[line_h_xor1 + 2], -80
-   mov WORD PTR cs:[line_h_xor2 + 2], -80 
-
+   mov WORD PTR cs:[line_h_xor1 + 2], ax
+   mov WORD PTR cs:[line_h_xor2 + 2], ax
 line_hu:                ; horizontalish, up
 
    mov ax, dx           ; compute iterations
@@ -225,8 +226,8 @@ line_h_done:
    ret
 
 line_vd:
-   mov WORD PTR cs:[line_v_xor1 + 2], -80
-   mov WORD PTR cs:[line_v_xor2 + 2], -80
+   mov WORD PTR cs:[line_v_xor1 + 2], ax
+   mov WORD PTR cs:[line_v_xor2 + 2], ax
 line_vu:
 
    mov ax, bx           ; compute iterations
