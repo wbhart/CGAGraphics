@@ -64,8 +64,8 @@ line_dx_pos:
 line_goto_hu:
    mov si, 8112
 
-   mov WORD PTR cs:[line_h_xor1 + 2], -8272
-   mov WORD PTR cs:[line_h_xor2 + 2], -8272 
+   mov WORD PTR cs:[line_h_xor1 + 2], -80
+   mov WORD PTR cs:[line_h_xor2 + 2], -80 
 
    jmp line_hu
 
@@ -148,7 +148,7 @@ line_h_Dgt0:            ; else if D > 0
 
    add di, bp           ; increase y coord
 line_h_xor1:
-   xor bp, -16304
+   xor bp, 01234h
         
    ror ah, 1            ; rotate colour
    ror ah, 1
@@ -173,7 +173,7 @@ line_h_Dcmp_end:
 
    add di, bp           ; increase y coord
 line_h_xor2:
-   xor bp, -16304
+   xor bp, 01234h
    
    sub si, dx           ; D -= 2*dx
 
