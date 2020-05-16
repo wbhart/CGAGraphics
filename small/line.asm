@@ -127,16 +127,11 @@ line_h_begin:
 
    and al, ch           ; and with mask 
    or al, ah            ; or with colour
-   ror ah, 1            ; rotate colour
-   ror ah, 1
    jmp line_h_Dcmp_end
 
 line_h_3mod4:           ; else if 3 mod 4
    or al, ah            ; or with colour
    stosb                ; write out
-
-   ror ah, 1            ; rotate colour
-   ror ah, 1
    
    mov al, [di]
    and al, ch           ; and with mask
@@ -151,8 +146,6 @@ line_h_Dgt0:            ; else if D > 0
 line_h_xor1:
    xor bp, 01234h
         
-   ror ah, 1            ; rotate colour
-   ror ah, 1
    ror ch, 1            ; rotate mask
    ror ch, 1
 
@@ -165,6 +158,8 @@ line_h_xor1:
 
 line_h_Dcmp_end:
 
+   ror ah, 1            ; rotate colour
+   ror ah, 1
    or al, ah            ; or with colour
 
    add si, bx           ; D += 2*dy
