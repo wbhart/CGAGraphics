@@ -45,12 +45,10 @@ line_dx_pos:
    shr ax, 1
    add di, ax
 
-   mov si, [x0]         ; compute 2*(x0 mod 4)
-   and si, 3
-   shl si, 1
-
-   mov cx, 6            ; compute colour shift
-   sub cx, si
+   mov cx, [x0]         ; compute 2*(x0 mod 4)
+   inc cx
+   and cx, 3
+   shl cx, 1
 
    mov bx, [y1]         ; compute dy
    sub bx, [y0]
@@ -60,6 +58,10 @@ line_dx_pos:
    cmp bx, dx
    
    jbe line_goto_hu
+   mov si, 8111
+
+   mov WORD PTR cs:[line_v_xor1+2], 16304
+   mov WORD PTR cs:[line_v_xor2+2], 16304
    jmp line_vu   
 line_goto_hu:
    mov si, 8112
@@ -90,9 +92,9 @@ line_hu:                ; horizontalish, up
    shr ax, 1            ; we unroll by 2
 
    mov ah, [colour]     ; compute initial colour information
-   shl ah, cl
+   ror ah, cl
    mov ch, 0fch
-   rol ch, cl           ; compute initial mask
+   ror ch, cl           ; compute initial mask
 
    mov bp, [y0]         ; compute initial even/odd offset diff
    shr bp, 1
@@ -201,15 +203,121 @@ line_h_no_iter:
 
 line_h_done:
 
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
+   
 line_vd:
+   mov si, 8191
+
+   mov WORD PTR cs:[line_v_xor1+2], -80
+   mov WORD PTR cs:[line_v_xor2+2], -80
 line_vu:
+
+   mov ax, bx           ; compute iterations
+   inc ax
+   push ax              ; save iterations
+   shr ax, 1            ; we unroll by 2
+
+   mov ah, [colour]     ; compute initial colour information
+   ror ah, cl
+   mov ch, 0fch
+   ror ch, cl           ; compute initial mask
+
+   mov bp, [y0]         ; compute initial even/odd offset diff
+   shr bp, 1
+   mov bp, si
+   jnc line_v_even
+   sub bp, 16304
+line_v_even:
+
+   shl dx, 1            ; compute 2*dx
+   xor si, si           ; D = -dy
+   sub si, bx
+   shl bx, 1            ; compute 2*dy
+
+   mov cl, al           ; get iterations
+
+   cmp cl, 0            ; check for zero iterations
+   je line_v_no_iter
+
+line_v_begin:
+   mov al, ch           ; get mask
+   and al, [di]         ; and with pixel
+   or al, ah            ; or with colour
+   stosb                ; write out
+
+   sub di, bp
+line_v_xor1:
+   xor bp, 01234h
+
+   add si, dx           ; D -= 2*dx
+   jng line_v_Dcmp_end
+
+   inc di
+   
+   ror ah, 1            ; rotate colour
+   ror ah, 1
+   ror ch, 1            ; rotate mask
+   ror ch, 1
+        
+   jnc line_v_3mod4     ; if 0, 1, 2 mod 4
+   dec di
+line_v_3mod4:
+
+   sub si, bx           ; D -= 2*dy 
+
+line_v_Dcmp_end:
+
+   mov al, ch           ; get mask
+   and al, [di]         ; and pixel
+   or al, ch            ; or colour
+   stosb                ; write out
+
+   sub di, bp           ; increment y
+line_v_xor1:
+   xor bp, 01234h
+
+   add si, dx           ; D += 2*dx
+
+   jle line_v_no_inc    ; if D >= 0
+
+   inc di
+   
+   sub si, bx           ; D -= 2*dy
+
+   ror ah, 1            ; rotate colour
+   ror ah, 1
+   ror ch, 1            ; rotate mask
+   ror ch, 1
+
+   jnc line_v_no_inc
+   dec di
+line_v_no_inc:
+   
+   dec cl
+   jnz line_v_begin
+
+line_v_no_iter:
+
+   pop bx
+   test bl, 1
+   jz line_v_done
+
+   mov al, ch           ; get mask
+   and al, [di]         ; and pixel
+   or al, ah            ; or colour
+   stosb                ; write out
+
+line_v_done:
 
    pop ds
    pop si
    pop di
    pop bp
    ret
-
 _cga_draw_line ENDP
 
         PUBLIC _cga_draw_line3
