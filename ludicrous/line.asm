@@ -15,10 +15,9 @@
                   DW line_vu_incx11_0, line_vu_incx11_1, line_vu_incx11_2, line_vu_incx11_3, line_vu_incx21_0, line_vu_incx21_1, line_vu_incx21_2, line_vu_incx21_3
                   DW line_vu_incx31_0, line_vu_incx31_1, line_vu_incx31_2, line_vu_incx31_3, line_vu_incx41_0, line_vu_incx41_1, line_vu_incx41_2, line_vu_incx41_3
 
-   ; Draw a line from (x0, y0) to (x1, y1) in the given colour (0-3) in the CGA buffer buff
-   ; Timing: IBM 5150 = 1500 + 80p (horiz) and 1500 + 98p (vert) where p is no. pixels in line
    PUBLIC _cga_draw_line
 _cga_draw_line PROC
+   ; Draw a line from (x0, y0) to (x1, y1) in the given colour (0-3) in the CGA buffer buff
    ARG buff:DWORD, x0:WORD, y0:WORD, x1:WORD, y1:WORD, colour:BYTE
    push bp
    mov bp, sp
