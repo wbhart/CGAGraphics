@@ -157,8 +157,7 @@ line_h_xor1:
    ror ch, 1            ; rotate mask
    ror ch, 1
 
-   cmc
-   adc di, 0            ; if 3 mod 4 increment offset
+   sbb di, -1            ; if 3 mod 4 increment offset
 
    mov al, [di]         ; get pixel
    and al, ch           ; and with mask
@@ -185,15 +184,15 @@ line_h_xor2:
    ror ah, 1
    ror ch, 1            ; rotate mask
    ror ch, 1
-
-   cmc                  ; if 3 mod 4 increment offset
-   adc di, 0
+    
+   sbb di, -1           ; if 3 mod 4 increment offset
 
    mov al, [di]         ; get pixel
 
    dec cl
    jnz line_h_begin
 
+   jmp line_h_no_iter
 line_h_no_inc:          ; else D >= 0
 
    ror ah, 1            ; rotate colour
