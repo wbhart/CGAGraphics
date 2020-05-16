@@ -273,7 +273,7 @@ line_v_Dcmp_end:
 
    mov al, ch           ; get mask
    and al, [di]         ; and pixel
-   or al, ch            ; or colour
+   or al, ah            ; or colour
    stosb                ; write out
 
    add di, bp           ; increment y
