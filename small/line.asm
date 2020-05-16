@@ -208,7 +208,7 @@ line_h_done:
    pop di
    pop bp
    ret
-   
+
 line_vd:
    mov si, 8191
 
@@ -249,7 +249,7 @@ line_v_begin:
    or al, ah            ; or with colour
    stosb                ; write out
 
-   sub di, bp
+   add di, bp
 line_v_xor1:
    xor bp, 01234h
 
@@ -276,8 +276,8 @@ line_v_Dcmp_end:
    or al, ch            ; or colour
    stosb                ; write out
 
-   sub di, bp           ; increment y
-line_v_xor1:
+   add di, bp           ; increment y
+line_v_xor2:
    xor bp, 01234h
 
    add si, dx           ; D += 2*dx
@@ -293,7 +293,7 @@ line_v_xor1:
    ror ch, 1            ; rotate mask
    ror ch, 1
 
-   jnc line_v_no_inc
+   jnc line_v_no_inc    ; if 3 mod 4
    dec di
 line_v_no_inc:
    
