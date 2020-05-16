@@ -60,8 +60,8 @@ line_dx_pos:
    jbe line_goto_hu
    mov si, 8111
 
-   mov WORD PTR cs:[line_v_xor1+2], 16304
-   mov WORD PTR cs:[line_v_xor2+2], 16304
+   mov WORD PTR cs:[line_v_xor1 + 2], -16304
+   mov WORD PTR cs:[line_v_xor2 + 2], -16304
    jmp line_vu   
 line_goto_hu:
    mov si, 8112
@@ -212,8 +212,8 @@ line_h_done:
 line_vd:
    mov si, 8191
 
-   mov WORD PTR cs:[line_v_xor1+2], -80
-   mov WORD PTR cs:[line_v_xor2+2], -80
+   mov WORD PTR cs:[line_v_xor1 + 2], -80
+   mov WORD PTR cs:[line_v_xor2 + 2], -80
 line_vu:
 
    mov ax, bx           ; compute iterations
