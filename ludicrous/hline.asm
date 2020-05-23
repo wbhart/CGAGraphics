@@ -2,7 +2,7 @@
    .MODEL small
    .CODE
 
-   macro salc
+   salc macro
       db 0d6h
    endm
 
