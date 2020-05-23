@@ -35,9 +35,8 @@ _cga_draw_line PROC
 line_dx_pos:
 
    mov ax, [y0]         ; compute offset for line y0
-   xor di, di         
    shr ax, 1            ; add 8192 to offset if odd line
-   sbb di, 0
+   sbb di, di
    and di, 8192
    shl ax, 1            ; add 80*y0 to offset
    shl ax, 1
