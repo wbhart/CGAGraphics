@@ -87,7 +87,11 @@ hline_long_line:
 
    mov al, ah           ; draw full colour bytes
    mov cx, dx
-   rep stosb
+   shr cx, 1
+   jnc hline_even_iter
+   stosb
+hline_even_iter:
+   rep stosw
 
    mov al, ah           ; put right hand mask in bl and colour in al
    and al, bl
