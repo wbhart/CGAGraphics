@@ -1,3 +1,7 @@
+   DOSSEG
+   .MODEL small
+   .CODE
+
    PUBLIC _cga_draw_vline
 _cga_draw_vline PROC
 	ARG x:WORD, y0:WORD, y1:WORD, colour:BYTE
@@ -66,7 +70,7 @@ _cga_draw_vline PROC
    shr cx, 1
    jnc vline_even_iters
 
-   mov al, cl           ; write pixel
+   mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb  
@@ -80,14 +84,14 @@ vline_even_iters:
 
 vline_even:             ; display pixels on even lines (unroll by 2)
    
-   mov al, cl           ; write pixel
+   mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb
 
    add di, 79           ; jump to next even line
       
-   mov al, cl           ; write pixel
+   mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb
@@ -104,28 +108,28 @@ vline_done_even:
    shr cx, 1            ; unroll by 2
    jnc vline_odd_iters
 
-   mov al, cl           ; write pixel
+   mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb
 
    add di, 79           ; jump to next odd line
 
-vline_odd_iters
+vline_odd_iters:
 
    cmp cx, 0            ; check for zero iterations
    je vline_done_odd
 
 vline_odd:              ; display pixels on odd lines (unroll by 2)
 
-   mov al, cl           ; write pixel
+   mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb
 
    add di, 79           ; jump to next odd line
 
-   mov al, cl           ; write pixel
+   mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb     
@@ -135,8 +139,11 @@ vline_odd:              ; display pixels on odd lines (unroll by 2)
 
 vline_done_odd: 
 
+   pop ds
    pop si
    pop di
    pop bp
    ret
 _cga_draw_vline ENDP
+
+   END
