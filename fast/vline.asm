@@ -16,7 +16,20 @@ _cga_draw_vline PROC
    inc ax            
    shr ax, 1            ; set ax = (y0 + 1)/2
    cmc
-   sbb bx, bx
+   sbb bx, bx           ; bx = -1 if y0 is odd, else bx = 0
+
+   mov dx, [y1]         ; get y1 coordinate
+   shr dx, 1            ; y1/2
+   cmc
+   sbb cx, cx           ; cx = -1 if y1 even, else cx = 0       
+
+   sub dx, ax           ; dx = even line iterations
+   inc dx
+
+   mov si, dx           ; si = odd line iterations     
+   add si, cx
+   sub si, bx
+
    and bx, -80          ; bx = -80 if y0 is odd, else bx = 0
         
    shl ax, 1            ; set di to 80*(y0 + 1)/2 = first even line
@@ -31,90 +44,94 @@ _cga_draw_vline PROC
    add bx, di           ; set bx to 8192 + 80*(y0/2) = first odd line
    add bh, 020h
 
-   mov ax, [y1]         ; get y1 coordinate
-   shr ax, 1            ; y1/2
-   cmc
-   sbb ch, ch          
-   and ch, 80           ; ch = 80 if y1 even, else ch = 0
-
-   shl ax, 1            ; set dx = 80*(y1/2)
-   shl ax, 1
-   shl ax, 1
-   shl ax, 1
-   mov dx, ax
-   shl ax, 1
-   shl ax, 1
-   add dx, ax
-
    mov ax, [x]          ; get x coordinate
    mov cl, al
    shr ax, 1
    shr ax, 1            ; compute byte of pixel at coord x
    add di, ax           ; add it to offset of first even line
-   add dx, ax           ; add it to offset of y1 line
    add bx, ax           ; add it to offset of first odd line
 
-   mov ah, [colour]     ; shift colour (ah) and mask (cl) into correct bitfields
+   mov ah, [colour]     ; shift colour (ah) and mask (dl) into correct bitfields
    inc cl
    and cl, 3
    shl cl, 1
    ror ah, cl
    mov al, 0fch        
    ror al, cl
-   mov cl, al
 
-   mov si, 79           ; set si = offset increment
+   mov cx, dx           ; get iterations
+
+   mov dl, al           
    
+   shr cx, 1
+   jnc vline_even_iters
+
+   mov al, cl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb  
+
+   add di, 79           ; jump to next odd line
+
+vline_even_iters:
+
+   cmp cx, 0            ; check for zero iterations
+   je vline_done_even
+
 vline_even:             ; display pixels on even lines (unroll by 2)
-   cmp di, dx
-   ja vline_done_even   ; check if done
    
    mov al, cl           ; write pixel
    and al, [di]
    or al, ah
    stosb
 
-   add di, si           ; jump to next even line
-   
-   cmp di, dx
-   ja vline_done_even   ; check if done
-   
+   add di, 79           ; jump to next even line
+      
    mov al, cl           ; write pixel
    and al, [di]
    or al, ah
    stosb
 
-   add di, si           ; jump to next even line
-   jmp vline_even       ; loop
+   add di, 79           ; jump to next even line
+   loop vline_even      ; loop
 
 vline_done_even:
    
    mov di, bx           ; load offset of first odd line
-   xor dh, 20h          ; update y1 offset to an odd line
-   sub dl, ch           ; adjust by one odd line if last line is even
-   sbb dh, 0
 
-vline_odd:              ; display pixels on odd lines (unroll by 2)
-   cmp di, dx
-   ja vline_done_odd    ; check if done
-   
+   mov cx, si           ; get iterations
+
+   shr cx, 1            ; unroll by 2
+   jnc vline_odd_iters
+
    mov al, cl           ; write pixel
    and al, [di]
    or al, ah
    stosb
 
-   add di, si           ; jump to next odd line
+   add di, 79           ; jump to next odd line
 
-   cmp di, dx
-   ja vline_done_odd    ; check if done
+vline_odd_iters
 
-   mov al, cl
+   cmp cx, 0            ; check for zero iterations
+   je vline_done_odd
+
+vline_odd:              ; display pixels on odd lines (unroll by 2)
+
+   mov al, cl           ; write pixel
    and al, [di]
    or al, ah
-   stosb                ; write pixel
+   stosb
 
-   add di, si          ; jump to next odd line
-   jmp vline_odd       ; loop
+   add di, 79           ; jump to next odd line
+
+   mov al, cl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb     
+
+   add di, 79           ; jump to next odd line
+   loop vline_odd       ; loop
 
 vline_done_odd: 
 
