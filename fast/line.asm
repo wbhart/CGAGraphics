@@ -42,21 +42,22 @@ line_dx_pos:
 
    mov ax, [y0]         ; compute offset for line y0
    shr ax, 1            ; add 8192 to offset if odd line
-   sbb di, di
-   and di, 8192
+   sbb si, si
+   and si, 8192
    shl ax, 1            ; add 80*y0 to offset
    shl ax, 1
    shl ax, 1
    shl ax, 1
-   add di, ax
+   add si, ax
    shl ax, 1
    shl ax, 1
-   add di, ax
+   add si, ax
    mov ax, [x0]         ; add x0/4 to offset
    shr ax, 1
    shr ax, 1
-   add di, ax
-
+   add si, ax
+   add di, si
+   
    mov si, [x0]         ; compute 2*(x0 mod 4)
    and si, 3
    shl si, 1

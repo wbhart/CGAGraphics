@@ -8,27 +8,31 @@
 
    PUBLIC _cga_draw_hline
 _cga_draw_hline PROC
-   ARG x0:WORD, x1:WORD, y:WORD, colour:BYTE
+   ARG buff:DWORD, x0:WORD, x1:WORD, y:WORD, colour:BYTE
    ; draw a line from (x0, y) - (x1, y) including endpoints in the given colour (0-3)
    push bp
 	mov bp, sp
    push di
 
-   mov ax, [y]          ; set dx to segment of CGA bank (odd/even)
-	xor dx, dx
-   shr ax, 1
-   sbb dh, 0
-	and dh, 02h
-   add dh, 0b8h
+   les di, buff         ; get buffer address in es:di
 
-   add dx, ax           ; set es to segment address of line y
-   shl ax, 1 
+   mov ax, [y]          ; set dx to offset of CGA bank (odd/even)
+	shr ax, 1
+   sbb dx, dx
+	and dx, 8192
+
+   shl ax, 1            ; set di to offset address of line y
+   shl ax, 1
+   shl ax, 1
    shl ax, 1
    add dx, ax
-	mov es, dx
+   shl ax, 1
+   shl ax, 1
+   add dx, ax
+	add di, dx
 
-   mov di, [x0]         ; set cl to 2*(x0 mod 4)
-   mov cx, di
+   mov ax, [x0]         ; set cl to 2*(x0 mod 4)
+   mov cx, ax
    and cx, 3
    shl cx, 1
 
@@ -37,12 +41,13 @@ _cga_draw_hline PROC
    and bx, 3
    shl bx, 1
 
-   shr di, 1            ; set di to x0/4
-   shr di, 1
+   shr ax, 1            ; add x0/4 to offset
+   shr ax, 1
+   add di, ax
 
    shr dx, 1            ; set dx to x1/4 - x0/4 (final offset - initial offset)
    shr dx, 1
-   sub dx, di
+   sub dx, ax
 
    mov ah, [colour]     ; put solid colour in ah
    shr ah, 1
@@ -92,7 +97,7 @@ hline_long_line:
    stosb
 hline_even_iter:
    rep stosw
-
+   
    mov al, ah           ; put right hand mask in bl and colour in al
    and al, bl
    not bl

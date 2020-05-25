@@ -4,7 +4,7 @@
 
    PUBLIC _cga_draw_vline
 _cga_draw_vline PROC
-	ARG x:WORD, y0:WORD, y1:WORD, colour:BYTE
+	ARG buff:DWORD, x:WORD, y0:WORD, y1:WORD, colour:BYTE
 	; draw a line from (x, y0) - (x, y1) including endpoints in the give colour (0-3)
    push bp
    mov bp, sp
@@ -12,9 +12,10 @@ _cga_draw_vline PROC
    push si
    push ds
 
-   mov ax, 0b800h       ; set segment reg to B800
-   mov es, ax
-   mov ds, ax           ; mirror in ds
+   les di, buff         ; get buffer address in es:di
+
+   mov ax, es           ; mirror in ds
+   mov ds, ax
 
    mov ax, [y0]         ; get y0 coordinate
    inc ax            
@@ -40,7 +41,7 @@ _cga_draw_vline PROC
    shl ax, 1
    shl ax, 1
    shl ax, 1
-   mov di, ax          
+   add di, ax          
    shl ax, 1
    shl ax, 1
    add di, ax
