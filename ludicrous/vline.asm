@@ -142,7 +142,7 @@ vline_even8:
    cmp cx, 0            ; check for zero iterations
    je vline_done_even
 
-vline_even:             ; display pixels on even lines (unroll by 4)
+vline_even:             ; display pixels on even lines (unroll by 8)
    
    mov al, dl           ; write pixel
    and al, [di]
@@ -274,7 +274,7 @@ vline_odd8:
    cmp cx, 0            ; check for zero iterations
    je vline_done_odd
 
-vline_odd:              ; display pixels on odd lines (unroll by 4)
+vline_odd:              ; display pixels on odd lines (unroll by 8)
 
    mov al, dl           ; write pixel
    and al, [di]
