@@ -80,10 +80,43 @@ _cga_draw_vline PROC
 
 vline_even_iters:
 
+   shr cx, 1
+   jnc vline_even4
+
+   mov al, dl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb  
+
+   add di, 79           ; jump to next odd line
+
+   mov al, dl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb  
+
+   add di, 79           ; jump to next odd line
+
+vline_even4:
+
    cmp cx, 0            ; check for zero iterations
    je vline_done_even
 
-vline_even:             ; display pixels on even lines (unroll by 2)
+vline_even:             ; display pixels on even lines (unroll by 4)
+   
+   mov al, dl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb
+
+   add di, 79           ; jump to next even line
+      
+   mov al, dl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb
+
+   add di, 79           ; jump to next even line
    
    mov al, dl           ; write pixel
    and al, [di]
@@ -106,6 +139,8 @@ vline_done_even:
 
    mov cx, si           ; get iterations
 
+   mov bx, 79           ; store jump value
+
    shr cx, 1            ; unroll by 2
    jnc vline_odd_iters
 
@@ -114,28 +149,61 @@ vline_done_even:
    or al, ah
    stosb
 
-   add di, 79           ; jump to next odd line
+   add di, bx           ; jump to next odd line
 
 vline_odd_iters:
 
-   cmp cx, 0            ; check for zero iterations
-   je vline_done_odd
-
-vline_odd:              ; display pixels on odd lines (unroll by 2)
+   shr cx, 1            ; unroll by 4
+   jnc vline_odd4
 
    mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb
 
-   add di, 79           ; jump to next odd line
+   add di, bx           ; jump to next odd line
+
+   mov al, dl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb
+
+   add di, bx           ; jump to next odd line
+
+vline_odd4:
+
+   cmp cx, 0            ; check for zero iterations
+   je vline_done_odd
+
+vline_odd:              ; display pixels on odd lines (unroll by 4)
+
+   mov al, dl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb
+
+   add di, bx           ; jump to next odd line
 
    mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb     
 
-   add di, 79           ; jump to next odd line
+   add di, bx           ; jump to next odd line
+
+   mov al, dl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb
+
+   add di, bx           ; jump to next odd line
+
+   mov al, dl           ; write pixel
+   and al, [di]
+   or al, ah
+   stosb     
+
+   add di, bx           ; jump to next odd line
    loop vline_odd       ; loop
 
 vline_done_odd: 
