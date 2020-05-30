@@ -27,3 +27,18 @@ void cga_draw_line(unsigned char far * buff, int x0, int y0, int x1, int y1, uns
    * Special layout of cases to maximise short jumps
    * As many cases as possible fall through to next case without jump
 
+void cga_draw_hline(unsigned char far * buff, int x0, int x1, int y, unsigned char colour)
+
+   Draw a horizontal line of the given colour (0-3) from (x0, y) to (x1, y)
+   inclusive in the CGA buffer (320x200 x 2 bit) buff. No restrictions except
+   that inputs be in the screen bounds and x1 >= x0.
+
+   * unroll by 2 and use rep stosw
+
+void cga_draw_vline(unsigned char far * buff, int x, int y0, int y1, unsigned char colour)
+
+   Draw a vertical line of the given colour (0-3) from (x, y0) to (x, y1)
+   inclusive in the CGA buffer (320x200 x 2 bit) buff. No restrictions except
+   that inputs be in the screen bounds and y1 >= y0.
+
+   * unroll by 2

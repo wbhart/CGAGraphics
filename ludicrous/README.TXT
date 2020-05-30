@@ -20,8 +20,8 @@ Lines
    buff from (x0, y0) to (x1, y1) inclusive. No restrictions on input except
    that both endpoints be in the screen bounds.
 
-   * All tricks as per fast code
-   * Turn off interrupts and use SP for speeding up Reenigne's XOR trick
+   * all tricks as per fast code
+   * turn off interrupts and use SP for speeding up Reenigne's XOR trick
 
 void cga_draw_hline(unsigned char far * buff, int x0, int x1, int y, unsigned char colour)
 
@@ -31,4 +31,13 @@ void cga_draw_hline(unsigned char far * buff, int x0, int x1, int y, unsigned ch
 
    * all tricks as per fast version
    * uses SALC undocumented instruction (8088/86 only)
+
+void cga_draw_vline(unsigned char far * buff, int x, int y0, int y1, unsigned char colour)
+
+   Draw a vertical line of the given colour (0-3) from (x, y0) to (x, y1)
+   inclusive in the CGA buffer (320x200 x 2 bit) buff. No restrictions except
+   that inputs be in the screen bounds and y1 >= y0.
+
+   * unroll by 8
+   * interrupts off and use SP for jump increment
 

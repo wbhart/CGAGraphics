@@ -36,4 +36,4 @@ void cga_draw_vline(unsigned char far * buff, int x, int y0, int y1, unsigned ch
    inclusive in the CGA buffer (320x200 x 2 bit) buff. No restrictions except
    that inputs be in the screen bounds and y1 >= y0.
 
-   * unroll by 2
+   * unroll by 4
