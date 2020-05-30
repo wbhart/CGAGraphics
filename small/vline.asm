@@ -71,29 +71,8 @@ _cga_draw_vline PROC
    cmp cx, 0            ; check for zero iterations
    je vline_done_even
 
-vline_even:             ; display pixels on even lines (unroll by 4)
+vline_even:             ; display pixels on even lines
    
-   mov al, dl           ; write pixel
-   and al, [di]
-   or al, ah
-   stosb
-
-   add di, 79           ; jump to next even line
-      
-   mov al, dl           ; write pixel
-   and al, [di]
-   or al, ah
-   stosb
-
-   add di, 79           ; jump to next even line
-   
-   mov al, dl           ; write pixel
-   and al, [di]
-   or al, ah
-   stosb
-
-   add di, 79           ; jump to next even line
-      
    mov al, dl           ; write pixel
    and al, [di]
    or al, ah
@@ -113,33 +92,12 @@ vline_done_even:
    cmp cx, 0            ; check for zero iterations
    je vline_done_odd
 
-vline_odd:              ; display pixels on odd lines (unroll by 4)
+vline_odd:              ; display pixels on odd lines
 
    mov al, dl           ; write pixel
    and al, [di]
    or al, ah
    stosb
-
-   add di, bx           ; jump to next odd line
-
-   mov al, dl           ; write pixel
-   and al, [di]
-   or al, ah
-   stosb     
-
-   add di, bx           ; jump to next odd line
-
-   mov al, dl           ; write pixel
-   and al, [di]
-   or al, ah
-   stosb
-
-   add di, bx           ; jump to next odd line
-
-   mov al, dl           ; write pixel
-   and al, [di]
-   or al, ah
-   stosb     
 
    add di, bx           ; jump to next odd line
    loop vline_odd       ; loop
