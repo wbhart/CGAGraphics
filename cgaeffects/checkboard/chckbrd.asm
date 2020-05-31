@@ -3,7 +3,7 @@
    .CODE
 
    PUBLIC _cga_checkboard
-_cga_draw_checkboard PROC
+_cga_checkboard PROC
    push di
 
    mov ax, 0b800h       ; set CGA segment
@@ -323,7 +323,10 @@ checkboard_loop1:
    stosw
 
    add dx, 80
-   loop checkboard_loop1
+   loopz checkboard_done1
+   jmp checkboard_loop1
+
+checkboard_done1:
 
    mov dx, 0
    not ax
@@ -638,11 +641,14 @@ checkboard_loop2:
    stosw
 
    add dx, 80
-   loop checkboard_loop2
+   loopz checkboard_done2
+   jmp checkboard_loop2
+
+checkboard_done2:
 
    pop di
    ret
-_cga_draw_checkboard ENDP
+_cga_checkboard ENDP
 
    END
 
