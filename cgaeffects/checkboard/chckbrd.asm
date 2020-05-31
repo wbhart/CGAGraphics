@@ -322,6 +322,108 @@ checkboard_loop1:
    stosw
    stosw
 
+   add di, 1920
+
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 2
+   stosb
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   not ax               ; solid colour 1
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 2
+   stosb
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   not ax               ; solid colour 1
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 2
+   stosb
+   stosw
+   stosw
+
+   add di, 1920
+
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 1
+   stosb
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   not ax               ; solid colour 2
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 1
+   stosb
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   not ax               ; solid colour 2
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 1
+   stosb
+   stosw
+   stosw
+     
    add dx, 80
    loopz checkboard_done1
    jmp checkboard_loop1
@@ -539,6 +641,108 @@ checkboard_loop2:
 
    mov di, dx
    add di, 8192         ; odd lines
+
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 1
+   stosb
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   not ax               ; solid colour 2
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 1
+   stosb
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   not ax               ; solid colour 2
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 1
+   stosb
+   stosw
+   stosw
+
+   add di, 1920
+
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 2
+   stosb
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   not ax               ; solid colour 1
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 2
+   stosb
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   not ax               ; solid colour 1
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosw
+   stosb
+   not ax               ; solid colour 2
+   stosb
+   stosw
+   stosw
+
+   add di, 1920
 
    stosw
    stosw
