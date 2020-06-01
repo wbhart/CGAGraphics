@@ -9,7 +9,7 @@ _cga_checkboard PROC
    mov ax, 0b800h       ; set CGA segment
    mov es, ax
 
-   mov dx, 0h           ; set initial offset
+   xor dx, dx           ; set initial offset
 
    mov ax, 05555h       ; solid colour 1
 
@@ -430,7 +430,7 @@ checkboard_loop1:
 
 checkboard_done1:
 
-   mov dx, 0
+   xor dx, dx
    not ax
    mov cx, 25
 
