@@ -99,9 +99,6 @@ line_hd:                ; horizontalish, down
    dec di
    stosb
 
-   mov al, 0ffh         ; get initial shifted mask
-   shl al, cl
-
    mov cx, si           ; get iterations
 
    shl bx, 1            ; compute 2*dy
@@ -156,6 +153,7 @@ line_hd0:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hd0
+   mov al, 0c0h         ; get mask
    and al, ah
    stosb                ; draw pixels
    xor al, al
@@ -171,13 +169,13 @@ line_hd0:
    mov al, ah
    stosb
 
-   mov al, 0f0h
 line_skip_incy_hd0:
 
 line_hd1:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hd1
+   mov al, 0f0h         ; get mask
    and al, ah           ; draw pixels
    stosb
    xor al, al
@@ -193,14 +191,13 @@ line_hd1:
    mov al, ah
    stosb
 
-   mov al, 0fch          ; get new mask
-
 line_skip_incy_hd1:
 
 line_hd2:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hd2
+   mov al, 0fch         ; get mask
    and al, ah           ; draw pixels
    stosb
    xor al, al
@@ -216,11 +213,10 @@ line_hd2:
    mov al, ah
    stosb
 
-   mov al, 0ffh          ; get new mask
-
 line_skip_incy_hd2:             
 
 line_hd3:
+   mov al, 0ffh         ; get mask
    and al, ah           ; draw pixels
    stosb
 
@@ -246,15 +242,11 @@ line_hd3:
 
 line_skip_incy_hd3:             
 
-   mov al, 0c0h         ; get new mask
-
    loop line_hd0
 
    xor al, al           ; write next byte
    stosb
    dec di
-
-   mov al, 0c0h         ; get new mask
 
    jmp line_hd_no_iter0
 
@@ -269,7 +261,6 @@ line_hd_blank_check:
    mov al, ah
    stosb
 
-   mov al, 0c0h         ; get new mask
    jmp line_hd_skip_iter_test
 
 line_hd_no_iter0:
@@ -284,7 +275,7 @@ line_hd_skip_iter_test:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hd4
-
+   mov al, 0c0h         ; get mask
    and al, ah           ; draw pixels
    stosb
    xor al, al
@@ -302,8 +293,6 @@ line_hd_skip_iter_test:
    mov al, ah           ; blank previous byte
    dec di
    stosb
-
-   mov al, 0f0h         ; get new mask
 
 line_skip_incy_hd4:
 
@@ -314,7 +303,7 @@ line_hd_no_iter1:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hd5
-
+   mov al, 0f0h         ; get mask
    and al, ah           ; draw pixels
    stosb
    xor al, al
@@ -333,9 +322,12 @@ line_hd_no_iter1:
    dec di
    stosb
 
-   mov al, 0fch
-
 line_skip_incy_hd5:
+
+   dec cl
+   jz line_hd_no_iter2
+
+   mov al, 0fch         ; get mask
 
 line_hd_no_iter2:
 
@@ -770,9 +762,6 @@ line_hu:                ; horizontalish, up
    dec di
    stosb
 
-   mov al, 0ffh         ; get initial shifted mask
-   shl al, cl
-
    mov cx, si           ; get iterations
 
    shl bx, 1            ; compute 2*dy
@@ -827,6 +816,7 @@ line_hu0:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hu0
+   mov al, 0c0h         ; get mask
    and al, ah
    stosb                ; draw pixels
    xor al, al
@@ -842,13 +832,13 @@ line_hu0:
    mov al, ah
    stosb
 
-   mov al, 0f0h
 line_skip_incy_hu0:
 
 line_hu1:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hu1
+   mov al, 0f0h         ; get mask
    and al, ah           ; draw pixels
    stosb
    xor al, al
@@ -863,8 +853,6 @@ line_hu1:
    dec di               ; blank previous byte
    mov al, ah
    stosb
-
-   mov al, 0fch          ; get new mask
 
 line_skip_incy_hu1:
 
@@ -872,6 +860,7 @@ line_hu2:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hu2
+   mov al, 0fch         ; get mask
    and al, ah           ; draw pixels
    stosb
    xor al, al
@@ -887,10 +876,10 @@ line_hu2:
    mov al, ah
    stosb
 
-   mov al, 0ffh          ; get new mask
 line_skip_incy_hu2:             
 
 line_hu3:
+   mov al, 0ffh         ; get mask
    and al, ah           ; draw pixels
    stosb
 
@@ -916,14 +905,11 @@ line_hu3:
 
 line_skip_incy_hu3:             
 
-   mov al, 0c0h         ; get new mask
    loop line_hu0
 
    xor al, al           ; write next byte
    stosb
    dec di
-
-   mov al, 0c0h         ; get new mask
 
    jmp line_hu_no_iter0
 
@@ -938,7 +924,6 @@ line_hu_blank_check:
    mov al, ah
    stosb
 
-   mov al, 0c0h         ; get new mask
    jmp line_hu_skip_iter_test
 
 line_hu_no_iter0:
@@ -953,7 +938,7 @@ line_hu_skip_iter_test:
    add si, bx           ; D += 2*dy
 
    jle line_skip_incy_hu4
-
+   mov al, 0c0h         ; get mask
    and al, ah           ; draw pixels
    stosb
    xor al, al
@@ -972,11 +957,10 @@ line_hu_skip_iter_test:
    dec di
    stosb
 
-   mov al, 0f0h         ; get new mask
-
 line_skip_incy_hu4:
 
 line_hu_no_iter1:
+   mov al, 0f0h         ; get mask
    dec cl
    jz line_hu_no_iter2
 
@@ -1002,9 +986,12 @@ line_hu_no_iter1:
    dec di
    stosb
 
-   mov al, 0fch
-
 line_skip_incy_hu5:
+
+   dec cl
+   jz line_hu_no_iter2
+
+   mov al, 0fch         ; get mask
 
 line_hu_no_iter2:
    and al, ah           ; draw pixels
