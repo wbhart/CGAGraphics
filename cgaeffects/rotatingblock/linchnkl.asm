@@ -99,7 +99,7 @@ line_hd:                ; horizontalish, down
 
    mov ah, [colour]     ; get colour
 
-   mov al 0ffh          ; get initial shifted mask
+   mov al, 0ffh          ; get initial shifted mask
    shl al, cl
    not al
 
@@ -230,9 +230,16 @@ line_hd3:
    sub si, dx           ; D -= 2*dx
    inc di
 
-   mov al, 0fh          ; get new mask
+   cmp cx, 0
+   je line_skip_incy_hd3
+
+   dec di               ; blank previous byte
+   xor al, al
+   stosb
 
 line_skip_incy_hd3:             
+
+   mov al, 0fh          ; get new mask
 
    loop line_hd0
 
