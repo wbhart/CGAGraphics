@@ -93,16 +93,14 @@ line_hd:                ; horizontalish, down
    shr si, 1            ; divide iterations by 4
    shr si, 1
 
-   xor al, al           ; blank previous byte (assumes no overrun of edge of screen)
+   mov ah, [colour]     ; get colour
+
+   mov al, ah           ; blank previous byte (assumes no overrun of edge of screen)
    dec di
    stosb
 
-   mov ah, [colour]     ; get colour
-
    mov al, 0ffh         ; get initial shifted mask
-   add cl, 2
    shl al, cl
-   not al
 
    mov cx, si           ; get iterations
 
@@ -159,7 +157,9 @@ line_hd0:
 
    jle line_skip_incy_hd0
    and al, ah
-   stosw                ; draw pixels
+   stosb                ; draw pixels
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -168,11 +168,10 @@ line_hd0:
    sub si, dx           ; D -= 2*dx
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
-   mov al, 03fh         ; get new mask
-
+   mov al, 0f0h
 line_skip_incy_hd0:
 
 line_hd1:
@@ -180,7 +179,9 @@ line_hd1:
 
    jle line_skip_incy_hd1
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
    dec di
    
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -189,10 +190,10 @@ line_hd1:
    sub si, dx           ; D -= 2*dx
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
-   mov al, 0fh          ; get new mask
+   mov al, 0fch          ; get new mask
 
 line_skip_incy_hd1:
 
@@ -201,7 +202,9 @@ line_hd2:
 
    jle line_skip_incy_hd2
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -210,10 +213,10 @@ line_hd2:
    sub si, dx           ; D -= 2*dx
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
-   mov al, 03h          ; get new mask
+   mov al, 0ffh          ; get new mask
 
 line_skip_incy_hd2:             
 
@@ -224,8 +227,7 @@ line_hd3:
    add si, bx           ; D += 2*dy
    
    jle line_skip_incy_hd3
-
-   mov al, ah           ; write next byte
+   xor al, al           ; write next byte
    stosb
    dec di
 
@@ -239,20 +241,20 @@ line_hd3:
    je line_hd_blank_check
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
 line_skip_incy_hd3:             
 
-   mov al, 0ffh         ; get new mask
+   mov al, 0c0h         ; get new mask
 
    loop line_hd0
 
-   mov al, ah           ; write next byte
+   xor al, al           ; write next byte
    stosb
    dec di
 
-   mov al, 0ffh         ; get new mask
+   mov al, 0c0h         ; get new mask
 
    jmp line_hd_no_iter0
 
@@ -264,10 +266,10 @@ line_hd_blank_check:
    jz line_hd_done
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
-   mov al, 0ffh         ; get new mask
+   mov al, 0c0h         ; get new mask
    jmp line_hd_skip_iter_test
 
 line_hd_no_iter0:
@@ -284,7 +286,9 @@ line_hd_skip_iter_test:
    jle line_skip_incy_hd4
 
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -295,11 +299,11 @@ line_hd_skip_iter_test:
    cmp cl, 1
    je line_hd_done
 
-   xor al, al           ; blank previous byte
+   mov al, ah           ; blank previous byte
    dec di
    stosb
 
-   mov al, 03fh         ; get new mask
+   mov al, 0f0h         ; get new mask
 
 line_skip_incy_hd4:
 
@@ -312,7 +316,9 @@ line_hd_no_iter1:
    jle line_skip_incy_hd5
 
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -323,18 +329,20 @@ line_hd_no_iter1:
    cmp cl, 1
    je line_hd_done
 
-   xor al, al           ; blank previous byte
+   mov al, ah           ; blank previous byte
    dec di
    stosb
 
-   mov al, 0fh
+   mov al, 0fch
 
 line_skip_incy_hd5:
 
 line_hd_no_iter2:
 
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
 
 line_hd_done:        
  
@@ -756,16 +764,14 @@ line_hu:                ; horizontalish, up
    shr si, 1            ; divide iterations by 4
    shr si, 1
 
-   xor al, al           ; blank previous byte (assumes no overrun of edge of screen)
+   mov ah, [colour]     ; get colour
+
+   mov al, ah           ; blank previous byte (assumes no overrun of edge of screen)
    dec di
    stosb
 
-   mov ah, [colour]     ; get colour
-
    mov al, 0ffh         ; get initial shifted mask
-   add cl, 2
    shl al, cl
-   not al
 
    mov cx, si           ; get iterations
 
@@ -822,7 +828,9 @@ line_hu0:
 
    jle line_skip_incy_hu0
    and al, ah
-   stosw                ; draw pixels
+   stosb                ; draw pixels
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -831,11 +839,10 @@ line_hu0:
    sub si, dx           ; D -= 2*dx
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
-   mov al, 03fh         ; get new mask
-
+   mov al, 0f0h
 line_skip_incy_hu0:
 
 line_hu1:
@@ -843,7 +850,9 @@ line_hu1:
 
    jle line_skip_incy_hu1
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -852,10 +861,10 @@ line_hu1:
    sub si, dx           ; D -= 2*dx
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
-   mov al, 0fh          ; get new mask
+   mov al, 0fch          ; get new mask
 
 line_skip_incy_hu1:
 
@@ -864,7 +873,9 @@ line_hu2:
 
    jle line_skip_incy_hu2
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -873,11 +884,10 @@ line_hu2:
    sub si, dx           ; D -= 2*dx
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
-   mov al, 03h          ; get new mask
-
+   mov al, 0ffh          ; get new mask
 line_skip_incy_hu2:             
 
 line_hu3:
@@ -887,7 +897,7 @@ line_hu3:
    add si, bx           ; D += 2*dy
    
    jle line_skip_incy_hu3
-   mov al, ah           ; write next byte
+   xor al, al           ; write next byte
    stosb
    dec di
 
@@ -901,20 +911,19 @@ line_hu3:
    je line_hu_blank_check
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
 line_skip_incy_hu3:             
 
-   mov al, 0ffh         ; get new mask
-
+   mov al, 0c0h         ; get new mask
    loop line_hu0
 
-   mov al, ah           ; write next byte
+   xor al, al           ; write next byte
    stosb
    dec di
 
-   mov al, 0ffh         ; get new mask
+   mov al, 0c0h         ; get new mask
 
    jmp line_hu_no_iter0
 
@@ -926,10 +935,10 @@ line_hu_blank_check:
    jz line_hu_done
 
    dec di               ; blank previous byte
-   xor al, al
+   mov al, ah
    stosb
 
-   mov al, 0ffh         ; get new mask
+   mov al, 0c0h         ; get new mask
    jmp line_hu_skip_iter_test
 
 line_hu_no_iter0:
@@ -946,7 +955,9 @@ line_hu_skip_iter_test:
    jle line_skip_incy_hu4
 
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -957,11 +968,11 @@ line_hu_skip_iter_test:
    cmp cl, 1
    je line_hu_done
 
-   xor al, al           ; blank previous byte
+   mov al, ah           ; blank previous byte
    dec di
    stosb
 
-   mov al, 03fh         ; get new mask
+   mov al, 0f0h         ; get new mask
 
 line_skip_incy_hu4:
 
@@ -974,7 +985,9 @@ line_hu_no_iter1:
    jle line_skip_incy_hu5
 
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
    dec di
 
    add di, bp           ; odd <-> even line (reenigne's trick)
@@ -985,17 +998,19 @@ line_hu_no_iter1:
    cmp cl, 1
    je line_hu_done
 
-   xor al, al           ; blank previous byte
+   mov al, ah           ; blank previous byte
    dec di
    stosb
 
-   mov al, 0fh
+   mov al, 0fch
 
 line_skip_incy_hu5:
 
 line_hu_no_iter2:
    and al, ah           ; draw pixels
-   stosw
+   stosb
+   xor al, al
+   stosb
 
 line_hu_done:        
 
