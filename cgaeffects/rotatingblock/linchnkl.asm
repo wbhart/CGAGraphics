@@ -99,7 +99,7 @@ line_hd:                ; horizontalish, down
 
    mov ah, [colour]     ; get colour
 
-   mov al, 0ffh          ; get initial shifted mask
+   mov al, 0ffh         ; get initial shifted mask
    shl al, cl
    not al
 
@@ -239,7 +239,7 @@ line_hd3:
 
 line_skip_incy_hd3:             
 
-   mov al, 0fh          ; get new mask
+   mov al, 0ffh          ; get new mask
 
    loop line_hd0
 
