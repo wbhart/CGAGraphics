@@ -235,7 +235,7 @@ line_hd3:
    sub si, dx           ; D -= 2*dx
    inc di
 
-   cmp cx, 0
+   cmp cl, 1
    je line_hd_blank_check
 
    dec di               ; blank previous byte
@@ -897,7 +897,7 @@ line_hu3:
    sub si, dx           ; D -= 2*dx
    inc di
 
-   cmp cx, 0
+   cmp cl, 1
    je line_hu_blank_check
 
    dec di               ; blank previous byte

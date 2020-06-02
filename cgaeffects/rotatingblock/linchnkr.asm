@@ -8,8 +8,8 @@
    line_vd_jmptab DW line_vd_loop1, line_vd_loop2, line_vd_loop3, line_vd_loop4, line_vd_incx11+4, line_vd_incx21+4, line_vd_incx31+4, line_vd_incx41+4
    line_vu_jmptab DW line_vu_loop1, line_vu_loop2, line_vu_loop3, line_vu_loop4, line_vu_incx11+4, line_vu_incx21+4, line_vu_incx31+4, line_vu_incx41+4
 
-   PUBLIC _cga_draw_line_chunky_left
-_cga_draw_line_chunky_left PROC
+   PUBLIC _cga_draw_line_chunky_right
+_cga_draw_line_chunky_right PROC
    ; Draw a line from (x0, y0) to (x1, y1) in the given colour (0-3) in the CGA buffer buff
    ; with pixels to the right in given colour and ones to the left in colour 0
    ARG buff:DWORD, x0:WORD, y0:WORD, x1:WORD, y1:WORD, colour:BYTE
@@ -233,7 +233,7 @@ line_hd3:
    sub si, dx           ; D -= 2*dx
    inc di
 
-   cmp cx, 0
+   cmp cl, 1
    je line_hd_blank_check
 
    dec di               ; blank previous byte
@@ -896,7 +896,7 @@ line_hu3:
    sub si, dx           ; D -= 2*dx
    inc di
 
-   cmp cx, 0
+   cmp cl, 1
    je line_hu_blank_check
 
    dec di               ; blank previous byte
@@ -1006,6 +1006,6 @@ line_hu_done:
    pop di
    pop bp
    ret
-_cga_draw_line_chunky_left ENDP
+_cga_draw_line_chunky_right ENDP
 
    END
