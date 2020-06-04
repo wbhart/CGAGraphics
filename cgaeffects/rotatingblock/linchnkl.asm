@@ -533,14 +533,14 @@ line_vd_no_iter:
    pop bp
    test [y1], 1
 
-   dec di               ; blank previous byte
-   xor al, al
-   mov [bx+di], al
-   inc di
-
    jnz line_vd_done
    and al, ah 
    mov [bx+di], ax
+
+   dec di               ; blank previous byte
+   xor al, al
+   mov [bx+di], al
+
 line_vd_done:
 
    pop ds
