@@ -122,6 +122,7 @@ line_hd_even_no_iter:
 
    dec cl
    jnz line_hd_not0
+   mov al, 0c0h
    jmp line_hd_no_iter0
 line_hd_not0:
 
@@ -129,12 +130,11 @@ line_hd_not0:
    jnz line_hd_not1
    pop cx
    and cl, 3
+   mov al, 0f0h
    jmp line_hd_no_iter1
 line_hd_not1:
 
-   pop cx
-   and cl, 3
-   dec cl
+   mov al, 0fch
    jmp line_hd_no_iter2
 
 line_hd_iter:
@@ -785,6 +785,7 @@ line_hu_even_no_iter:
 
    dec cl
    jnz line_hu_not0
+   mov al, 0c0h
    jmp line_hu_no_iter0
 line_hu_not0:
 
@@ -792,12 +793,11 @@ line_hu_not0:
    jnz line_hu_not1
    pop cx
    and cl, 3
+   mov al, 0f0h
    jmp line_hu_no_iter1
 line_hu_not1:
 
-   pop cx
-   and cl, 3
-   dec cl
+   mov al, 0fch
    jmp line_hu_no_iter2
 
 line_hu_iter:
