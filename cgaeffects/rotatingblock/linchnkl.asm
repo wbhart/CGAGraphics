@@ -469,7 +469,6 @@ line_vd_loop3:
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx41
    add si, bp           ; D += 2*dy
-   jmp line_vd_incx31+4
 line_vd_incx31:
    dec di               ; blank previous byte
    xor al, al
