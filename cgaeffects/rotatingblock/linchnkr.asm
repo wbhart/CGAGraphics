@@ -517,7 +517,7 @@ line_vd_loop4:
    inc di
    mov [bx+di], al
    
-                        ; move to next byte
+                        ; move to next byte, maybe
    add si, dx           ; D += 2*dx - 2*dy
    jg line_vd_incx11
    dec di
@@ -550,7 +550,7 @@ line_vd_no_iter:
    jnz line_vd_done
    and al, ah 
    mov [bx+di], al
-   inc dx
+   inc di
    xor al, al
    mov [bx+di], al
    dec di
@@ -774,7 +774,7 @@ line_vu_no_iter:
    jnz line_vu_done
    and al, ah 
    mov [bx+di], al
-   inc dx
+   inc di
    xor al, al
    mov [bx+di], al
    dec di
