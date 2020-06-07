@@ -5,8 +5,8 @@
    jmp_addr       DW ?
    line_hd_jmptab DW line_hd0, line_hd1, line_hd2, line_hd3
    line_hu_jmptab DW line_hu0, line_hu1, line_hu2, line_hu3
-   line_vd_jmptab DW line_vd_loop1, line_vd_loop2, line_vd_loop3, line_vd_loop4, line_vd_incx11+4, line_vd_incx21+4, line_vd_incx31+4, line_vd_incx41+4
-   line_vu_jmptab DW line_vu_loop1, line_vu_loop2, line_vu_loop3, line_vu_loop4, line_vu_incx11+4, line_vu_incx21+4, line_vu_incx31+4, line_vu_incx41+4
+   line_vd_jmptab DW line_vd_loop1, line_vd_loop2, line_vd_loop3, line_vd_loop4, line_vd_incx11, line_vd_incx21, line_vd_incx31, line_vd_incx41
+   line_vu_jmptab DW line_vu_loop1, line_vu_loop2, line_vu_loop3, line_vu_loop4, line_vu_incx11, line_vu_incx21, line_vu_incx31, line_vu_incx41
 
    PUBLIC _cga_draw_line_chunky_right
 _cga_draw_line_chunky_right PROC
