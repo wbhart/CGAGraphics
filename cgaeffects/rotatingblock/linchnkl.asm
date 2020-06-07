@@ -371,7 +371,7 @@ line_vd_even:
    cmp cl, 0            ; check for zero iterations
    jne line_vd_iter
 
-   xor bx, bx           ; compute ah and al
+   xor bx, bx           ; compute al
    mov cx, [x0]
    and cl, 3
    shl cl, 1
