@@ -104,12 +104,18 @@ line_hd:                ; horizontalish, down
    shr si, 1            ; divide iterations by 4
    shr si, 1
 
-   xor ax, ax           ; compte increment
+   xor ax, ax           ; compute increment
    xchg bx, dx
+   cmp bx, dx
+   jne line_hd_noteq
+   mov dx, 0ffffh
+   jmp line_hd_skip_div
+line_hd_noteq:
    div bx
    shl dx, 1
    adc ax, 0
    mov dx, bx
+line_hd_skip_div:
 
    mov ah, [colour]     ; initial colour shift
    shl ah, cl
