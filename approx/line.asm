@@ -508,9 +508,9 @@ line_vd_even:
    xor ax, ax           ; compute increment round(256*dx/dy)
    mov ah, dl
    div bl
-   shl al, 1
-   adc ah, 0
-   mov dl, ah
+   shl ah, 1
+   adc al, 0
+   mov dl, al
    xor dh, dh
 
    mov ah, [colour]     ; compute shifted colour
