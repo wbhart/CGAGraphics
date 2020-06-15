@@ -16,12 +16,17 @@ perhaps for demos, but more often than not for intellectual interest only.
    * Undocumented features/instructions may be used
         
 Lines
-=====                                                                                                                                                       void cga_draw_line(unsigned char far * buff, int x0, int y0, int x1, int y1, unsigned char colour)                                                                                                                                          Draw a line of the given colour (0-3) in the CGA buffer (320x200 x 2 bit)
+=====                                                                                    
+
+void cga_draw_line(unsigned char far * buff, int x0, int y0, int x1, int y1, unsigned char colour)
+
+   Draw a line of the given colour (0-3) in the CGA buffer (320x200 x 2 bit)
    buff from (x0, y0) to (x1, y1) inclusive. No restrictions on input except
    that both endpoints be in the screen bounds.
 
    * all tricks as per fast code
-   * turn off interrupts and use SP for speeding up Reenigne's XOR trick
+   * use two register approximation from div instead of D, dx, dy
+   * use bx register to hold xor value
 
 void cga_draw_hline(unsigned char far * buff, int x0, int x1, int y, unsigned char colour)
 
