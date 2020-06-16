@@ -465,7 +465,6 @@ line_vd_loop1_1:
    mov [bx+di], al
    add si, dx           ; inc x?
    jc line_vd_incx21_1
-   add si, bp           ; D += 2*dy
 line_vd_incx11_1:
 
    mov al, [di]
