@@ -411,7 +411,7 @@ line_vd_incx12_1:
    add di, bp
 
    loop line_vd_loop1_1
-   mov ax, 040fh
+   mov ax, 050fh
    jmp line_vd_no_iter
 
 line_vd_loop2_1:
@@ -509,7 +509,7 @@ line_vd_incx12_3:
    add di, bp
 
    loop line_vd_loop1_3
-   mov ax, 0f0fh
+   mov ax, 0f00fh
    jmp line_vd_no_iter
 
 line_vd_loop2_3:
