@@ -47,10 +47,11 @@ line_dx_pos:
    add si, ax
    shl ax, 1
    shl ax, 1
-   add di, ax
+   add si, ax
    mov ax, [x0]         ; add x0/2 to offset
    shr ax, 1
-   add di, ax
+   add si, ax
+   add di, si
    
    mov si, [x0]         ; compute 4 - 4*(x0 mod 2)
    not si
