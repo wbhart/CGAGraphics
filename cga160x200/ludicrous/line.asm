@@ -267,8 +267,8 @@ line_skip_incy_hd1_3:
 
 line_hd_no_iter:
 
-   pop cx               ; do remaining iterations (0-3)
-   and cl, 01h
+   pop cx               ; do remaining iterations (0-1)
+   test cl, 1
 
    jz line_hd_done                   
 
@@ -411,7 +411,7 @@ line_vd_incx12_1:
    add di, bp
 
    loop line_vd_loop1_1
-   mov ax, 050fh
+   mov ax, 0500fh
    jmp line_vd_no_iter
 
 line_vd_loop2_1:
@@ -461,7 +461,7 @@ line_vd_incx12_2:
    add di, bp
 
    loop line_vd_loop1_2
-   mov ax, 0a0fh
+   mov ax, 0a00fh
    jmp line_vd_no_iter
 
 line_vd_loop2_2:
