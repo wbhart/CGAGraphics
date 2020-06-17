@@ -31,14 +31,16 @@ _cga_draw_hline PROC
    add dx, ax
 	add di, dx
 
-   mov ax, [x0]         ; set cl to 4*(x0 mod 2)
+   mov ax, [x0]         ; set bh to left mask based on x0 mod 2
    shr ax, 1
    sbb bh, bh
-   and bh, 0f0h
+   not bh
+   or bh, 0fh
 
-   mov dx, [x1]         ; set bl to 4*(x1 mod 2)
+   mov dx, [x1]         ; set bl to right mask based on x1 mod 2
    shr dx, 1
    sbb bl, bl
+   or bl, 0f0h
 
    add di, ax           ; add x0/2 to offset
 
@@ -52,10 +54,6 @@ _cga_draw_hline PROC
    sbb ah, ah
    and ah, 0aah
    add ah, al
-
-   xor bh, 0ffh         ; prepare left mask in bh
-
-   or bl, 0f0h          ; prepare right mask in bl
 
    mov al, ah           ; copy colour in al
 
