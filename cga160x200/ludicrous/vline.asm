@@ -4,6 +4,10 @@
 
    sp_save dw ?
 
+   salc macro
+      db 0d6h
+   endm
+   
    PUBLIC _cga_draw_vline
 _cga_draw_vline PROC
 	ARG buff:DWORD, x:WORD, y0:WORD, y1:WORD, colour:BYTE
