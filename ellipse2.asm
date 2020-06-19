@@ -25,11 +25,9 @@ _cga_draw_ellipse1 PROC
    mov ax, 0b800h       ; set DS to segment for CGA memory
    mov ds, ax
 
-   mov ax, [y0]         ; compute offset for line y0
-   xor di, di           
+   mov ax, [y0]         ; compute offset for line y0           
    shr ax, 1
-
-   sbb di, 0
+   sbb di, di
    and di, 8192
    shl ax, 1            
    shl ax, 1
@@ -106,7 +104,9 @@ ellipse1_jump_done:
    shr ax, cl
    mov cx, 7
    sub cl, al
-   adc cl, 0            ; loop will also repeat at least once
+   adc cl, 0            ; n = max(1, n)
+   sub cl, 1
+   adc cl, 1
 
    mov ax, [s]          ; c = s^2
    mul al               
@@ -156,9 +156,9 @@ ellipse1_n1:
 
    mov cx, [r]          ; deltax = 2c*r = 2*(s^2 << n)*r 
    mul cl
-   mov cl, dl
    mov si, ax
-   mov ax, [r]
+   mov ax, cx
+   mov cl, dl
    mul bx
    mov dx, ax
    mov bx, si
@@ -856,7 +856,9 @@ ellipse2_jump_done:
    shr ax, cl
    mov cx, 7
    sub cl, al
-   adc cl, 0            ; loop will also repeat at least once
+   adc cl, 0            ; n = max(1, n)
+   sub cl, 1
+   adc cl, 1
 
    mov ax, [s]          ; c = s^2
    mul al               
@@ -906,9 +908,9 @@ ellipse2_n1:
 
    mov cx, [r]          ; deltax = 2c*r = 2*(s^2 << n)*r 
    mul cl
-   mov cl, dl
    mov si, ax
-   mov ax, [r]
+   mov ax, cx
+   mov cl, dl
    mul bx
    mov dx, ax
    mov bx, si

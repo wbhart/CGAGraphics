@@ -114,7 +114,9 @@ ellipse1_jump_done:
    shr ax, cl
    mov cx, 7
    sub cl, al
-   adc cl, 0            ; loop will also repeat at least once
+   adc cl, 0            ; n = max(1, n)
+   sub cl, 1
+   adc cl, 1
 
    mov ax, [s]          ; c = s^2
    mul al               
@@ -164,9 +166,9 @@ ellipse1_n1:
 
    mov cx, [r]          ; deltax = 2c*r = 2*(s^2 << n)*r 
    mul cl
-   mov cl, dl
    mov si, ax
-   mov ax, [r]
+   mov ax, cx
+   mov cl, dl
    mul bx
    mov dx, ax
    mov bx, si
@@ -175,7 +177,7 @@ ellipse1_n1:
    shl bl, 1
    rcl dx, 1            ; dx:bl = deltax
    
-   mov ax, [r]          ; ax:bh = 2a
+   mov ax, [r]          ; ax:bh = 2*(a << n)
    mul al
    mov bh, al
    mov al, ah
@@ -820,7 +822,9 @@ ellipse2_jump_done:
    shr ax, cl
    mov cx, 7
    sub cl, al
-   adc cl, 0            ; loop will also repeat at least once
+   adc cl, 0            ; n = max(1, n)
+   sub cl, 1
+   adc cl, 1
 
    mov ax, [s]          ; c = s^2
    mul al               
@@ -870,9 +874,9 @@ ellipse2_n1:
 
    mov cx, [r]          ; deltax = 2c*r = 2*(s^2 << n)*r 
    mul cl
-   mov cl, dl
    mov si, ax
-   mov ax, [r]
+   mov ax, cx
+   mov cl, dl
    mul bx
    mov dx, ax
    mov bx, si
