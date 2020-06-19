@@ -505,7 +505,18 @@ ellipse1_donev3:
    mov dl, [di]
    jmp ellipse1_h3   
 
-  
+ellipse1_doneh1:
+
+   mov [di+bx], dh
+   mov [di], dl
+
+   pop dx
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret 
 
    ; di, di+bx offsets of points above and below axis, dx: pixels
    ; dl: deltay (lo8), ax: deltax (hi16), bp: deltay (hi16),
@@ -1238,6 +1249,19 @@ ellipse2_donev2:
    jmp ellipse2_h2   
   
 
+ellipse2_doneh1:
+
+   mov [di+bx], dh
+   mov [di], dl
+
+   pop dx
+
+   pop ds
+   pop si
+   pop di
+   pop bp
+   ret
+
    ; di, di+bx offsets of points above and below axis, dx: pixels
    ; dl: deltay (lo8), ax: deltax (hi16), bp: deltay (hi16),
    ; ch: D (lo8), cl: deltay (lo8), si: D (hi16)
@@ -1448,7 +1472,7 @@ ellipse2_patch63:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch64:
    sbb ax, 01234h
-   jle ellipse2_doneh2_skip ; skip extra byte and doubled pixel
+   jl ellipse2_doneh2_skip ; skip extra byte and doubled pixel
 
    jmp ellipse2_h1
 
