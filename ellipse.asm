@@ -1399,7 +1399,7 @@ ellipse2_patch63:
    sub dl, 012h         ; dx -= s^2
 ellipse2_patch64:
    sbb sp, 01234h
-   jle ellipse2_doneh2_skip ; skip extra byte and doubled pixel
+   jl ellipse2_doneh2_skip ; skip extra byte and doubled pixel
 
    jmp ellipse2_h1
 
