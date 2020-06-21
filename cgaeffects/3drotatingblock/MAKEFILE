@@ -1,0 +1,17 @@
+3drot.exe: 3drot.c line.obj hline.obj vline.obj linchnkl.obj linchnkr.obj
+	tcc -G -O -Z 3drot line.obj hline.obj vline.obj linchnkl.obj linchnkr.obj
+
+line.obj: line.asm
+	tasm /mx line.asm
+
+hline.obj: hline.asm
+	tasm /mx hline.asm
+
+vline.obj: vline.asm
+	tasm /mx vline.asm
+
+linchnkl.obj: linchnkl.asm
+	tasm /mx linchnkl.asm
+
+linchnkr.obj: linchnkr.asm
+	tasm /mx linchnkr.asm
