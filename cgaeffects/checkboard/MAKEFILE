@@ -1,0 +1,11 @@
+linetest.exe: checkbrd.c hline.obj vline.obj chckbrd.obj
+	tcc -G -O -Z -B checkbrd hline.obj vline.obj chckbrd.obj
+
+hline.obj: hline.asm
+	tasm /mx hline.asm
+
+vline.obj: vline.asm
+	tasm /mx vline.asm
+
+chckbrd.obj: chckbrd.asm
+	tasm /mx chckbrd.asm

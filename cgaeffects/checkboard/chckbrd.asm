@@ -4,7 +4,9 @@
 
    PUBLIC _cga_checkboard
 _cga_checkboard PROC
+   push bp
    push di
+   push si
 
    mov ax, 0b800h       ; set CGA segment
    mov es, ax
@@ -425,7 +427,8 @@ checkboard_loop1:
    stosw
      
    add dx, 80
-   loopz checkboard_done1
+   dec cx
+   jz checkboard_done1
    jmp checkboard_loop1
 
 checkboard_done1:
@@ -845,12 +848,15 @@ checkboard_loop2:
    stosw
 
    add dx, 80
-   loopz checkboard_done2
+   dec cx
+   jz checkboard_done2
    jmp checkboard_loop2
 
 checkboard_done2:
 
+   pop si
    pop di
+   pop bp
    ret
 _cga_checkboard ENDP
 
