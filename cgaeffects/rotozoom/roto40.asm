@@ -17,7 +17,6 @@ _rotozoom PROC
 
    xor bx, bx
    xor dx, dx
-   xor ax, ax
 
    add bx, si           ; add incs
    add dx, di
