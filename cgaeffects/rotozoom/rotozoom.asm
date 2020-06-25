@@ -24,475 +24,475 @@ _rotozoom PROC
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz1+2], ax
+   mov WORD PTR cs:[rz1+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz2+2], ax
+   mov WORD PTR cs:[rz2+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz3+2], ax
+   mov WORD PTR cs:[rz3+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz4+2], ax
+   mov WORD PTR cs:[rz4+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz5+2], ax
+   mov WORD PTR cs:[rz5+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz6+2], ax
+   mov WORD PTR cs:[rz6+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz7+2], ax
+   mov WORD PTR cs:[rz7+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz8+2], ax
+   mov WORD PTR cs:[rz8+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz9+2], ax
+   mov WORD PTR cs:[rz9+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz10+2], ax
+   mov WORD PTR cs:[rz10+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz11+2], ax
+   mov WORD PTR cs:[rz11+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz12+2], ax
+   mov WORD PTR cs:[rz12+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz13+2], ax
+   mov WORD PTR cs:[rz13+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz14+2], ax
+   mov WORD PTR cs:[rz14+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz15+2], ax
+   mov WORD PTR cs:[rz15+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz16+2], ax
+   mov WORD PTR cs:[rz16+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz17+2], ax
+   mov WORD PTR cs:[rz17+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz18+2], ax
+   mov WORD PTR cs:[rz18+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz19+2], ax
+   mov WORD PTR cs:[rz19+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz20+2], ax
+   mov WORD PTR cs:[rz20+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz21+2], ax
+   mov WORD PTR cs:[rz21+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz22+2], ax
+   mov WORD PTR cs:[rz22+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz23+2], ax
+   mov WORD PTR cs:[rz23+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz24+2], ax
+   mov WORD PTR cs:[rz24+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz25+2], ax
+   mov WORD PTR cs:[rz25+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz26+2], ax
+   mov WORD PTR cs:[rz26+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz27+2], ax
+   mov WORD PTR cs:[rz27+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz28+2], ax
+   mov WORD PTR cs:[rz28+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz29+2], ax
+   mov WORD PTR cs:[rz29+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz30+2], ax
+   mov WORD PTR cs:[rz30+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz31+2], ax
+   mov WORD PTR cs:[rz31+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz32+2], ax
+   mov WORD PTR cs:[rz32+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz33+2], ax
+   mov WORD PTR cs:[rz33+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz34+2], ax
+   mov WORD PTR cs:[rz34+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz35+2], ax
+   mov WORD PTR cs:[rz35+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz36+2], ax
+   mov WORD PTR cs:[rz36+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz37+2], ax
+   mov WORD PTR cs:[rz37+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz38+2], ax
+   mov WORD PTR cs:[rz38+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz39+2], ax
+   mov WORD PTR cs:[rz39+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz40+2], ax
+   mov WORD PTR cs:[rz40+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz41+2], ax
+   mov WORD PTR cs:[rz41+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz42+2], ax
+   mov WORD PTR cs:[rz42+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz43+2], ax
+   mov WORD PTR cs:[rz43+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz44+2], ax
+   mov WORD PTR cs:[rz44+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz45+2], ax
+   mov WORD PTR cs:[rz45+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz46+2], ax
+   mov WORD PTR cs:[rz46+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz47+2], ax
+   mov WORD PTR cs:[rz47+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz48+2], ax
+   mov WORD PTR cs:[rz48+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz49+2], ax
+   mov WORD PTR cs:[rz49+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz50+2], ax
+   mov WORD PTR cs:[rz50+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz51+2], ax
+   mov WORD PTR cs:[rz51+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz52+2], ax
+   mov WORD PTR cs:[rz52+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz53+2], ax
+   mov WORD PTR cs:[rz53+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz54+2], ax
+   mov WORD PTR cs:[rz54+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz55+2], ax
+   mov WORD PTR cs:[rz55+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz56+2], ax
+   mov WORD PTR cs:[rz56+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz57+2], ax
+   mov WORD PTR cs:[rz57+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz58+2], ax
+   mov WORD PTR cs:[rz58+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz59+2], ax
+   mov WORD PTR cs:[rz59+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz60+2], ax
+   mov WORD PTR cs:[rz60+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz61+2], ax
+   mov WORD PTR cs:[rz61+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz62+2], ax
+   mov WORD PTR cs:[rz62+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz63+2], ax
+   mov WORD PTR cs:[rz63+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz64+2], ax
+   mov WORD PTR cs:[rz64+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz65+2], ax
+   mov WORD PTR cs:[rz65+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz66+2], ax
+   mov WORD PTR cs:[rz66+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz67+2], ax
+   mov WORD PTR cs:[rz67+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz68+2], ax
+   mov WORD PTR cs:[rz68+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz69+2], ax
+   mov WORD PTR cs:[rz69+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz70+2], ax
+   mov WORD PTR cs:[rz70+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz71+2], ax
+   mov WORD PTR cs:[rz71+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz72+2], ax
+   mov WORD PTR cs:[rz72+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz73+2], ax
+   mov WORD PTR cs:[rz73+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz74+2], ax
+   mov WORD PTR cs:[rz74+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz75+2], ax
+   mov WORD PTR cs:[rz75+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz76+2], ax
+   mov WORD PTR cs:[rz76+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz77+2], ax
+   mov WORD PTR cs:[rz77+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz78+2], ax
+   mov WORD PTR cs:[rz78+2], ax
 
    add bx, si           ; add incs
    add dx, di
    mov ah, bh           ; compute jumps
    mov al, dh
-   mov cs:[rz79+2], ax
+   mov WORD PTR cs:[rz79+2], ax
 
    lds si, buff         ; set DS:SI = buff, ES:DI = CGA memory, SI wil be 0
    mov ax, 0b800h
