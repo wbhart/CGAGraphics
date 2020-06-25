@@ -18,7 +18,6 @@ _rotozoom PROC
    xor bx, bx
    xor dx, dx
    xor ax, ax
-   xor cx, cx
 
    add bx, si           ; add incs
    add dx, di
@@ -509,13 +508,16 @@ _rotozoom PROC
    mov dh, ah
 
    mov cx, 50           ; loop iterations
+   push bp
+   mov bp, 0ff0h
+
 rz_loop:
 
    inc di
    mov ah, [si]
 rz1:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -524,7 +526,7 @@ rz2:
    mov ah, [si+01234h]
 rz3:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -533,7 +535,7 @@ rz4:
    mov ah, [si+01234h]
 rz5:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -542,7 +544,7 @@ rz6:
    mov ah, [si+01234h]
 rz7:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -551,7 +553,7 @@ rz8:
    mov ah, [si+01234h]
 rz9:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -560,7 +562,7 @@ rz10:
    mov ah, [si+01234h]
 rz11:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -569,7 +571,7 @@ rz12:
    mov ah, [si+01234h]
 rz13:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -578,7 +580,7 @@ rz14:
    mov ah, [si+01234h]
 rz15:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -587,7 +589,7 @@ rz16:
    mov ah, [si+01234h]
 rz17:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -596,7 +598,7 @@ rz18:
    mov ah, [si+01234h]
 rz19:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -605,7 +607,7 @@ rz20:
    mov ah, [si+01234h]
 rz21:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -614,7 +616,7 @@ rz22:
    mov ah, [si+01234h]
 rz23:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -623,7 +625,7 @@ rz24:
    mov ah, [si+01234h]
 rz25:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -632,7 +634,7 @@ rz26:
    mov ah, [si+01234h]
 rz27:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -641,7 +643,7 @@ rz28:
    mov ah, [si+01234h]
 rz29:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -650,7 +652,7 @@ rz30:
    mov ah, [si+01234h]
 rz31:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -659,7 +661,7 @@ rz32:
    mov ah, [si+01234h]
 rz33:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -668,7 +670,7 @@ rz34:
    mov ah, [si+01234h]
 rz35:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -677,7 +679,7 @@ rz36:
    mov ah, [si+01234h]
 rz37:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -686,7 +688,7 @@ rz38:
    mov ah, [si+01234h]
 rz39:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -695,7 +697,7 @@ rz40:
    mov ah, [si+01234h]
 rz41:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -704,7 +706,7 @@ rz42:
    mov ah, [si+01234h]
 rz43:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -713,7 +715,7 @@ rz44:
    mov ah, [si+01234h]
 rz45:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -722,7 +724,7 @@ rz46:
    mov ah, [si+01234h]
 rz47:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -731,7 +733,7 @@ rz48:
    mov ah, [si+01234h]
 rz49:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -740,7 +742,7 @@ rz50:
    mov ah, [si+01234h]
 rz51:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -749,7 +751,7 @@ rz52:
    mov ah, [si+01234h]
 rz53:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -758,7 +760,7 @@ rz54:
    mov ah, [si+01234h]
 rz55:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -767,7 +769,7 @@ rz56:
    mov ah, [si+01234h]
 rz57:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -776,7 +778,7 @@ rz58:
    mov ah, [si+01234h]
 rz59:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -785,7 +787,7 @@ rz60:
    mov ah, [si+01234h]
 rz61:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -794,7 +796,7 @@ rz62:
    mov ah, [si+01234h]
 rz63:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -803,7 +805,7 @@ rz64:
    mov ah, [si+01234h]
 rz65:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -812,7 +814,7 @@ rz66:
    mov ah, [si+01234h]
 rz67:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -821,7 +823,7 @@ rz68:
    mov ah, [si+01234h]
 rz69:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -830,7 +832,7 @@ rz70:
    mov ah, [si+01234h]
 rz71:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -839,7 +841,7 @@ rz72:
    mov ah, [si+01234h]
 rz73:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -848,7 +850,7 @@ rz74:
    mov ah, [si+01234h]
 rz75:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -857,7 +859,7 @@ rz76:
    mov ah, [si+01234h]
 rz77:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
@@ -866,22 +868,27 @@ rz78:
    mov ah, [si+01234h]
 rz79:
    mov al, [si+01234h]
-   and ax, 0ff0h
+   and ax, bp
    add al, ah
    stosb
 
+   pop bp
    sub bx, [yinc]       ; jump by (-yinc, xinc) in vertical direction
    add dx, [xinc]
    mov al, bh
    mov ah, dh
    mov si, ax
-   
+   push bp
+   mov bp, 0ff0h
+
    dec cx
    jz rz_done
    jmp rz_loop
 
 rz_done:
 
+   pop bp
+   
    pop ds
    pop si
    pop di
