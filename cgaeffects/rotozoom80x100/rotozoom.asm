@@ -17,6 +17,7 @@ _rotozoom PROC
 
    xor bx, bx
    xor dx, dx
+   xor ax, ax
 
    add bx, si           ; add incs
    add dx, di
@@ -506,7 +507,10 @@ _rotozoom PROC
    xor dx, dx
    mov dh, ah
 
-   mov cx, 50           ; loop iterations
+   sar WORD PTR [yinc], 1
+   sar WORD PTR [xinc], 1
+
+   mov cx, 100           ; loop iterations
    push bp
    mov bp, 0ff0h
 
