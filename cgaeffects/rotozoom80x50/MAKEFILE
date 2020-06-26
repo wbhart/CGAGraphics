@@ -1,0 +1,8 @@
+rotazoom.exe: rotazoom.c pcx.obj rotozoom.obj
+	tcc -G -O -Z -B rotazoom pcx.obj rotozoom.obj
+
+pcx.obj: pcx.h pcx.c
+	tcc -G -O -Z -c pcx
+
+rotozoom.obj: rotozoom.asm
+	tasm /mx rotozoom.asm
