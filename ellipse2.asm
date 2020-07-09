@@ -6,14 +6,14 @@
    ncorr DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-         DB 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-         DB 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 255, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 255, 0, 0, 0, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-         DB 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
-         DB 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 255, 0, 0, 0
+         DB 0, 0, 0, 255, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-         DB 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 255, 0, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -41,9 +41,6 @@ _cga_draw_ellipse1 PROC
    push di
    push si
    push ds
-
-   mov ax, 0b800h       ; set DS to segment for CGA memory
-   mov ds, ax
 
    mov ax, [y0]         ; compute offset for line y0           
    shr ax, 1
@@ -127,10 +124,12 @@ ellipse1_jump_done:
 
    push bx              ; compute corrections
    xor ah, ah
-   mov bx, ncorr
+   mov bx, OFFSET ncorr
    mov al, cl
    xlat
    mov BYTE PTR cs:[ellipse1_patchn + 2], al
+   mov ax, 0b800h       ; set DS to segment for CGA memory
+   mov ds, ax
    pop bx
 
    mov ax, cx
