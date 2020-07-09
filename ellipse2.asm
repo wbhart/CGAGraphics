@@ -475,13 +475,14 @@ ellipse1_patch36:
    jne ellipse1_donev1  ; done verticalish
 
 ellipse1_eq1:
+   jne ellipse1_donev1
    cmp al, cl
    jae ellipse1_jump1
    jmp ellipse1_donev1  ; done verticalish
 
 ellipse1_eq4:
    cmp al, cl
-   jb ellipse1_donev4  ; done verticalish
+   jb ellipse1_donev4   ; done verticalish
    jmp ellipse1_jump4
 
                         ; horizontalish part of ellipse
