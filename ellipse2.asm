@@ -110,18 +110,19 @@ ellipse1_jump_done:
 
    mul al
    shl ax, 1
-   mov dx, [s]          ; bp = 2a
+   mov dx, [s]          ; bp = 2a = 2r^2
    mov bp, ax
    mul dx               ; dl:ax = 2a*s
 
    or ax, bx
    or dl, cl
+
    xor dh, dh
 
 ellipse1_compute_n:     ; count leading zeros
+   inc dh
    shl ax, 1
    rcl dl, 1
-   inc dh
    jnc ellipse1_compute_n
    sub dh, 2
    mov ah, dh           ; ah = n = 23 - maxbits(2a*s, 2c*r)
@@ -137,7 +138,7 @@ ellipse1_compute_n:     ; count leading zeros
    mov bp, bx
 
    mov bx, si           ; bx:ch = c = s^2
-   mov bl, ch
+   mov ch, bl
    mov bl, bh
    xor bh, bh
 
@@ -347,7 +348,7 @@ ellipse1_patch18:
 
    cmp dx, bp           ; check if done verticalish 
    ja ellipse1_jump1
-   jmp ellipse1_eq1
+   jmp ellipse1_na1
 
 ellipse1_x3:
    sahf
@@ -472,10 +473,9 @@ ellipse1_patch36:
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
    ja ellipse1_jump1
-   jne ellipse1_donev1  ; done verticalish
 
-ellipse1_eq1:
-   jne ellipse1_donev1
+ellipse1_na1:
+   jne ellipse1_donev1  ; done verticalish
    cmp al, cl
    jae ellipse1_jump1
    jmp ellipse1_donev1  ; done verticalish
