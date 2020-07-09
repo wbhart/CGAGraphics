@@ -127,7 +127,7 @@ ellipse1_jump_done:
    mov bx, OFFSET ncorr
    mov al, cl
    xlat
-   mov BYTE PTR cs:[ellipse1_patchn + 2], al
+   mov BYTE PTR cs:[ellipse1_patchn + 1], al
    mov ax, 0b800h       ; set DS to segment for CGA memory
    mov ds, ax
    pop bx
