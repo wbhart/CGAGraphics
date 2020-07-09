@@ -1,5 +1,25 @@
    DOSSEG
    .MODEL small
+
+   .DATA
+
+   ncorr DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
+         DB 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+         DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
    .CODE
 
    jmp_addr   DW ?
@@ -105,6 +125,14 @@ ellipse1_jump_done:
    mul cx
    mov bx, ax
 
+   push bx              ; compute corrections
+   xor ah, ah
+   mov bx, ncorr
+   mov al, cl
+   xlat
+   mov BYTE PTR cs:[ellipse1_patchn + 2], al
+   pop bx
+
    mov ax, cx
    mov cl, dl
 
@@ -117,7 +145,8 @@ ellipse1_jump_done:
    or ax, bx
    or dl, cl
 
-   xor dh, dh
+ellipse1_patchn:
+   mov dh, 012h
 
 ellipse1_compute_n:     ; count leading zeros
    inc dh
