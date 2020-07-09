@@ -408,11 +408,7 @@ ellipse1_patch27:
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
    ja ellipse1_jump4
-   jne ellipse1_ne4
-ellipse1_eq4:
-   cmp al, cl
-   jae ellipse1_jump4
-ellipse1_ne4:
+   je ellipse1_eq4
    jmp ellipse1_donev4  ; done verticalish
 
 
@@ -483,6 +479,10 @@ ellipse1_eq1:
    jae ellipse1_jump1
    jmp ellipse1_donev1  ; done verticalish
 
+ellipse1_eq4:
+   cmp al, cl
+   jb ellipse1_donev4  ; done verticalish
+   jmp ellipse1_jump4
 
                         ; horizontalish part of ellipse
 ellipse1_donev4:
