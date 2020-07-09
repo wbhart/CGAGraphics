@@ -20,6 +20,40 @@
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
+   cmp1 DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 100, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 93, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 53, 0, 59, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 29, 0, 0
+
+   cmp2 DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 39, 0, 0, 33, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 0, 0, 0, 0, 3, 96, 0, 0, 0, 0
+        DB 0, 0, 29, 0, 0, 0, 0, 0, 39, 0
+        DB 0, 57, 0, 0, 33, 0, 0, 0, 0, 0
+        DB 0, 0, 63, 36, 0, 12, 0, 100, 0, 0
+        DB 0, 0, 0, 17, 0, 0, 0, 0, 0, 0
+        DB 0, 18, 0, 0, 0, 0, 0, 0, 0, 0
+        DB 31, 0, 38, 0, 0, 52, 0, 0, 0, 0
+        DB 0, 84, 83, 0, 0, 0, 10, 0, 3, 0
+        DB 96, 0, 0, 0, 0, 0, 31, 0, 43, 0
+        
    .CODE
 
    jmp_addr   DW ?
@@ -128,6 +162,30 @@ ellipse1_jump_done:
    mov al, cl
    xlat
    mov BYTE PTR cs:[ellipse1_patchn + 1], al
+   mov bx, OFFSET cmp1
+   mov al, cl
+   xlat
+   mov dh, 07eh
+   cmp ax, [s]
+   je ellipse1_skip_jl
+   sub dh, 2
+ellipse1_skip_jl:
+   mov BYTE PTR cs:[ellipse1_patchjl1], dh
+   mov BYTE PTR cs:[ellipse1_patchjl2], dh
+   mov BYTE PTR cs:[ellipse1_patchjl3], dh
+   mov BYTE PTR cs:[ellipse1_patchjl4], dh
+   mov bx, OFFSET cmp2
+   mov al, cl
+   xlat
+   mov dh, 07dh
+   cmp ax, [s]
+   je ellipse1_skip_jg
+   add dh, 2
+ellipse1_skip_jg:
+   mov BYTE PTR cs:[ellipse1_patchjg1], dh
+   mov BYTE PTR cs:[ellipse1_patchjg2], dh
+   mov BYTE PTR cs:[ellipse1_patchjg3], dh
+   mov BYTE PTR cs:[ellipse1_patchjg4], dh
    mov ax, 0b800h       ; set DS to segment for CGA memory
    mov ds, ax
    pop bx
@@ -280,6 +338,7 @@ ellipse1_patch5:
    shr dx, 1            ; if dx/2 <= D, decrement x
    lahf
    cmp dx, si
+ellipse1_patchjl2:
    jle ellipse1_x1
 
    sahf
@@ -347,6 +406,7 @@ ellipse1_patch14:
    shr dx, 1            ; if dx/2 <= D, decrement x
    lahf
    cmp dx, si
+ellipse1_patchjl3:
    jle ellipse1_x2
 
    sahf
@@ -431,6 +491,7 @@ ellipse1_patch27:
    shr dx, 1            ; if dx/2 <= D, decrement x
    lahf
    cmp dx, si
+ellipse1_patchjl4:
    jle ellipse1_x3
 
    sahf
@@ -495,6 +556,7 @@ ellipse1_patch36:
    shr dx, 1            ; if dx/2 <= D, decrement x
    lahf
    cmp dx, si
+ellipse1_patchjl1:
    jle ellipse1_x4
 
    sahf
@@ -600,6 +662,7 @@ ellipse1_patch39:
    shr bp, 1            ; if dy/2 < D, increment y
 
    cmp bp, si
+ellipse1_patchjg4:
    jge ellipse1_skip_y4
    
    mov [di+bx], dh
@@ -653,6 +716,7 @@ ellipse1_patch46:
    mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
+ellipse1_patchjg3:
    jge ellipse1_skip_y3
    
    mov [di+bx], dh
@@ -704,6 +768,7 @@ ellipse1_patch53:
    mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
+ellipse1_patchjg2:
    jge ellipse1_skip_y2
    
    mov [di+bx], dh
@@ -758,6 +823,7 @@ ellipse1_patch60:
    mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
+ellipse1_patchjg1:
    jge ellipse1_skip_y1
 
    pop dx
