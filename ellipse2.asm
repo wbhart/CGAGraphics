@@ -890,9 +890,6 @@ _cga_draw_ellipse2 PROC
    push si
    push ds
 
-   mov ax, 0b800h       ; set DS to segment for CGA memory
-   mov ds, ax
-
    mov ax, [y0]         ; compute offset for line y0
    shr ax, 1
    sbb di, di
@@ -965,44 +962,118 @@ ellipse2_jump_done:
    mov WORD PTR cs:[ellipse2_patch51 + 2], ax
 
 
-   mov ax, [r]          ; n = max(1, 7 - (r + s + 1)/32)
-   add ax, [s]
-   inc ax
-   mov cl, 5
-   shr ax, cl
-   mov cx, 7
-   sub cl, al
-   adc cl, 0            ; n = max(1, n)
-   sub cl, 1
-   adc cl, 1
-
-   mov ax, [s]          ; c = s^2
+   mov ax, [s]          ; si = c = s^2
    mul al               
-   mov bl, ah           ; c << n in bx:al
+   mov si, ax          
+   
+   shl ax, 1            ; cl:bx = deltax = 2c*r
+   mov cx, [r] 
+   mul cx
+   mov bx, ax
+
+   push bx              ; compute corrections
+   xor ah, ah
+   mov bx, OFFSET ncorr
+   mov al, cl
+   xlat
+   mov BYTE PTR cs:[ellipse2_patchn + 1], al
+   mov bx, OFFSET cmp1
+   mov al, cl
+   xlat
+   mov dh, 07eh
+   cmp ax, [s]
+   je ellipse2_skip_jl
+   sub dh, 2
+ellipse2_skip_jl:
+   mov BYTE PTR cs:[ellipse2_patchjl1], dh
+   mov BYTE PTR cs:[ellipse2_patchjl2], dh
+   mov BYTE PTR cs:[ellipse2_patchjl3], dh
+   mov BYTE PTR cs:[ellipse2_patchjl4], dh
+   mov bx, OFFSET cmp2
+   mov al, cl
+   xlat
+   mov dh, 07dh
+   cmp ax, [s]
+   je ellipse2_skip_jg
+   add dh, 2
+ellipse2_skip_jg:
+   mov BYTE PTR cs:[ellipse2_patchjg1], dh
+   mov BYTE PTR cs:[ellipse2_patchjg2], dh
+   mov BYTE PTR cs:[ellipse2_patchjg3], dh
+   mov BYTE PTR cs:[ellipse2_patchjg4], dh
+   mov ax, 0b800h       ; set DS to segment for CGA memory
+   mov ds, ax
+   pop bx
+
+
+   mov ax, cx
+   mov cl, dl
+
+   mul al
+   shl ax, 1
+   mov dx, [s]          ; bp = 2a = 2r^2
+   mov bp, ax
+   mul dx               ; dl:ax = 2a*s
+
+   or ax, bx
+   or dl, cl
+
+ellipse2_patchn:
+   mov dh, 012h
+
+ellipse2_compute_n:     ; count leading zeros
+   inc dh
+   shl ax, 1
+   rcl dl, 1
+   jnc ellipse2_compute_n
+   sub dh, 2
+   mov ah, dh           ; ah = n = 23 - maxbits(2a*s, 2c*r)
+
+   mov dh, cl           ; deltax = dx:al = 2c*r
+   mov dl, bh
+   mov al, bl
+
+   mov bx, bp           ; bp:cl = 2a = 2r^2
+   mov cl, bl
+   mov bl, bh
    xor bh, bh
-   mov dl, cl           ; save n
-ellipse2_n1:
+   mov bp, bx
+
+   mov bx, si           ; bx:ch = c = s^2
+   mov ch, bl
+   mov bl, bh
+   xor bh, bh
+
+   cmp ah, 0
+   je ellipse2_done_shift
+ellipse2_shift_loop:
    shl al, 1
+   rcl dx, 1
+   shl cl, 1
+   rcl bp, 1
+   shl ch, 1
    rcl bx, 1
-   loop ellipse2_n1
+   dec ah
+   jnz ellipse2_shift_loop
+ellipse2_done_shift:
 
-   mov BYTE PTR cs:[ellipse2_patch6 + 1], al
-   mov BYTE PTR cs:[ellipse2_patch8 + 1], al
-   mov BYTE PTR cs:[ellipse2_patch15 + 1], al
-   mov BYTE PTR cs:[ellipse2_patch17 + 1], al
-   mov BYTE PTR cs:[ellipse2_patch19 + 1], al
-   mov BYTE PTR cs:[ellipse2_patch21 + 1], al
-   mov BYTE PTR cs:[ellipse2_patch28 + 1], al
-   mov BYTE PTR cs:[ellipse2_patch30 + 1], al
+   mov BYTE PTR cs:[ellipse2_patch6 + 1], ch
+   mov BYTE PTR cs:[ellipse2_patch8 + 1], ch
+   mov BYTE PTR cs:[ellipse2_patch15 + 1], ch
+   mov BYTE PTR cs:[ellipse2_patch17 + 1], ch
+   mov BYTE PTR cs:[ellipse2_patch19 + 1], ch
+   mov BYTE PTR cs:[ellipse2_patch21 + 1], ch
+   mov BYTE PTR cs:[ellipse2_patch28 + 1], ch
+   mov BYTE PTR cs:[ellipse2_patch30 + 1], ch
 
-   mov BYTE PTR cs:[ellipse2_patch38 + 2], al
-   mov BYTE PTR cs:[ellipse2_patch42 + 2], al
-   mov BYTE PTR cs:[ellipse2_patch45 + 2], al
-   mov BYTE PTR cs:[ellipse2_patch49 + 2], al
-   mov BYTE PTR cs:[ellipse2_patch52 + 2], al
-   mov BYTE PTR cs:[ellipse2_patch56 + 2], al
-   mov BYTE PTR cs:[ellipse2_patch59 + 2], al
-   mov BYTE PTR cs:[ellipse2_patch63 + 2], al
+   mov BYTE PTR cs:[ellipse2_patch38 + 2], ch
+   mov BYTE PTR cs:[ellipse2_patch42 + 2], ch
+   mov BYTE PTR cs:[ellipse2_patch45 + 2], ch
+   mov BYTE PTR cs:[ellipse2_patch49 + 2], ch
+   mov BYTE PTR cs:[ellipse2_patch52 + 2], ch
+   mov BYTE PTR cs:[ellipse2_patch56 + 2], ch
+   mov BYTE PTR cs:[ellipse2_patch59 + 2], ch
+   mov BYTE PTR cs:[ellipse2_patch63 + 2], ch
 
    mov WORD PTR cs:[ellipse2_patch7 + 2], bx
    mov WORD PTR cs:[ellipse2_patch9 + 2], bx
@@ -1022,53 +1093,26 @@ ellipse2_n1:
    mov WORD PTR cs:[ellipse2_patch60 + 1], bx
    mov WORD PTR cs:[ellipse2_patch64 + 1], bx
 
-   mov cx, [r]          ; deltax = 2c*r = 2*(s^2 << n)*r 
-   mul cl
-   mov si, ax
-   mov ax, cx
-   mov cl, dl
-   mul bx
-   mov dx, ax
-   mov bx, si
-   add dl, bh
-   adc dh, 0
-   shl bl, 1
-   rcl dx, 1            ; dx:bl = deltax
-   
-   mov ax, [r]          ; ax:bh = 2a
-   mul al
-   mov bh, al
-   mov al, ah
-   xor ah, ah
-   inc cl
-ellipse2_n2:
-   shl bh, 1
-   rcl ax, 1
-   loop ellipse2_n2
+   mov BYTE PTR cs:[ellipse2_patch4 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch13 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch26 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch35 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch40 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch47 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch54 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch61 + 2], cl
 
-   mov BYTE PTR cs:[ellipse2_patch4 + 2], bh
-   mov BYTE PTR cs:[ellipse2_patch13 + 2], bh
-   mov BYTE PTR cs:[ellipse2_patch26 + 2], bh
-   mov BYTE PTR cs:[ellipse2_patch35 + 2], bh
-   mov BYTE PTR cs:[ellipse2_patch40 + 2], bh
-   mov BYTE PTR cs:[ellipse2_patch47 + 2], bh
-   mov BYTE PTR cs:[ellipse2_patch54 + 2], bh
-   mov BYTE PTR cs:[ellipse2_patch61 + 2], bh
+   mov WORD PTR cs:[ellipse2_patch5 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch14 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch27 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch36 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch41 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch48 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch55 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch62 + 2], bp
 
-   mov WORD PTR cs:[ellipse2_patch5 + 2], ax
-   mov WORD PTR cs:[ellipse2_patch14 + 2], ax
-   mov WORD PTR cs:[ellipse2_patch27 + 2], ax
-   mov WORD PTR cs:[ellipse2_patch36 + 2], ax
-   mov WORD PTR cs:[ellipse2_patch41 + 2], ax
-   mov WORD PTR cs:[ellipse2_patch48 + 2], ax
-   mov WORD PTR cs:[ellipse2_patch55 + 2], ax
-   mov WORD PTR cs:[ellipse2_patch62 + 2], ax
-
-   shr ax, 1
-   rcr bh, 1
-   mov bp, ax
-   mov cl, bh           ; bp:cl = delta y = a
-   mov al, bl           ; dx:al = delta x
+   shr bp, 1            ; bp:cl = a = r^2
+   rcr cl, 1
    
    xor si, si           ; si:ch = D = 0
    xor ch, ch
@@ -1110,14 +1154,20 @@ ellipse2_patch5:
    shr dx, 1            ; if dx/2 <= D, decrement x
    lahf
    cmp dx, si
+ellipse2_patchjl3:
    jle ellipse2_x4
 
    sahf
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
+   ja ellipse2_jump3
+   jne ellipse2_ne3
+ellipse2_eq3:
+   cmp al, cl
    jae ellipse2_jump3
+ellipse2_ne3:
    jmp ellipse2_donev3  ; done verticalish
-
+   
 ellipse2_x3:
    sahf
    rcl dx, 1
@@ -1133,7 +1183,8 @@ ellipse2_patch9:
    sbb dx, 01234h
 
    cmp dx, bp           ; check if done verticalish 
-   jae ellipse2_jump3
+   ja ellipse2_jump3
+   je ellipse2_eq3
    jmp ellipse2_donev3  ; done verticalish
    
 
@@ -1171,13 +1222,20 @@ ellipse2_patch14:
    shr dx, 1            ; if dx/2 <= D, decrement x
    lahf
    cmp dx, si
+ellipse2_patchjl2:
    jle ellipse2_x3
 
    sahf
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
+   ja ellipse2_jump2
+   jne ellipse2_ne2
+ellipse2_eq2:
+   cmp al, cl
    jae ellipse2_jump2
+ellipse2_ne2:
    jmp ellipse2_donev2  ; done verticalish
+   
 
 ellipse2_x4:
    sahf
@@ -1194,8 +1252,8 @@ ellipse2_patch18:
    sbb dx, 01234h
 
    cmp dx, bp           ; check if done verticalish 
-   jae ellipse2_jump4
-   jmp ellipse2_donev4  ; done verticalish
+   ja ellipse2_jump4
+   jmp ellipse2_na4
 
 
 ellipse2_x2:
@@ -1213,7 +1271,8 @@ ellipse2_patch22:
    sbb dx, 01234h
 
    cmp dx, bp           ; check if done verticalish 
-   jae ellipse2_jump2
+   ja ellipse2_jump2
+   je ellipse2_eq2
    jmp ellipse2_donev2  ; done verticalish
 
    ALIGN 2
@@ -1250,12 +1309,14 @@ ellipse2_patch27:
    shr dx, 1            ; if dx/2 <= D, decrement x
    lahf
    cmp dx, si
+ellipse2_patchjl1:
    jle ellipse2_x2
 
    sahf
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
-   jae ellipse2_jump1
+   ja ellipse2_jump1
+   je ellipse2_eq1
    jmp ellipse2_donev1  ; done verticalish
 
 
@@ -1275,7 +1336,8 @@ ellipse2_patch31:
    sbb dx, 01234h
 
    cmp dx, bp           ; check if done verticalish 
-   jae ellipse2_jump1
+   ja ellipse2_jump1
+   je ellipse2_eq1
    jmp ellipse2_donev1  ; done verticalish
 
    ALIGN 2
@@ -1312,13 +1374,24 @@ ellipse2_patch36:
    shr dx, 1            ; if dx/2 <= D, decrement x
    lahf
    cmp dx, si
+ellipse2_patchjl4:
    jle ellipse2_x1
 
    sahf
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
+   ja ellipse2_jump4
+
+ellipse2_na4:
+   jne ellipse2_donev4  ; done verticalish
+   cmp al, cl
    jae ellipse2_jump4
    jmp ellipse2_donev4  ; done verticalish
+
+ellipse2_eq1:
+   cmp al, cl
+   jb ellipse2_donev1   ; done verticalish
+   jmp ellipse2_jump1
 
 
 
@@ -1410,6 +1483,7 @@ ellipse2_patch39:
    shr bp, 1            ; if dy/2 < D, increment y
 
    cmp bp, si
+ellipse2_patchjg1:
    jge ellipse2_skip_y1
    
    mov [di+bx], dh
@@ -1463,6 +1537,7 @@ ellipse2_patch46:
    mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
+ellipse2_patchjg2:
    jge ellipse2_skip_y2
    
    mov [di+bx], dh
@@ -1514,6 +1589,7 @@ ellipse2_patch53:
    mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
+ellipse2_patchjg3:
    jge ellipse2_skip_y3
    
    mov [di+bx], dh
@@ -1568,6 +1644,7 @@ ellipse2_patch60:
    mov bp, es
    shr bp, 1            ; if dy/2 < D, increment y
    cmp bp, si
+ellipse2_patchjg4:
    jge ellipse2_skip_y4
 
    pop dx
