@@ -1189,6 +1189,10 @@ ellipse2_done_shift:
    mov BYTE PTR cs:[ellipse2_patch47 + 2], cl
    mov BYTE PTR cs:[ellipse2_patch54 + 2], cl
    mov BYTE PTR cs:[ellipse2_patch61 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch65 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch67 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch69 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch71 + 2], cl
 
    mov WORD PTR cs:[ellipse2_patch5 + 2], bp
    mov WORD PTR cs:[ellipse2_patch14 + 2], bp
@@ -1198,6 +1202,10 @@ ellipse2_done_shift:
    mov WORD PTR cs:[ellipse2_patch48 + 2], bp
    mov WORD PTR cs:[ellipse2_patch55 + 2], bp
    mov WORD PTR cs:[ellipse2_patch62 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch66 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch68 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch70 + 2], bp
+   mov WORD PTR cs:[ellipse2_patch70 + 2], bp
 
    shr bp, 1            ; bp:cl = a = r^2
    rcr cl, 1
@@ -1490,6 +1498,26 @@ ellipse2_donev1:
    push cx
    mov cl, al
    mov ax, dx
+   mov bp, es
+   shr bp, 1            ; if dy/2 < D, decrement y
+   cmp bp, si
+   jge ellipse2_skip_adjust1
+   pop dx
+   mov bp, es
+ellipse2_patch65:
+   sub dl, 012h         ; dy -= 2r^2
+ellipse2_patch66:
+   sbb bp, 01234h
+   sub ch, dl           ; D -= dy
+   sbb si, bp
+   push dx
+   sub di, 8192         ; update offset of odd <-> even
+   sbb dx, dx
+   and dx, 16304
+   add di, dx
+   add bx, 80           ; decrement/increment y lines 
+   mov es, bp
+ellipse2_skip_adjust1:
    neg ch               ; D = -D
    adc si, 0
    neg si
@@ -1501,6 +1529,26 @@ ellipse2_donev4:
    push cx
    mov cl, al
    mov ax, dx
+   mov bp, es
+   shr bp, 1            ; if dy/2 < D, decrement y
+   cmp bp, si
+   jge ellipse2_skip_adjust4
+   pop dx
+   mov bp, es
+ellipse2_patch67:
+   sub dl, 012h         ; dy -= 2r^2
+ellipse2_patch68:
+   sbb bp, 01234h
+   sub ch, dl           ; D -= dy
+   sbb si, bp
+   push dx
+   sub di, 8192         ; update offset of odd <-> even
+   sbb dx, dx
+   and dx, 16304
+   add di, dx
+   add bx, 80           ; decrement/increment y lines 
+   mov es, bp
+ellipse2_skip_adjust4:
    neg ch               ; D = -D
    adc si, 0
    neg si
@@ -1514,6 +1562,26 @@ ellipse2_donev3:
    push cx
    mov cl, al
    mov ax, dx
+   mov bp, es
+   shr bp, 1            ; if dy/2 < D, decrement y
+   cmp bp, si
+   jge ellipse2_skip_adjust3
+   pop dx
+   mov bp, es
+ellipse2_patch69:
+   sub dl, 012h         ; dy -= 2r^2
+ellipse2_patch70:
+   sbb bp, 01234h
+   sub ch, dl           ; D -= dy
+   sbb si, bp
+   push dx
+   sub di, 8192         ; update offset of odd <-> even
+   sbb dx, dx
+   and dx, 16304
+   add di, dx
+   add bx, 80           ; decrement/increment y lines 
+   mov es, bp
+ellipse2_skip_adjust3:
    neg ch               ; D = -D
    adc si, 0
    neg si
@@ -1527,6 +1595,26 @@ ellipse2_donev2:
    push cx
    mov cl, al
    mov ax, dx
+   mov bp, es
+   shr bp, 1            ; if dy/2 < D, decrement y
+   cmp bp, si
+   jge ellipse2_skip_adjust2
+   pop dx
+   mov bp, es
+ellipse2_patch71:
+   sub dl, 012h         ; dy -= 2r^2
+ellipse2_patch72:
+   sbb bp, 01234h
+   sub ch, dl           ; D -= dy
+   sbb si, bp
+   push dx
+   sub di, 8192         ; update offset of odd <-> even
+   sbb dx, dx
+   and dx, 16304
+   add di, dx
+   add bx, 80           ; decrement/increment y lines 
+   mov es, bp
+ellipse2_skip_adjust2:
    neg ch               ; D = -D
    adc si, 0
    neg si
