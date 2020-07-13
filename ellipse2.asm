@@ -596,12 +596,12 @@ ellipse1_donev4:
    jge ellipse1_skip_adjust4
    pop dx
    mov bp, es
+ellipse1_patch65:
+   sub dl, 012h         ; dy -= 2r^2
+ellipse1_patch66:
+   sbb bp, 01234h
    sub ch, dl           ; D -= dy
    sbb si, bp
-ellipse1_patch65:
-   add dl, 012h         ; dy += 2r^2
-ellipse1_patch66:
-   adc bp, 01234h
    push dx
    sub di, 8192         ; update offset of odd <-> even
    sbb dx, dx
@@ -627,12 +627,12 @@ ellipse1_donev1:
    jge ellipse1_skip_adjust1
    pop dx
    mov bp, es
+ellipse1_patch67:
+   sub dl, 012h         ; dy -= 2r^2
+ellipse1_patch68:
+   sbb bp, 01234h
    sub ch, dl           ; D -= dy
    sbb si, bp
-ellipse1_patch67:
-   add dl, 012h         ; dy += 2r^2
-ellipse1_patch68:
-   adc bp, 01234h
    push dx
    sub di, 8192         ; update offset of odd <-> even
    sbb dx, dx
@@ -660,12 +660,12 @@ ellipse1_donev2:
    jge ellipse1_skip_adjust2
    pop dx
    mov bp, es
+ellipse1_patch69:
+   sub dl, 012h         ; dy -= 2r^2
+ellipse1_patch70:
+   sbb bp, 01234h
    sub ch, dl           ; D -= dy
    sbb si, bp
-ellipse1_patch69:
-   add dl, 012h         ; dy += 2r^2
-ellipse1_patch70:
-   adc bp, 01234h
    push dx
    sub di, 8192         ; update offset of odd <-> even
    sbb dx, dx
@@ -693,12 +693,12 @@ ellipse1_donev3:
    jge ellipse1_skip_adjust3
    pop dx
    mov bp, es
+ellipse1_patch71:
+   sub dl, 012h         ; dy -= 2r^2
+ellipse1_patch72:
+   sbb bp, 01234h
    sub ch, dl           ; D -= dy
    sbb si, bp
-ellipse1_patch71:
-   add dl, 012h         ; dy += 2r^2
-ellipse1_patch72:
-   adc bp, 01234h
    push dx
    sub di, 8192         ; update offset of odd <-> even
    sbb dx, dx
