@@ -352,12 +352,7 @@ ellipse1_patchjl2:
    sahf
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
-   ja ellipse1_jump2
-   jne ellipse1_ne2
-ellipse1_eq2:
-   cmp al, cl
    jae ellipse1_jump2
-ellipse1_ne2:
    jmp ellipse1_donev2  ; done verticalish
 
 ellipse1_x2:
@@ -375,8 +370,7 @@ ellipse1_patch9:
    sbb dx, 01234h
 
    cmp dx, bp           ; check if done verticalish 
-   ja ellipse1_jump2
-   je ellipse1_eq2
+   jae ellipse1_jump2
    jmp ellipse1_donev2  ; done verticalish
    
 
@@ -420,12 +414,7 @@ ellipse1_patchjl3:
    sahf
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
-   ja ellipse1_jump3
-   jne ellipse1_ne3
-ellipse1_eq3:
-   cmp al, cl
    jae ellipse1_jump3
-ellipse1_ne3:
    jmp ellipse1_donev3  ; done verticalish
 
 ellipse1_x1:
@@ -443,8 +432,8 @@ ellipse1_patch18:
    sbb dx, 01234h
 
    cmp dx, bp           ; check if done verticalish 
-   ja ellipse1_jump1
-   jmp ellipse1_na1
+   jae ellipse1_jump1
+   jmp ellipse1_donev1
 
 ellipse1_x3:
    sahf
@@ -461,8 +450,7 @@ ellipse1_patch22:
    sbb dx, 01234h
 
    cmp dx, bp           ; check if done verticalish 
-   ja ellipse1_jump3
-   je ellipse1_eq3
+   jae ellipse1_jump3
    jmp ellipse1_donev3  ; done verticalish
 
    ALIGN 2
@@ -505,8 +493,7 @@ ellipse1_patchjl4:
    sahf
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
-   ja ellipse1_jump4
-   je ellipse1_eq4
+   jae ellipse1_jump4
    jmp ellipse1_donev4  ; done verticalish
 
 
@@ -526,8 +513,7 @@ ellipse1_patch31:
    sbb dx, 01234h
 
    cmp dx, bp           ; check if done verticalish 
-   ja ellipse1_jump4
-   je ellipse1_eq4
+   jae ellipse1_jump4
    jmp ellipse1_donev4  ; done verticalish
 
    ALIGN 2
@@ -570,18 +556,8 @@ ellipse1_patchjl1:
    sahf
    rcl dx, 1
    cmp dx, bp           ; check if done verticalish
-   ja ellipse1_jump1
-
-ellipse1_na1:
-   jne ellipse1_donev1  ; done verticalish
-   cmp al, cl
    jae ellipse1_jump1
    jmp ellipse1_donev1  ; done verticalish
-
-ellipse1_eq4:
-   cmp al, cl
-   jb ellipse1_donev4   ; done verticalish
-   jmp ellipse1_jump4
 
                         ; horizontalish part of ellipse
 ellipse1_donev4:
