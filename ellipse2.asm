@@ -229,9 +229,7 @@ ellipse1_compute_n:     ; count leading zeros
    xor bh, bh
 
    cmp ah, 0
-   je ellipse1_done_shift
-   jg ellipse1_shift_loop ; deal with n == -1
-   inc ah
+   jle ellipse1_done_shift ; deal with n == -1, 0
 ellipse1_shift_loop:
    shl al, 1
    rcl dx, 1
