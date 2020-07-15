@@ -123,6 +123,7 @@ ellipse2_j3:
    mov WORD PTR cs:[jmp_addr2], si
 ellipse2_jump_done:
 
+   sub di, dx
    mov dx, [x0]         ; adjust offset for column x0 + r
    add dx, [r]
    mov ax, dx
