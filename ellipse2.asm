@@ -63,7 +63,7 @@
 
    PUBLIC _cga_draw_ellipse
 _cga_draw_ellipse PROC
-   ARG buff::DWOWD, x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE
+   ARG buff:DWORD, x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE
    ; ellipse with centre (x0, y0) and semiradius in the x-direction of r
    ; and semiradius in the y-direction of s
    ; draws only the right side of the ellipse
@@ -90,7 +90,7 @@ _cga_draw_ellipse PROC
    shl ax, 1
    add di, ax
    add di, WORD PTR [buff]
-   
+
    mov dx, [x0]         ; adjust offset for column x0 + r
    sub dx, [r]
    mov ax, dx
