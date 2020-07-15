@@ -2,7 +2,7 @@
    .MODEL small
 
    EXTRN _cga_draw_hline:NEAR, _cga_draw_vline:NEAR
-   
+
    .DATA
 
    ncorr DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -92,7 +92,9 @@ _cga_draw_ellipse PROC
    mov ax, WORD PTR [buff+2]
    push ax
    mov ax, WORD PTR [buff]
+   push ax
    call _cga_draw_vline
+   mov sp, bp
    pop bp
    ret
 ellipse_rn0:
@@ -112,7 +114,9 @@ ellipse_rn0:
    mov ax, WORD PTR [buff+2]
    push ax
    mov ax, WORD PTR [buff]
+   push ax
    call _cga_draw_hline
+   mov sp, bp
    pop bp
    ret
 ellipse_sn0:
