@@ -41,3 +41,17 @@ void cga_draw_vline(unsigned char far * buff, int x, int y0, int y1, unsigned ch
    that inputs be in the screen bounds and y1 >= y0.
 
    * unroll by 4
+
+Circles and Ellipses
+====================
+
+void cga_draw_ellipse(unsigned char far * buff, int x0, int y0, int r, int s, unsigned char colour)
+
+   Draw an ellipse of the given colour (0-3) centred at (x0, r0) with semiradii
+   r in the x direction and s in the y direction in the CGA buffer buff
+   (320x200 x 2 bit). Assumes r <= 160, s <= 100.
+
+   * links against cga_draw_vline/hline.
+   * lookup tables to ensure pixel perfect (self-modify conditional jumps)
+   * shift bits so decisions depend on top 16 bits (incl. lookup table adjustment)
+
