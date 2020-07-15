@@ -101,23 +101,23 @@ _cga_draw_ellipse1 PROC
    xor si, si
    and ax, 3            ; deal with scrambled layout
    jnz ellipse1_j1
-   lea si, ellipse1_jump1
+   lea si, ellipse1_jump_check1
    mov WORD PTR cs:[jmp_addr], si
    jmp ellipse1_jump_done
 ellipse1_j1:
    dec ax
    jnz ellipse1_j2
-   lea si, ellipse1_jump2
+   lea si, ellipse1_jump_check2
    mov WORD PTR cs:[jmp_addr], si
    jmp ellipse1_jump_done
 ellipse1_j2:
    dec ax
    jnz ellipse1_j3
-   lea si, ellipse1_jump3
+   lea si, ellipse1_jump_check3
    mov WORD PTR cs:[jmp_addr], si
    jmp ellipse1_jump_done
 ellipse1_j3:
-   lea si, ellipse1_jump4
+   lea si, ellipse1_jump_check4
    mov WORD PTR cs:[jmp_addr], si
    
 
@@ -349,6 +349,7 @@ ellipse1_patch5:
 ellipse1_patchjl2:
    jle ellipse1_x1
 
+ellipse1_jump_check2:
    cmp dx, bp           ; check if done verticalish
    jae ellipse1_jump2
    jmp ellipse1_donev2  ; done verticalish
@@ -409,6 +410,7 @@ ellipse1_patch14:
 ellipse1_patchjl3:
    jle ellipse1_x2
 
+ellipse1_jump_check3:
    cmp dx, bp           ; check if done verticalish
    jae ellipse1_jump3
    jmp ellipse1_donev3  ; done verticalish
@@ -486,6 +488,7 @@ ellipse1_patch27:
 ellipse1_patchjl4:
    jle ellipse1_x3
 
+ellipse1_jump_check4:
    cmp dx, bp           ; check if done verticalish
    jae ellipse1_jump4
    jmp ellipse1_donev4  ; done verticalish
@@ -547,6 +550,7 @@ ellipse1_patch36:
 ellipse1_patchjl1:
    jle ellipse1_x4
 
+ellipse1_jump_check1:
    cmp dx, bp           ; check if done verticalish
    jae ellipse1_jump1
    jmp ellipse1_donev1  ; done verticalish
