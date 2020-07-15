@@ -418,6 +418,7 @@ ellipse1_done_shift:
    xor ch, ch
    xor bx, bx           ; distance between lines above and below axis
    
+   push ax
    push cx
    push dx
    push bp
@@ -1021,6 +1022,7 @@ ellipse1_doneh2_skip:
    pop bp
    pop dx
    pop cx
+   pop ax
    pop di
 
    jmp cs:[jmp_addr2] 
