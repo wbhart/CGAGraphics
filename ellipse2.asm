@@ -63,7 +63,7 @@
 
    PUBLIC _cga_draw_ellipse
 _cga_draw_ellipse PROC
-   ARG x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE
+   ARG buff::DWOWD, x0:WORD, y0:WORD, r:WORD, s:WORD, colour:BYTE
    ; ellipse with centre (x0, y0) and semiradius in the x-direction of r
    ; and semiradius in the y-direction of s
    ; draws only the right side of the ellipse
@@ -89,7 +89,8 @@ _cga_draw_ellipse PROC
    shl ax, 1
    shl ax, 1
    add di, ax
-
+   add di, WORD PTR [buff]
+   
    mov dx, [x0]         ; adjust offset for column x0 + r
    sub dx, [r]
    mov ax, dx
@@ -238,7 +239,7 @@ ellipse1_skip_jg:
    mov BYTE PTR cs:[ellipse2_patchjg2], dh
    mov BYTE PTR cs:[ellipse2_patchjg3], dh
    mov BYTE PTR cs:[ellipse2_patchjg4], dh
-   mov ax, 0b800h       ; set DS to segment for CGA memory
+   mov ax, WORD PTR [buff + 2]       ; set DS to segment buff
    mov ds, ax
    pop bx
 
