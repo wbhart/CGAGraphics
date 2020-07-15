@@ -1,6 +1,8 @@
    DOSSEG
    .MODEL small
 
+   EXTRN _cga_draw_hline:NEAR, _cga_draw_vline:NEAR
+   
    .DATA
 
    ncorr DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -73,6 +75,48 @@ _cga_draw_ellipse PROC
    ; The idea to use the high 16 bits for branches is due to Reenigne
    push bp
    mov bp, sp
+
+   cmp [r], 0           ; if r == 0 call vline
+   jne ellipse_rn0
+   mov al, colour
+   push ax
+   mov ax, [y0]
+   mov bx, [s]
+   add ax, bx
+   push ax
+   shl bx, 1
+   sub ax, bx
+   push ax
+   mov ax, [x0]
+   push ax
+   mov ax, WORD PTR [buff+2]
+   push ax
+   mov ax, WORD PTR [buff]
+   call _cga_draw_vline
+   pop bp
+   ret
+ellipse_rn0:
+   cmp [s], 0
+   jne ellipse_sn0
+   mov al, colour
+   push ax
+   mov ax, [y0]
+   push ax
+   mov ax, [x0]
+   mov bx, [r]
+   add ax, bx
+   push ax
+   shl bx, 1
+   sub ax, bx
+   push ax
+   mov ax, WORD PTR [buff+2]
+   push ax
+   mov ax, WORD PTR [buff]
+   call _cga_draw_hline
+   pop bp
+   ret
+ellipse_sn0:
+
    push di
    push si
    push ds
