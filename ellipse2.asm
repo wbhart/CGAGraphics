@@ -208,7 +208,7 @@ ellipse1_jump_done:
    mov al, ah
    mov BYTE PTR cs:[ellipse1_patch23 + 2], al
    mov BYTE PTR cs:[ellipse1_patch24 + 2], al
-   mov WORD PTR cs:[ellipse1_patch37 + 2], ax
+   mov WORD PTR cs:[ellipse1_patch37 + 1], ax
    mov BYTE PTR cs:[ellipse2_patch32 + 2], al
    mov BYTE PTR cs:[ellipse2_patch33 + 2], al
    mov WORD PTR cs:[ellipse2_patch58 + 2], ax
@@ -217,28 +217,28 @@ ellipse1_jump_done:
    mov al, ah
    mov BYTE PTR cs:[ellipse1_patch32 + 2], al
    mov BYTE PTR cs:[ellipse1_patch33 + 2], al
-   mov WORD PTR cs:[ellipse1_patch58 + 2], ax
+   mov WORD PTR cs:[ellipse1_patch58 + 1], ax
    mov BYTE PTR cs:[ellipse2_patch23 + 2], al
    mov BYTE PTR cs:[ellipse2_patch24 + 2], al
-   mov WORD PTR cs:[ellipse2_patch37 + 2], ax
+   mov WORD PTR cs:[ellipse2_patch37 + 1], ax
    ror ah, 1
    ror ah, 1
    mov al, ah
    mov BYTE PTR cs:[ellipse1_patch1 + 2], al
    mov BYTE PTR cs:[ellipse1_patch2 + 2], al
-   mov WORD PTR cs:[ellipse1_patch51 + 2], ax
+   mov WORD PTR cs:[ellipse1_patch51 + 1], ax
    mov BYTE PTR cs:[ellipse2_patch10 + 2], al
    mov BYTE PTR cs:[ellipse2_patch11 + 2], al
-   mov WORD PTR cs:[ellipse2_patch44 + 2], ax
+   mov WORD PTR cs:[ellipse2_patch44 + 1], ax
    ror ah, 1
    ror ah, 1
    mov al, ah 
    mov BYTE PTR cs:[ellipse1_patch10 + 2], al
    mov BYTE PTR cs:[ellipse1_patch11 + 2], al
-   mov WORD PTR cs:[ellipse1_patch44 + 2], ax
+   mov WORD PTR cs:[ellipse1_patch44 + 1], ax
    mov BYTE PTR cs:[ellipse2_patch1 + 2], al
    mov BYTE PTR cs:[ellipse2_patch2 + 2], al
-   mov WORD PTR cs:[ellipse2_patch51 + 2], ax
+   mov WORD PTR cs:[ellipse2_patch51 + 1], ax
 
    mov ax, [s]          ; si = c = s^2
    mul al               
@@ -393,47 +393,47 @@ ellipse1_done_shift:
    mov WORD PTR cs:[ellipse2_patch29 + 2], bx
    mov WORD PTR cs:[ellipse2_patch31 + 2], bx
 
-   mov WORD PTR cs:[ellipse1_patch39 + 1], bx
-   mov WORD PTR cs:[ellipse1_patch43 + 1], bx
-   mov WORD PTR cs:[ellipse1_patch46 + 1], bx
-   mov WORD PTR cs:[ellipse1_patch50 + 1], bx
-   mov WORD PTR cs:[ellipse1_patch53 + 1], bx
-   mov WORD PTR cs:[ellipse1_patch57 + 1], bx
-   mov WORD PTR cs:[ellipse1_patch60 + 1], bx
-   mov WORD PTR cs:[ellipse1_patch64 + 1], bx
-   mov WORD PTR cs:[ellipse2_patch39 + 1], bx
-   mov WORD PTR cs:[ellipse2_patch43 + 1], bx
-   mov WORD PTR cs:[ellipse2_patch46 + 1], bx
-   mov WORD PTR cs:[ellipse2_patch50 + 1], bx
-   mov WORD PTR cs:[ellipse2_patch53 + 1], bx
-   mov WORD PTR cs:[ellipse2_patch57 + 1], bx
-   mov WORD PTR cs:[ellipse2_patch60 + 1], bx
-   mov WORD PTR cs:[ellipse2_patch64 + 1], bx
+   mov WORD PTR cs:[ellipse1_patch39 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch43 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch46 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch50 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch53 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch57 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch60 + 2], bx
+   mov WORD PTR cs:[ellipse1_patch64 + 2], bx
+   mov WORD PTR cs:[ellipse2_patch39 + 2], bx
+   mov WORD PTR cs:[ellipse2_patch43 + 2], bx
+   mov WORD PTR cs:[ellipse2_patch46 + 2], bx
+   mov WORD PTR cs:[ellipse2_patch50 + 2], bx
+   mov WORD PTR cs:[ellipse2_patch53 + 2], bx
+   mov WORD PTR cs:[ellipse2_patch57 + 2], bx
+   mov WORD PTR cs:[ellipse2_patch60 + 2], bx
+   mov WORD PTR cs:[ellipse2_patch64 + 2], bx
    
    mov BYTE PTR cs:[ellipse1_patch4 + 2], cl
    mov BYTE PTR cs:[ellipse1_patch13 + 2], cl
    mov BYTE PTR cs:[ellipse1_patch26 + 2], cl
    mov BYTE PTR cs:[ellipse1_patch35 + 2], cl
-   mov BYTE PTR cs:[ellipse1_patch40 + 2], cl
-   mov BYTE PTR cs:[ellipse1_patch47 + 2], cl
-   mov BYTE PTR cs:[ellipse1_patch54 + 2], cl
-   mov BYTE PTR cs:[ellipse1_patch61 + 2], cl
-   mov BYTE PTR cs:[ellipse1_patch65 + 2], cl
-   mov BYTE PTR cs:[ellipse1_patch67 + 2], cl
-   mov BYTE PTR cs:[ellipse1_patch69 + 2], cl
-   mov BYTE PTR cs:[ellipse1_patch71 + 2], cl
+   mov BYTE PTR cs:[ellipse1_patch40 + 1], cl
+   mov BYTE PTR cs:[ellipse1_patch47 + 1], cl
+   mov BYTE PTR cs:[ellipse1_patch54 + 1], cl
+   mov BYTE PTR cs:[ellipse1_patch61 + 1], cl
+   mov BYTE PTR cs:[ellipse1_patch65 + 1], cl
+   mov BYTE PTR cs:[ellipse1_patch67 + 1], cl
+   mov BYTE PTR cs:[ellipse1_patch69 + 1], cl
+   mov BYTE PTR cs:[ellipse1_patch71 + 1], cl
    mov BYTE PTR cs:[ellipse2_patch4 + 2], cl
    mov BYTE PTR cs:[ellipse2_patch13 + 2], cl
    mov BYTE PTR cs:[ellipse2_patch26 + 2], cl
    mov BYTE PTR cs:[ellipse2_patch35 + 2], cl
-   mov BYTE PTR cs:[ellipse2_patch40 + 2], cl
-   mov BYTE PTR cs:[ellipse2_patch47 + 2], cl
-   mov BYTE PTR cs:[ellipse2_patch54 + 2], cl
-   mov BYTE PTR cs:[ellipse2_patch61 + 2], cl
-   mov BYTE PTR cs:[ellipse2_patch65 + 2], cl
-   mov BYTE PTR cs:[ellipse2_patch67 + 2], cl
-   mov BYTE PTR cs:[ellipse2_patch69 + 2], cl
-   mov BYTE PTR cs:[ellipse2_patch71 + 2], cl
+   mov BYTE PTR cs:[ellipse2_patch40 + 1], cl
+   mov BYTE PTR cs:[ellipse2_patch47 + 1], cl
+   mov BYTE PTR cs:[ellipse2_patch54 + 1], cl
+   mov BYTE PTR cs:[ellipse2_patch61 + 1], cl
+   mov BYTE PTR cs:[ellipse2_patch65 + 1], cl
+   mov BYTE PTR cs:[ellipse2_patch67 + 1], cl
+   mov BYTE PTR cs:[ellipse2_patch69 + 1], cl
+   mov BYTE PTR cs:[ellipse2_patch71 + 1], cl
 
    mov WORD PTR cs:[ellipse1_patch5 + 2], bp
    mov WORD PTR cs:[ellipse1_patch14 + 2], bp
@@ -851,11 +851,11 @@ ellipse1_patch37:
 ellipse1_patch38:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch39:
-   sbb sx, 01234h
+   sbb dx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, sx                     
+   adc si, dx                     
    add ch, cl
-   adc si, sx                     
+   adc si, dx                     
 
    cmp bp, si           ; if dy < D, increment y
 ellipse1_patchjg4:
