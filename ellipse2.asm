@@ -211,7 +211,7 @@ ellipse1_jump_done:
    mov WORD PTR cs:[ellipse1_patch37 + 1], ax
    mov BYTE PTR cs:[ellipse2_patch32 + 2], al
    mov BYTE PTR cs:[ellipse2_patch33 + 2], al
-   mov WORD PTR cs:[ellipse2_patch58 + 2], ax
+   mov WORD PTR cs:[ellipse2_patch58 + 1], ax
    ror ah, 1
    ror ah, 1
    mov al, ah
