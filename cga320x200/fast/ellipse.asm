@@ -1445,8 +1445,8 @@ ellipse2_doneh1:
    pop bp
    ret
 
-   ; di, di+bx offsets of points above and below axis, dx: pixels
-   ; dl: deltay (lo8), ax: deltax (hi16), bp: deltay (hi16),
+   ; di, di+bx offsets of points above and below axis, ax: pixels
+   ; al: deltay (lo8), dx: deltax (hi16), bp: deltay (hi16),
    ; ch: D (lo8), cl: deltax (lo8), si: D (hi16)
    ; es: dy (hi16) temp
 
@@ -1605,7 +1605,7 @@ ellipse2_skip_y3:
 ellipse2_patch56:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch57:
-   sbb ax, 01234h
+   sbb dx, 01234h
    jl ellipse2_doneh2
 
 
