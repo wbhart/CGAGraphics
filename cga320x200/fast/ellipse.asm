@@ -374,7 +374,7 @@ ellipse1_do_shift16:
    mov bh, ch
    xor bl, bl
    xor ch, ch
-   sub ax, 16
+   sub ah, 16
 ellipse1_shift_start:
    cmp ah, 0
    jle ellipse1_done_shift ; deal with n == -1, 0
