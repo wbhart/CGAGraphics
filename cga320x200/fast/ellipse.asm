@@ -313,6 +313,18 @@ ellipse_skip_mul:
 ellipse1_patchn:
    mov dh, 012h
 
+   cmp dl, 0
+   jne ellipse1_compute_n
+   cmp ah, 0
+   je ellipse1_shift16
+   xchg dl, al
+   xchg dl, ah
+   add dh, 8
+   jmp ellipse1_compute_n
+ellipse1_shift16:
+   mov dl, al
+   xor ax, ax
+   add dh, 16
 ellipse1_compute_n:     ; count leading zeros
    inc dh
    shl ax, 1
@@ -336,6 +348,34 @@ ellipse1_compute_n:     ; count leading zeros
    mov bl, bh
    xor bh, bh
 
+   cmp ah, 8
+   jl ellipse1_shift_start
+   cmp ah, 16
+   jae ellipse1_do_shift16
+   xchg al, dh
+   xchg dh, dl
+   xchg bp, dx
+   xchg cl, dl
+   xchg dh, dl
+   xchg bp, dx
+   xchg ch, bl
+   xchg bh, bl
+   sub ah, 8
+   jmp ellipse1_shift_start
+ellipse1_do_shift16:
+   mov dh, al
+   xor dl, dl
+   xor al, al
+   xchg bp, dx
+   mov dh, cl
+   xor dl, dl
+   xor cl, cl
+   xchg bp, dx
+   mov bh, ch
+   xor bl, bl
+   xor ch, ch
+   sub ax, 16
+ellipse1_shift_start:
    cmp ah, 0
    jle ellipse1_done_shift ; deal with n == -1, 0
 ellipse1_shift_loop:
