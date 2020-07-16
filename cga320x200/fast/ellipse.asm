@@ -297,8 +297,15 @@ ellipse1_skip_jg:
    mul al
    shl ax, 1
    mov dx, [s]          ; bp = 2a = 2r^2
+   cmp dx, [r]
    mov bp, ax
+   jna ellipse_compute_2as
+   mov ax, bx
+   mov dl, cl
+   jmp ellipse1_patchn
+ellipse_compute_2as:
    mul dx               ; dl:ax = 2a*s
+ellipse_skip_mul:
 
    or ax, bx
    or dl, cl
