@@ -97,7 +97,7 @@ _cga_draw_ellipse PROC
    mov sp, bp
    pop bp
    ret
-ellipse_rn0:
+ellipse_rn0:            ; if s == 0 call hline
    cmp [s], 0
    jne ellipse_sn0
    mov al, colour
@@ -300,7 +300,7 @@ ellipse1_skip_jg:
    cmp dx, [r]
    mov bp, ax
    jna ellipse_compute_2as
-   mov ax, bx
+   mov ax, bx           ; if s >= r no need to compute 2a*s
    mov dl, cl
    jmp ellipse1_patchn
 ellipse_compute_2as:
@@ -316,13 +316,13 @@ ellipse1_patchn:
    cmp dl, 0
    jne ellipse1_compute_n
    cmp ah, 0
-   je ellipse1_shift16
-   xchg dl, al
+   je ellipse1_shift16  
+   xchg dl, al          ; optimise shift by 8 bits
    xchg dl, ah
    add dh, 8
    jmp ellipse1_compute_n
 ellipse1_shift16:
-   mov dl, al
+   mov dl, al           ; optimise shift by 16 bits
    xor ax, ax
    add dh, 16
 ellipse1_compute_n:     ; count leading zeros
@@ -352,7 +352,7 @@ ellipse1_compute_n:     ; count leading zeros
    jl ellipse1_shift_start
    cmp ah, 16
    jae ellipse1_do_shift16
-   xchg al, dh
+   xchg al, dh          ; optimise shift by 8 bits
    xchg dh, dl
    xchg bp, dx
    xchg cl, dh
@@ -363,7 +363,7 @@ ellipse1_compute_n:     ; count leading zeros
    sub ah, 8
    jmp ellipse1_shift_start
 ellipse1_do_shift16:
-   xchg dh, al
+   xchg dh, al          ; optimise shift by 16 bits
    xchg bp, dx
    xchg dh, cl
    xchg bp, dx
