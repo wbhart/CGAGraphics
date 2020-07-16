@@ -355,25 +355,19 @@ ellipse1_compute_n:     ; count leading zeros
    xchg al, dh
    xchg dh, dl
    xchg bp, dx
-   xchg cl, dl
+   xchg cl, dh
    xchg dh, dl
    xchg bp, dx
-   xchg ch, bl
+   xchg ch, bh
    xchg bh, bl
    sub ah, 8
    jmp ellipse1_shift_start
 ellipse1_do_shift16:
-   mov dh, al
-   xor dl, dl
-   xor al, al
+   xchg dh, al
    xchg bp, dx
-   mov dh, cl
-   xor dl, dl
-   xor cl, cl
+   xchg dh, cl
    xchg bp, dx
-   mov bh, ch
-   xor bl, bl
-   xor ch, ch
+   xchg bh, ch
    sub ah, 16
 ellipse1_shift_start:
    cmp ah, 0
