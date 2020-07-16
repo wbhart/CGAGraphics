@@ -722,23 +722,22 @@ ellipse1_donev4:
 
    mov es, cx
    mov cl, al
-   mov ax, dx
    cmp bp, si           ; if dy < D, decrement y
    jge ellipse1_skip_adjust4
-   mov dx, es
+   mov ax, es
 ellipse1_patch65:
-   sub dl, 012h         ; dy -= 2r^2
+   sub al, 012h         ; dy -= 2r^2
 ellipse1_patch66:
    sbb bp, 01234h
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
-   mov es, dx
+   mov es, ax
    sub di, 8192         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
    add bx, 80           ; decrement/increment y lines 
 ellipse1_skip_adjust4:
    neg ch               ; D = -D
@@ -750,299 +749,296 @@ ellipse1_donev1:
 
    mov es, cx
    mov cl, al
-   mov ax, dx
    cmp bp, si           ; if dy < D, decrement y
    jge ellipse1_skip_adjust1
-   mov dx, es
+   mov ax, es
 ellipse1_patch67:
-   sub dl, 012h         ; dy -= 2r^2
+   sub al, 012h         ; dy -= 2r^2
 ellipse1_patch68:
    sbb bp, 01234h
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
-   mov es, dx
+   mov es, ax
    sub di, 8192         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
    add bx, 80           ; decrement/increment y lines 
 ellipse1_skip_adjust1:
    neg ch               ; D = -D
    adc si, 0
    neg si
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
    jmp ellipse1_h1   
 
 ellipse1_donev2:
 
    mov es, cx
    mov cl, al
-   mov ax, dx
    cmp bp, si           ; if dy < D, decrement y
    jge ellipse1_skip_adjust2
-   mov dx, es
+   mov ax, es
 ellipse1_patch69:
-   sub dl, 012h         ; dy -= 2r^2
+   sub al, 012h         ; dy -= 2r^2
 ellipse1_patch70:
    sbb bp, 01234h
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
-   mov es, dx
+   mov es, ax
    sub di, 8192         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
    add bx, 80           ; decrement/increment y lines 
 ellipse1_skip_adjust2:
    neg ch               ; D = -D
    adc si, 0
    neg si
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
    jmp ellipse1_h2   
 
 ellipse1_donev3:
 
    mov es, cx
    mov cl, al
-   mov ax, dx
    cmp bp, si           ; if dy < D, decrement y
    jge ellipse1_skip_adjust3
-   mov dx, es
+   mov ax, es
 ellipse1_patch71:
-   sub dl, 012h         ; dy -= 2r^2
+   sub al, 012h         ; dy -= 2r^2
 ellipse1_patch72:
    sbb bp, 01234h
-   sub ch, dl           ; D -= 2dy
+   sub ch, al           ; D -= 2dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
-   mov es, dx
+   mov es, ax
    sub di, 8192         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
    add bx, 80           ; decrement/increment y lines 
 ellipse1_skip_adjust3:
    neg ch               ; D = -D
    adc si, 0
    neg si
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
    jmp ellipse1_h3   
 
 ellipse1_doneh1:
 
    jmp ellipse1_doneh2
 
-   ; di, di+bx offsets of points above and below axis, dx: pixels
-   ; dl: deltay (lo8), ax: deltax (hi16), bp: deltay (hi16),
+   ; di, di+bx offsets of points above and below axis, ax: pixels
+   ; al: deltay (lo8), dx: deltax (hi16), bp: deltay (hi16),
    ; ch: D (lo8), cl: deltax (lo8), si: D (hi16)
    ; es: dy (hi16) temp
 
 ellipse1_h4:
-   mov dh, [di+bx]
-   mov dl, [di]
-   and dx, 0fcfch
+   mov ah, [di+bx]
+   mov al, [di]
+   and ax, 0fcfch
 ellipse1_patch37:
-   or dx, 0303h
+   or ax, 0303h
 
 ellipse1_patch38:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch39:
-   sbb ax, 01234h
+   sbb sx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, ax                     
+   adc si, sx                     
    add ch, cl
-   adc si, ax                     
+   adc si, sx                     
 
    cmp bp, si           ; if dy < D, increment y
 ellipse1_patchjg4:
    jge ellipse1_skip_y4
    
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
-   mov dx, es
+   mov ax, es
 
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
 ellipse1_patch40:
-   add dl, 012h         ; dy += 2r^2
+   add al, 012h         ; dy += 2r^2
 ellipse1_patch41:
    adc bp, 01234h
 
-   mov es, dx
+   mov es, ax
 
    sub di, 8112         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
 
    sub bx, 80           ; decrement/increment y lines 
 
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
 
 ellipse1_skip_y4:          
    
 ellipse1_patch42:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch43:
-   sbb ax, 01234h
+   sbb dx, 01234h
 ellipse1_doneh1_check:
    jl ellipse1_doneh1
 
 
 ellipse1_h3:
-   and dx, 0f3f3h
+   and ax, 0f3f3h
 ellipse1_patch44:
-   or dx, 0c0ch
+   or ax, 0c0ch
 
 ellipse1_patch45:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch46:
-   sbb ax, 01234h
+   sbb dx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, ax                     
+   adc si, dx                     
    add ch, cl
-   adc si, ax                     
+   adc si, dx                     
 
    cmp bp, si           ; if dy < D, increment y
 ellipse1_patchjg3:
    jge ellipse1_skip_y3
    
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
-   mov dx, es
+   mov ax, es
 
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
 ellipse1_patch47:
-   add dl, 012h         ; dy += 2r^2
+   add al, 012h         ; dy += 2r^2
 ellipse1_patch48:
    adc bp, 01234h
 
-   mov es, dx
+   mov es, ax
 
    sub di, 8112         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
 
    sub bx, 80           ; decrement/increment y lines 
 
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
 ellipse1_skip_y3:
  
 ellipse1_patch49:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch50:
-   sbb ax, 01234h
+   sbb dx, 01234h
    jl ellipse1_doneh1_check
 
 
 ellipse1_h2:
-   and dx, 0cfcfh
+   and ax, 0cfcfh
 ellipse1_patch51:
-   or dx, 03030h
+   or ax, 03030h
 
 ellipse1_patch52:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch53:
-   sbb ax, 01234h
+   sbb dx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, ax
+   adc si, dx
    add ch, cl
-   adc si, ax
+   adc si, dx
 
    cmp bp, si           ; if dy < D, increment y
 ellipse1_patchjg2:
    jge ellipse1_skip_y2
    
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
-   mov dx, es
+   mov ax, es
 
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
 ellipse1_patch54:
-   add dl, 012h         ; dy += 2r^2
+   add al, 012h         ; dy += 2r^2
 ellipse1_patch55:
    adc bp, 01234h
 
-   mov es, dx
+   mov es, ax
 
    sub di, 8112         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
 
    sub bx, 80           ; decrement/increment y lines
 
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
 ellipse1_skip_y2:
  
 ellipse1_patch56:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch57:
-   sbb ax, 01234h
+   sbb dx, 01234h
    jl ellipse1_doneh2
 
 
 ellipse1_h1:
-   and dx, 03f3fh
+   and ax, 03f3fh
 ellipse1_patch58:
-   or dx, 0c0c0h
+   or ax, 0c0c0h
 
 ellipse1_patch59:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch60:
-   sbb ax, 01234h
+   sbb dx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, ax
+   adc si, dx
    add ch, cl
-   adc si, ax
+   adc si, dx
 
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
  
    cmp bp, si           ; if dy < D, increment y
 ellipse1_patchjg1:
    jge ellipse1_skip_y1
 
-   mov dx, es
+   mov ax, es
 
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
 ellipse1_patch61:
-   add dl, 012h         ; dy += 2r^2
+   add al, 012h         ; dy += 2r^2
 ellipse1_patch62:
    adc bp, 01234h
 
-   mov es, dx
+   mov es, ax
 
    sub di, 8112         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
 
    sub bx, 80           ; decrement/increment y lines
 
@@ -1052,7 +1048,7 @@ ellipse1_skip_y1:
 ellipse1_patch63:
    sub cl, 012h         ; dx -= s^2
 ellipse1_patch64:
-   sbb ax, 01234h
+   sbb dx, 01234h
    jl ellipse1_doneh2_skip ; skip extra byte
 
    jmp ellipse1_h4
@@ -1060,8 +1056,8 @@ ellipse1_patch64:
 
 ellipse1_doneh2:
 
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
 ellipse1_doneh2_skip:
    
@@ -1327,23 +1323,22 @@ ellipse2_donev1:
 
    mov es, cx
    mov cl, al
-   mov ax, dx
    cmp bp, si           ; if dy < D, decrement y
    jge ellipse2_skip_adjust1
-   mov dx, es
+   mov ax, es
 ellipse2_patch65:
-   sub dl, 012h         ; dy -= 2r^2
+   sub al, 012h         ; dy -= 2r^2
 ellipse2_patch66:
    sbb bp, 01234h
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
-   mov es, dx
+   mov es, ax
    sub di, 8192         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
    add bx, 80           ; decrement/increment y lines 
 ellipse2_skip_adjust1:
    neg ch               ; D = -D
@@ -1355,97 +1350,94 @@ ellipse2_donev4:
 
    mov es, cx
    mov cl, al
-   mov ax, dx
    cmp bp, si           ; if dy < D, decrement y
    jge ellipse2_skip_adjust4
-   mov dx, es
+   mov ax, es
 ellipse2_patch67:
-   sub dl, 012h         ; dy -= 2r^2
+   sub al, 012h         ; dy -= 2r^2
 ellipse2_patch68:
    sbb bp, 01234h
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
-   mov es, dx
+   mov es, ax
    sub di, 8192         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
    add bx, 80           ; decrement/increment y lines 
 ellipse2_skip_adjust4:
    neg ch               ; D = -D
    adc si, 0
    neg si
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
    jmp ellipse2_h4 
 
 ellipse2_donev3:
 
    mov es, cx
    mov cl, al
-   mov ax, dx
    cmp bp, si           ; if dy < D, decrement y
    jge ellipse2_skip_adjust3
-   mov dx, es
+   mov ax, es
 ellipse2_patch69:
-   sub dl, 012h         ; dy -= 2r^2
+   sub al, 012h         ; dy -= 2r^2
 ellipse2_patch70:
    sbb bp, 01234h
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
-   mov es, dx
+   mov es, ax
    sub di, 8192         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
    add bx, 80           ; decrement/increment y lines 
 ellipse2_skip_adjust3:
    neg ch               ; D = -D
    adc si, 0
    neg si
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
    jmp ellipse2_h3   
 
 ellipse2_donev2:
 
    mov es, cx
-   mov cl, al
-   mov ax, dx 
+   mov cl, al 
    cmp bp, si           ; if dy < D, decrement y
    jge ellipse2_skip_adjust2
-   mov dx, es
+   mov ax, es
 ellipse2_patch71:
-   sub dl, 012h         ; dy -= 2r^2
+   sub al, 012h         ; dy -= 2r^2
 ellipse2_patch72:
    sbb bp, 01234h
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
-   mov es, dx
+   mov es, ax
    sub di, 8192         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
    add bx, 80           ; decrement/increment y lines 
 ellipse2_skip_adjust2:
    neg ch               ; D = -D
    adc si, 0
    neg si
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
    jmp ellipse2_h2   
   
 
 ellipse2_doneh1:
 
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
    pop ds
    pop si
@@ -1459,155 +1451,155 @@ ellipse2_doneh1:
    ; es: dy (hi16) temp
 
 ellipse2_h1:
-   mov dh, [di+bx]
-   mov dl, [di]
-   and dx, 03f3fh
+   mov ah, [di+bx]
+   mov al, [di]
+   and ax, 03f3fh
 ellipse2_patch37:
-   or dx, 0c0c0h
+   or ax, 0c0c0h
 
 ellipse2_patch38:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch39:
-   sbb ax, 01234h
+   sbb dx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, ax                     
+   adc si, dx                     
    add ch, cl
-   adc si, ax                     
+   adc si, dx                     
 
    cmp bp, si           ; if dy < D, increment y
 ellipse2_patchjg1:
    jge ellipse2_skip_y1
    
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
-   mov dx, es
+   mov ax, es
 
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
 ellipse2_patch40:
-   add dl, 012h         ; dy += 2r^2
+   add al, 012h         ; dy += 2r^2
 ellipse2_patch41:
    adc bp, 01234h
 
-   mov es, dx
+   mov es, ax
 
    sub di, 8112         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
 
    sub bx, 80           ; decrement/increment y lines 
 
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
 ellipse2_skip_y1:          
 
 ellipse2_patch42:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch43:
-   sbb ax, 01234h
+   sbb dx, 01234h
 ellipse2_doneh1_check:
    jl ellipse2_doneh1
 
 
 ellipse2_h2:
-   and dx, 0cfcfh
+   and ax, 0cfcfh
 ellipse2_patch44:
-   or dx, 0303h
+   or ax, 0303h
 
 ellipse2_patch45:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch46:
-   sbb ax, 01234h
+   sbb dx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, ax                     
+   adc si, dx                     
    add ch, cl
-   adc si, ax                     
+   adc si, dx                     
  
    cmp bp, si           ; if dy < D, increment y
 ellipse2_patchjg2:
    jge ellipse2_skip_y2
    
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
-   mov dx, es
+   mov ax, es
 
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
 ellipse2_patch47:
-   add dl, 012h         ; dy += 2r^2
+   add al, 012h         ; dy += 2r^2
 ellipse2_patch48:
    adc bp, 01234h
 
-   mov es, dx
+   mov es, ax
 
    sub di, 8112         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
 
    sub bx, 80           ; decrement/increment y lines 
 
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
 ellipse2_skip_y2:
  
 ellipse2_patch49:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch50:
-   sbb ax, 01234h
+   sbb dx, 01234h
    jl ellipse2_doneh1_check
 
 
 ellipse2_h3:
-   and dx, 0f3f3h
+   and ax, 0f3f3h
 ellipse2_patch51:
-   or dx, 0c0ch
+   or ax, 0c0ch
 
 ellipse2_patch52:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch53:
-   sbb ax, 01234h
+   sbb dx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, ax
+   adc si, dx
    add ch, cl
-   adc si, ax
+   adc si, dx
  
    cmp bp, si           ; if dy < D, increment y
 ellipse2_patchjg3:
    jge ellipse2_skip_y3
    
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
-   mov dx, es
+   mov ax, es
 
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
 ellipse2_patch54:
-   add dl, 012h         ; dy += 2r^2
+   add al, 012h         ; dy += 2r^2
 ellipse2_patch55:
    adc bp, 01234h
 
-   mov es, dx
+   mov es, ax
 
    sub di, 8112         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
 
    sub bx, 80           ; decrement/increment y lines
 
-   mov dh, [di+bx]
-   mov dl, [di]
+   mov ah, [di+bx]
+   mov al, [di]
 ellipse2_skip_y3:
  
 ellipse2_patch56:
@@ -1618,43 +1610,43 @@ ellipse2_patch57:
 
 
 ellipse2_h4:
-   and dx, 0fcfch
+   and ax, 0fcfch
 ellipse2_patch58:
-   or dx, 0303h
+   or ax, 0303h
 
 ellipse2_patch59:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch60:
-   sbb ax, 01234h
+   sbb dx, 01234h
    add ch, cl           ; D += 2*dx
-   adc si, ax
+   adc si, dx
    add ch, cl
-   adc si, ax
+   adc si, dx
 
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
  
    cmp bp, si           ; if dy < D, increment y
 ellipse2_patchjg4:
    jge ellipse2_skip_y4
 
-   mov dx, es
+   mov ax, es
 
-   sub ch, dl           ; D -= 2*dy
+   sub ch, al           ; D -= 2*dy
    sbb si, bp
-   sub ch, dl
+   sub ch, al
    sbb si, bp
 ellipse2_patch61:
-   add dl, 012h         ; dy += 2r^2
+   add al, 012h         ; dy += 2r^2
 ellipse2_patch62:
    adc bp, 01234h
 
-   mov es, dx
+   mov es, ax
 
    sub di, 8112         ; update offset of odd <-> even
-   sbb dx, dx
-   and dx, 16304
-   add di, dx
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
 
    sub bx, 80           ; decrement/increment y lines
 ellipse2_skip_y4:
@@ -1663,7 +1655,7 @@ ellipse2_skip_y4:
 ellipse2_patch63:
    sub cl, 012h         ; dx -= s^2
 ellipse2_patch64:
-   sbb ax, 01234h
+   sbb dx, 01234h
    jl ellipse2_doneh2_skip ; skip extra byte and doubled pixel
 
    jmp ellipse2_h1
@@ -1671,8 +1663,8 @@ ellipse2_patch64:
 
 ellipse2_doneh2:
 
-   mov [di+bx], dh
-   mov [di], dl
+   mov [di+bx], ah
+   mov [di], al
 
 ellipse2_doneh2_skip:
 
