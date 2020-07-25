@@ -489,7 +489,7 @@ line_vd_even:
    inc si
    shr si, 1            ; divide iterations by 2
 
-   xor ax, ax           ; compute increment round(256*dx/dy)
+   xor ax, ax           ; compute increment round(65536*dx/dy)
    div bx
    shl dx, 1
    adc ax, 0
@@ -932,7 +932,7 @@ line_vu_even:
    inc si
    shr si, 1            ; divide iterations by 2
 
-   xor ax, ax           ; compute increment round(256*dx/dy)
+   xor ax, ax           ; compute increment round(65536*dx/dy)
    div bx
    shl dx, 1
    adc ax, 0
