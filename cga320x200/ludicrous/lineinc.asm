@@ -8,8 +8,8 @@
 
    ; vd odd jump address before even
 
-   PUBLIC _cga_draw_line_increments
-_cga_draw_line_increments PROC
+   PUBLIC _get_line_increments
+_get_line_increments PROC
    ARG buff:WORD, deltax:WORD, deltay:WORD
    push bp
    mov bp, sp
@@ -62,6 +62,6 @@ lineinc_vr_no_iter:
    pop di
    pop bp
    ret
-_cga_draw_line_increments ENDP
+_get_line_increments ENDP
 
    END
