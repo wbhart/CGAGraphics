@@ -6,8 +6,6 @@
       db 0d6h
    endm
 
-   ; vd odd jump address before even
-
    PUBLIC _get_line_increments
 _get_line_increments PROC
    ARG buff:WORD, deltax:WORD, deltay:WORD
@@ -38,7 +36,7 @@ _get_line_increments PROC
    inc cx
    shr cx, 1            ; compute iterations
 
-   jc lineinc_vr_mid
+   jnc lineinc_vr_mid
    jz lineinc_vr_no_iter
 
 lineinc_vr_loop:
