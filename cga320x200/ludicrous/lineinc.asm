@@ -18,7 +18,7 @@ _cga_draw_line_increments PROC
    mov ax, ds           ; set segment for table
    mov es, ax
 
-   mov dx, [deltax]         ; compute increment = round(65536*dx/dy)
+   mov dx, [deltax]     ; compute increment = round(65536*dx/dy)
    xor ax, ax
    mov cx, [deltay]
    div cx
@@ -55,7 +55,7 @@ lineinc_vr_mid:
    salc
    neg al
 
-   loop lineinv_vr_loop
+   loop lineinc_vr_loop
 
 lineinc_vr_no_iter:
 
