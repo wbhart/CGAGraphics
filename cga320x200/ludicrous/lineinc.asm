@@ -10,7 +10,7 @@
 
    PUBLIC _cga_draw_line_increments
 _cga_draw_line_increments PROC
-   ARG buff:DWORD, dx:WORD, dy:WORD
+   ARG buff:WORD, deltax:WORD, deltay:WORD
    push bp
    mov bp, sp
    push di
@@ -18,16 +18,16 @@ _cga_draw_line_increments PROC
    mov ax, ds           ; set segment for table
    mov es, ax
 
-   mov dx, [dx]         ; compute increment = round(65536*dx/dy)
+   mov dx, [deltax]         ; compute increment = round(65536*dx/dy)
    xor ax, ax
-   mov cx, [dy]
+   mov cx, [deltay]
    div cx
    shl dx, 1
    adc ax, 0
    mov dx, ax
 
    mov di, [buff]       ; get buffer address
-   inc                  ; skip first entry
+   inc di               ; skip first entry
 
    mov bx, 08000h       ; starting value for increments
 
@@ -55,7 +55,7 @@ lineinc_vr_mid:
    salc
    neg al
 
-   loop lineinv_cd_loop
+   loop lineinv_vr_loop
 
 lineinc_vr_no_iter:
 
