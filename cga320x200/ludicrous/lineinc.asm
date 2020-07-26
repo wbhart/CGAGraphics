@@ -5,7 +5,7 @@
    salc macro
       db 0d6h
    endm
-
+   
    PUBLIC _get_line_increments
 _get_line_increments PROC
    ARG buff:WORD, deltax:WORD, deltay:WORD
@@ -15,6 +15,9 @@ _get_line_increments PROC
 
    mov ax, ds           ; set segment for table
    mov es, ax
+
+   mov di, [buff]       ; get buffer address
+   inc di               ; skip first entry
 
    mov dx, [deltax]
    mov cx, [deltay]
@@ -32,9 +35,6 @@ lineinc_vr:
    shl dx, 1
    adc ax, 0
    mov dx, ax
-
-   mov di, [buff]       ; get buffer address
-   inc di               ; skip first entry
 
    mov bx, 08000h       ; starting value for increments
 
@@ -83,9 +83,6 @@ lineinc_hr:
    adc ax, 0
    mov dx, ax
 
-   mov di, [buff]       ; get buffer address
-   inc di               ; skip first entry
-
    mov ah, bh           ; get q
 
    mov bx, 08000h       ; starting value for increments
@@ -119,6 +116,8 @@ lineinc_hr_mid:
 
    loop lineinc_hr_loop
 
+lineinc_hr_no_iter:
+
    pop di
    pop bp
    ret
@@ -137,9 +136,6 @@ lineinc_vl:
    shl dx, 1
    adc ax, 0
    mov dx, ax
-
-   mov di, [buff]       ; get buffer address
-   inc di               ; skip first entry
 
    mov bx, 08000h       ; starting value for increments
 
@@ -173,6 +169,49 @@ lineinc_vl_no_iter:
    ret
 
 lineinc_hl:
+   mov ax, dx           ; compute q = dx/dy
+   div cl
+   mov bh, al
+   mov dl, ah
+   xor dh, dh
+
+   xor ax, ax           ; compute increment = round(65536*dx/dy)
+   div cx
+   shl dx, 1
+   adc ax, 0
+   mov dx, ax
+
+   mov ah, bh           ; get q
+
+   mov bx, 08000h       ; starting value for increments
+
+   add bx, dx           ; extra inc x?
+   salc
+   sub al, ah
+
+   inc cx
+   shr cx, 1            ; compute iterations
+
+   jnc lineinc_hl_mid
+   jz lineinc_hl_no_iter
+
+lineinc_hl_loop:
+   stosb
+
+   add bx, dx           ; extra inc x?
+   salc
+   sub al, ah
+
+lineinc_hl_mid:
+   stosb
+
+   add bx, dx           ; extra inc x?
+   salc
+   sub al, ah
+
+   loop lineinc_hl_loop
+
+lineinc_hl_no_iter:
 
    pop di
    pop bp
