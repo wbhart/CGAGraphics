@@ -52,10 +52,14 @@ trifill_skip_loop:      ; lines of length 0 skipped
    add dl, BYTE PTR [si+200]
    adc dh, 0
    inc si
+
+   ror ch, 1
+   
    sub di, 8112         ; increment y
    sbb bx, bx
    and bx, 16304
    add di, bx
+   
    cmp al, dl
    jbe trifill_first
    dec bp
@@ -72,9 +76,11 @@ trifill_short_loop:
    add dl, BYTE PTR [si+200]
    adc dh, 0
    inc si
+
 trifill_first:
    push ax
    push dx
+   push di
 
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
@@ -104,6 +110,7 @@ trifill_first:
 
    dec dl               ; if first and last pixels are not in the same byte
    jns trifill_long_line
+trifill_short_line:
 
    and bl, bh           ; compute overlapped mask and put masked colour in al
    and al, bl
@@ -112,7 +119,10 @@ trifill_first:
    and bl, es:[di]      ; draw pixels
    or al, bl
    stosb
+   
+   ror ch, 1
 
+   pop di
    sub di, 8112         ; increment y
    sbb ax, ax
    and ax, 16304
@@ -136,6 +146,7 @@ trifill_long_loop:
    inc si
    push ax
    push dx
+   push di
 
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
@@ -149,9 +160,11 @@ trifill_long_loop:
    shr ax, 1
    add di, ax
 
-   shr dx, 1            ; set dx to x1/4 - x0/4 (final offset - initial offset)
+   shr dx, 1            ; set dx to x1/4 - x0/4 - 1 (final offset - initial offset - 1)
    shr dx, 1
    sub dx, ax
+   dec dx
+   js trifill_short_line
 
    mov bh, 0ffh         ; prepare left mask in bh
    shr bh, cl
@@ -189,6 +202,9 @@ trifill_even_iter:
 
    mov ch, ah           ; save colour
 
+   ror ch, 1
+
+   pop di
    sub di, 8112         ; increment y
    sbb ax, ax
    and ax, 16304
