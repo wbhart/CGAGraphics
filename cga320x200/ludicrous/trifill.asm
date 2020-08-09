@@ -54,7 +54,7 @@ trifill_skip_loop:      ; lines of length 0 skipped
    inc si
 
    ror ch, 1
-   
+
    sub di, 8112         ; increment y
    sbb bx, bx
    and bx, 16304
@@ -163,8 +163,6 @@ trifill_long_loop:
    shr dx, 1            ; set dx to x1/4 - x0/4 - 1 (final offset - initial offset - 1)
    shr dx, 1
    sub dx, ax
-   dec dx
-   js trifill_short_line
 
    mov bh, 0ffh         ; prepare left mask in bh
    shr bh, cl
@@ -175,6 +173,9 @@ trifill_long_loop:
 
    mov al, ch           ; put colour into al and ah
    mov ah, ch
+
+   dec dx
+   js trifill_short_line
 
 trifill_long_line:
    and al, bh           ; put left hand mask in bh and colour in al
@@ -191,9 +192,8 @@ trifill_long_line:
    stosb
 trifill_even_iter:
    rep stosw
-   
-   mov al, ah           ; put right hand mask in bl and colour in al
-   and al, bl
+              
+   and al, bl           ; put right hand mask in bl and colour in al
    not bl
    
    and bl, es:[di]      ; draw right hand pixels
