@@ -48,11 +48,19 @@ _cga_draw_triangle_1u2d PROC
 
    inc si
    
+   push ax
+   push dx
+   push di
+
 trifill_1u2d_skip_loop:      ; lines of length 0 skipped   
    cmp al, dl
    jbe trifill_1u2d_first
 
    ror ch, 1
+
+   pop di
+   pop dx
+   pop ax
 
    sub di, 8112         ; increment y
    sbb bx, bx
@@ -69,8 +77,16 @@ trifill_1u2d_skip_loop:      ; lines of length 0 skipped
 
    inc si
 
+   push ax
+   push dx
+   push di
+
    dec bp
    jnz trifill_1u2d_skip_loop
+
+   pop di
+   pop dx
+   pop ax
 
    pop si
    pop di
@@ -78,6 +94,7 @@ trifill_1u2d_skip_loop:      ; lines of length 0 skipped
    ret
 
 trifill_1u2d_short_loop:
+trifill_1u2d_first:
 
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
@@ -138,7 +155,6 @@ trifill_1u2d_short_line:
 
    inc si
 
-trifill_1u2d_first:
    push ax
    push dx
    push di
@@ -146,6 +162,10 @@ trifill_1u2d_first:
    dec bp
    jnz trifill_1u2d_short_loop
 
+   pop di
+   pop dx
+   pop ax
+   
    pop si
    pop di
    pop bp
