@@ -44,7 +44,7 @@ _cga_draw_triangle_1u2d PROC
    dec dx               ; rightmost pixel is not drawn
 
    mov bp, [len]        ; get number of horizontal lines
-   dec bp               ; last line is not drawn
+                        ; last line is not drawn
 
 trifill_1u2d_skip_loop:      ; lines of length 0 skipped
    mov bx, ax
@@ -56,6 +56,9 @@ trifill_1u2d_skip_loop:      ; lines of length 0 skipped
    add ax, bx
 
    inc si
+   
+   cmp al, dl
+   jbe trifill_1u2d_first
 
    ror ch, 1
 
@@ -63,9 +66,7 @@ trifill_1u2d_skip_loop:      ; lines of length 0 skipped
    sbb bx, bx
    and bx, 16304
    add di, bx
-   
-   cmp al, dl
-   jbe trifill_1u2d_first
+
    dec bp
    jnz trifill_1u2d_skip_loop
 
@@ -275,11 +276,13 @@ _cga_draw_triangle_2u1d PROC
    dec dx               ; rightmost pixel is not drawn
 
    mov bp, [len]        ; get number of horizontal lines
-   dec bp               ; last line is not drawn
+                        ; last line is not drawn
 
    push ax
    push dx
    push di
+
+   inc si
 
 trifill_2u1d_long_loop:
    mov cl, al           ; set cl to 2*(x0 mod 4)
@@ -374,7 +377,7 @@ trifill_2u1d_even_iter:
 
 trifill_2u1d_short_loop:
    cmp ax, dx           ; lines of length 0 are skipped
-   jg trifill_2u1d_skip_line
+   ja trifill_2u1d_skip_line
 
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
@@ -446,7 +449,7 @@ trifill_2u1d_skip_line:
    pop di
    pop dx
    pop ax
-   
+
    pop si
    pop di
    pop bp
