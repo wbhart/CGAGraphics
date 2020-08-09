@@ -127,7 +127,7 @@ lineinc_left:
    neg dx               ; make deltax positive
 
    cmp dx, cx
-   jbe lineinc_vl
+   jb lineinc_vl
    jmp lineinc_hl
 
 lineinc_vl:

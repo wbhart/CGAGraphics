@@ -236,8 +236,8 @@ _cga_draw_triangle_1u2d ENDP
    PUBLIC _cga_draw_triangle_2u1d
 _cga_draw_triangle_2u1d PROC
    ARG buff:DWORD, x0:WORD, x1:word, y:WORD, incs:WORD, len:WORD, colour:BYTE
-   ; draw a filled triangle with top point at (x, y), with bottom coords on
-   ; the same line and increments in the x direction in inc[i] and (inc+200)[i]
+   ; draw a filled triangle with top points at (x0, y) and (x1, y), with
+   ; increments in the x direction in inc[i] and (inc+200)[i]
    push bp
 	mov bp, sp
    push di
@@ -277,20 +277,11 @@ _cga_draw_triangle_2u1d PROC
    mov bp, [len]        ; get number of horizontal lines
    dec bp               ; last line is not drawn
 
-trifill_2u1d_long_loop:
-   mov bx, ax
-   mov al, BYTE PTR [si+200]
-   cbw
-   add dx, ax
-   mov al, BYTE PTR [si]
-   cbw
-   add ax, bx
-
-   inc si
    push ax
    push dx
    push di
 
+trifill_2u1d_long_loop:
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
    shl cl, 1
@@ -355,15 +346,7 @@ trifill_2u1d_even_iter:
 
    pop dx
    pop ax
-   dec bp
-   jnz trifill_2u1d_long_loop
-   
-   pop si
-   pop di
-   pop bp
-   ret
 
-trifill_2u1d_short_loop:
    mov bx, ax
    mov al, BYTE PTR [si+200]
    cbw
@@ -373,12 +356,23 @@ trifill_2u1d_short_loop:
    add ax, bx
 
    inc si
-
-trifill_2u1d_first:
    push ax
    push dx
    push di
 
+   dec bp
+   jnz trifill_2u1d_long_loop
+   
+   pop di
+   pop dx
+   pop ax
+
+   pop si
+   pop di
+   pop bp
+   ret
+
+trifill_2u1d_short_loop:
    cmp ax, dx           ; lines of length 0 are skipped
    jg trifill_2u1d_skip_line
 
@@ -431,9 +425,28 @@ trifill_2u1d_skip_line:
 
    pop dx
    pop ax
+
+   mov bx, ax
+   mov al, BYTE PTR [si+200]
+   cbw
+   add dx, ax
+   mov al, BYTE PTR [si]
+   cbw
+   add ax, bx
+
+   inc si
+
+   push ax
+   push dx
+   push di
+
    dec bp
    jnz trifill_2u1d_short_loop
 
+   pop di
+   pop dx
+   pop ax
+   
    pop si
    pop di
    pop bp
