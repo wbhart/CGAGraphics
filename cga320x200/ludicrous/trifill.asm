@@ -46,7 +46,7 @@ _cga_draw_triangle_1u2d PROC
    mov bp, [len]        ; get number of horizontal lines
    dec bp               ; last line is not drawn
 
-trifill_skip_loop:      ; lines of length 0 skipped
+trifill_1u2d_skip_loop:      ; lines of length 0 skipped
    mov bx, ax
    mov al, BYTE PTR [si+200]
    cbw
@@ -65,16 +65,16 @@ trifill_skip_loop:      ; lines of length 0 skipped
    add di, bx
    
    cmp al, dl
-   jbe trifill_first
+   jbe trifill_1u2d_first
    dec bp
-   jnz trifill_skip_loop
+   jnz trifill_1u2d_skip_loop
 
    pop si
    pop di
    pop bp
    ret
 
-trifill_short_loop:
+trifill_1u2d_short_loop:
    mov bx, ax
    mov al, BYTE PTR [si+200]
    cbw
@@ -85,7 +85,7 @@ trifill_short_loop:
 
    inc si
 
-trifill_first:
+trifill_1u2d_first:
    push ax
    push dx
    push di
@@ -117,8 +117,8 @@ trifill_first:
    mov ah, ch
 
    dec dl               ; if first and last pixels are not in the same byte
-   jns trifill_long_line
-trifill_short_line:
+   jns trifill_1u2d_long_line
+trifill_1u2d_short_line:
 
    and bl, bh           ; compute overlapped mask and put masked colour in al
    and al, bl
@@ -139,14 +139,14 @@ trifill_short_line:
    pop dx
    pop ax
    dec bp
-   jnz trifill_short_loop
+   jnz trifill_1u2d_short_loop
 
    pop si
    pop di
    pop bp
    ret
 
-trifill_long_loop:
+trifill_1u2d_long_loop:
    mov bx, ax
    mov al, BYTE PTR [si+200]
    cbw
@@ -154,7 +154,7 @@ trifill_long_loop:
    mov al, BYTE PTR [si]
    cbw
    add ax, bx
-   
+
    inc si
    push ax
    push dx
@@ -187,9 +187,9 @@ trifill_long_loop:
    mov ah, ch
 
    dec dx
-   js trifill_short_line
+   js trifill_1u2d_short_line
 
-trifill_long_line:
+trifill_1u2d_long_line:
    and al, bh           ; put left hand mask in bh and colour in al
    not bh
 
@@ -200,9 +200,9 @@ trifill_long_line:
    mov al, ah           ; draw full colour bytes
    mov cx, dx
    shr cx, 1
-   jnc trifill_even_iter
+   jnc trifill_1u2d_even_iter
    stosb
-trifill_even_iter:
+trifill_1u2d_even_iter:
    rep stosw
               
    and al, bl           ; put right hand mask in bl and colour in al
@@ -225,7 +225,7 @@ trifill_even_iter:
    pop dx
    pop ax
    dec bp
-   jnz trifill_long_loop
+   jnz trifill_1u2d_long_loop
    
    pop si
    pop di
