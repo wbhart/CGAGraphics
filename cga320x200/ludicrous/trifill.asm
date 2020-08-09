@@ -165,7 +165,7 @@ trifill_1u2d_short_line:
    pop di
    pop dx
    pop ax
-   
+
    pop si
    pop di
    pop bp
@@ -252,6 +252,10 @@ trifill_1u2d_even_iter:
 
    dec bp
    jnz trifill_1u2d_long_loop
+   
+   pop di
+   pop dx
+   pop ax
    
    pop si
    pop di
