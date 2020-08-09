@@ -47,16 +47,14 @@ _cga_draw_triangle_1u2d PROC
    dec bp               ; last line is not drawn
 
 trifill_skip_loop:      ; lines of length 0 skipped
-   mov cl, BYTE PTR [si]
-   add al, cl
-   adc ah, 0
-   shl cl, 1
-   sbb ah, 0
-   mov cl, BYTE PTR [si+200]
-   add dl, cl
-   adc dh, 0
-   shl cl, 1
-   sbb dh, 0
+   mov bx, ax
+   mov al, BYTE PTR [si+200]
+   cbw
+   add dx, ax
+   mov al, BYTE PTR [si]
+   cbw
+   add ax, bx
+
    inc si
 
    ror ch, 1
@@ -77,16 +75,14 @@ trifill_skip_loop:      ; lines of length 0 skipped
    ret
 
 trifill_short_loop:
-   mov cl, BYTE PTR [si]
-   add al, cl
-   adc ah, 0
-   shl cl, 1
-   sbb ah, 0
-   mov cl, BYTE PTR [si+200]
-   add dl, cl
-   adc dh, 0
-   shl cl, 1
-   sbb dh, 0
+   mov bx, ax
+   mov al, BYTE PTR [si+200]
+   cbw
+   add dx, ax
+   mov al, BYTE PTR [si]
+   cbw
+   add ax, bx
+
    inc si
 
 trifill_first:
@@ -151,16 +147,14 @@ trifill_short_line:
    ret
 
 trifill_long_loop:
-   mov cl, BYTE PTR [si]
-   add al, cl
-   adc ah, 0
-   shl cl, 1
-   sbb ah, 0
-   mov cl, BYTE PTR [si+200]
-   add dl, cl
-   adc dh, 0
-   shl cl, 1
-   sbb dh, 0
+   mov bx, ax
+   mov al, BYTE PTR [si+200]
+   cbw
+   add dx, ax
+   mov al, BYTE PTR [si]
+   cbw
+   add ax, bx
+   
    inc si
    push ax
    push dx
