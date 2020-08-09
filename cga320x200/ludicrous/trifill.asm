@@ -57,6 +57,7 @@ trifill_1u2d_skip_loop:      ; lines of length 0 skipped
    jbe trifill_1u2d_first
 
    ror ch, 1
+   ror ch, 1
 
    pop di
    pop dx
@@ -134,6 +135,7 @@ trifill_1u2d_short_line:
    or al, bl
    stosb
    
+   ror ch, 1
    ror ch, 1
 
    pop di
@@ -227,6 +229,7 @@ trifill_1u2d_even_iter:
    mov ch, ah           ; save colour
 
    ror ch, 1
+   ror ch, 1
 
    pop di
    sub di, 8112         ; increment y
@@ -256,7 +259,7 @@ trifill_1u2d_even_iter:
    pop di
    pop dx
    pop ax
-   
+
    pop si
    pop di
    pop bp
@@ -369,6 +372,7 @@ trifill_2u1d_even_iter:
    mov ch, ah           ; save colour
 
    ror ch, 1
+   ror ch, 1
 
    pop di
    sub di, 8112         ; increment y
@@ -447,6 +451,7 @@ trifill_2u1d_short_line:
    stosb
    
 trifill_2u1d_skip_line:
+   ror ch, 1
    ror ch, 1
 
    pop di
