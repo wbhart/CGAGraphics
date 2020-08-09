@@ -46,17 +46,9 @@ _cga_draw_triangle_1u2d PROC
    mov bp, [len]        ; get number of horizontal lines
                         ; last line is not drawn
 
-trifill_1u2d_skip_loop:      ; lines of length 0 skipped
-   mov bx, ax
-   mov al, BYTE PTR [si+200]
-   cbw
-   add dx, ax
-   mov al, BYTE PTR [si]
-   cbw
-   add ax, bx
-
    inc si
    
+trifill_1u2d_skip_loop:      ; lines of length 0 skipped   
    cmp al, dl
    jbe trifill_1u2d_first
 
@@ -67,15 +59,6 @@ trifill_1u2d_skip_loop:      ; lines of length 0 skipped
    and bx, 16304
    add di, bx
 
-   dec bp
-   jnz trifill_1u2d_skip_loop
-
-   pop si
-   pop di
-   pop bp
-   ret
-
-trifill_1u2d_short_loop:
    mov bx, ax
    mov al, BYTE PTR [si+200]
    cbw
@@ -86,10 +69,15 @@ trifill_1u2d_short_loop:
 
    inc si
 
-trifill_1u2d_first:
-   push ax
-   push dx
-   push di
+   dec bp
+   jnz trifill_1u2d_skip_loop
+
+   pop si
+   pop di
+   pop bp
+   ret
+
+trifill_1u2d_short_loop:
 
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
@@ -139,15 +127,7 @@ trifill_1u2d_short_line:
 
    pop dx
    pop ax
-   dec bp
-   jnz trifill_1u2d_short_loop
 
-   pop si
-   pop di
-   pop bp
-   ret
-
-trifill_1u2d_long_loop:
    mov bx, ax
    mov al, BYTE PTR [si+200]
    cbw
@@ -157,10 +137,21 @@ trifill_1u2d_long_loop:
    add ax, bx
 
    inc si
+
+trifill_1u2d_first:
    push ax
    push dx
    push di
 
+   dec bp
+   jnz trifill_1u2d_short_loop
+
+   pop si
+   pop di
+   pop bp
+   ret
+
+trifill_1u2d_long_loop:
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
    shl cl, 1
@@ -225,6 +216,20 @@ trifill_1u2d_even_iter:
 
    pop dx
    pop ax
+
+   mov bx, ax
+   mov al, BYTE PTR [si+200]
+   cbw
+   add dx, ax
+   mov al, BYTE PTR [si]
+   cbw
+   add ax, bx
+
+   inc si
+   push ax
+   push dx
+   push di
+
    dec bp
    jnz trifill_1u2d_long_loop
    
