@@ -324,6 +324,49 @@ trifill_2u1d_even_y:
 
    inc si
 
+trifill_2u1d_skip_loop:      ; lines of length 0 skipped   
+   cmp al, dl
+   jbe trifill_2u1d_first
+
+   ror ch, 1
+   ror ch, 1
+
+   pop di
+   pop dx
+   pop ax
+
+   sub di, 8112         ; increment y
+   sbb bx, bx
+   and bx, 16304
+   add di, bx
+
+   mov bx, ax
+   mov al, BYTE PTR [si+200]
+   cbw
+   add dx, ax
+   mov al, BYTE PTR [si]
+   cbw
+   add ax, bx
+
+   inc si
+
+   push ax
+   push dx
+   push di
+
+   dec bp
+   jnz trifill_2u1d_skip_loop
+
+   pop di
+   pop dx
+   pop ax
+
+   pop si
+   pop di
+   pop bp
+   ret
+
+trifill_2u1d_first:
 trifill_2u1d_long_loop:
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
