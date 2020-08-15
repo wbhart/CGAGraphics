@@ -100,6 +100,8 @@ trifill_1u2d_skip_loop:      ; lines of length 0 skipped
 
 trifill_1u2d_short_loop:
 trifill_1u2d_first:
+   cmp ax, dx           ; lines of length 0 are skipped
+   ja trifill_1u2d_skip_line
 
    mov cl, al           ; set cl to 2*(x0 mod 4)
    and cl, 3
@@ -139,6 +141,8 @@ trifill_1u2d_short_line:
    or al, bl
    stosb
    
+trifill_1u2d_skip_line:
+
    ror ch, 1
    ror ch, 1
 
