@@ -1,8 +1,12 @@
+   DOSSEG
+   .MODEL small
+   .CODE
+
    PUBLIC _cga_draw_line_wide
 _cga_draw_line_wide PROC
-   ARG buff:DWORD, x:WORD, y:WORD, incs:WORD, width:WORD, len:WORD, colour:BYTE
+   ARG buff:DWORD, x:WORD, y:WORD, incs:WORD, w:WORD, len:WORD, colour:BYTE
    ; draw a line with starting point (x, y) and other starting point at
-   ; (x + width, y) (where width may be negative), with increments in the
+   ; (x + w, y) (where w may be negative), with increments in the
    ; x direction in inc[i]. Requires width != 0.
    push bp
 	mov bp, sp
@@ -41,7 +45,7 @@ line_wide_even_y:
    mov si, [incs]       ; get address of increments buffer
 
    mov ax, [x]
-   mov dx, [width]
+   mov dx, [w]
    dec dx               ; rightmost pixel not drawn
    jns line_wide_pos
    inc dx
@@ -221,3 +225,6 @@ line_wide_even_iter:
    pop bp
    ret
 _cga_draw_line_wide ENDP
+
+   END
+
