@@ -48,11 +48,8 @@ line_wide_even_y:
    mov dx, [w]
    dec dx               ; rightmost pixel not drawn
    jns line_wide_pos
-   inc dx
-   dec ax
-   xchg dx, ax
    add ax, dx
-   sub dx, ax
+   not dx
 line_wide_pos:
    add dx, ax
 
@@ -94,6 +91,7 @@ line_wide_short_loop:
 
    dec dl               ; if first and last pixels are not in the same byte
    jns line_wide_long_line
+long_wide_short_line:
 
    and bl, bh           ; compute overlapped mask and put masked colour in al
    and al, bl
@@ -167,6 +165,7 @@ line_wide_long_loop:
    mov ah, ch
 
    dec dx               ; get iterations
+   js line_wide_short_line
 
 line_wide_long_line:
    and al, bh           ; put left hand mask in bh and colour in al
