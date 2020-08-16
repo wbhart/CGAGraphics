@@ -50,6 +50,9 @@ line_wide_even_y:
    jns line_wide_pos
    inc dx
    dec ax
+   xchg dx, ax
+   add ax, dx
+   sub dx, ax
 line_wide_pos:
    add dx, ax
 
