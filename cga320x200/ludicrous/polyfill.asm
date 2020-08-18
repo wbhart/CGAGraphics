@@ -4,7 +4,7 @@
 
    PUBLIC _cga_poly_fill
 _cga_draw_poly_fill PROC
-   ARG buff:DWORD, x:WORD, y:WORD, incs:WORD, len:WORD, colour:BYTE
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, incs:WORD, len:WORD, colour:BYTE
    ; fill a polygon with top point at (x1, y) and (x2, y) with
    ; increments in the x direction in inc[i] and (inc+200)[i].
    ; Negative and zero spans are ignored. Rightmost pixels and the
