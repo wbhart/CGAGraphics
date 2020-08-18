@@ -4,9 +4,9 @@
 
    PUBLIC _cga_poly_fill
 _cga_draw_poly_fill PROC
-   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, incs:WORD, len:WORD, colour:BYTE
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, colour:BYTE
    ; fill a polygon with top point at (x1, y) and (x2, y) with
-   ; increments in the x direction in inc[i] and (inc+200)[i].
+   ; increments in the x direction in inc1[i] and inc2[i].
    ; Negative and zero spans are ignored. Rightmost pixels and the
    ; final span, at line y + len, are omitted.
    push bp
@@ -43,7 +43,11 @@ poly_fill_even_y:
    add dx, ax
 	add di, dx
 
-   mov si, [incs]       ; get address of increments buffer
+   mov si, [inc1]       ; get addresses of increments buffers
+   mov ax, [inc2]
+   sub ax, si
+   mov WORD PTR cs:[inc_patch1+2], ax
+   mov WORD PTR cs:[inc_patch2+2], ax
 
    mov ax, [x1]
    mov dx, [x2]
@@ -115,6 +119,7 @@ poly_fill_skip_line:
    pop ax
 
    mov bx, ax
+inc_patch1:
    mov al, BYTE PTR [si+200]
    cbw
    add dx, ax
@@ -211,6 +216,7 @@ poly_fill_even_iter:
    pop ax
 
    mov bx, ax           ; get next increments
+inc_patch2:
    mov al, BYTE PTR [si+200]
    cbw
    add dx, ax
