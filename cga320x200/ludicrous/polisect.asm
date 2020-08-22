@@ -131,7 +131,8 @@ poly_intersect_inc1_start1:
    sub dh, ah                    ; sub inc1R
 
 poly_intersect_inc1_start2:
-   mov BYTE PTR [bx], dl         ; write out shift to poly1
+   add al, dl
+   mov BYTE PTR [bx], al         ; write out shift to poly1
 
    dec cx
    jz prologue
@@ -173,7 +174,8 @@ poly_intersect_inc1_check:
 
 
 poly_intersect_inc2_start:
-   mov BYTE PTR [bx], dl        ; write out shift to poly2
+   add ah, dl
+   mov BYTE PTR [bx], ah        ; write out shift to poly2
 
    dec cx
    jz prologue
