@@ -4,9 +4,9 @@
 
    PUBLIC _poly_intersect
 _poly_intersect PROC
-   buff:WORD, x1R:WORD, y1::WORD, inc1R:WORD, len1:WORD, x2L:WORD, x2R:WORD, y2:WORD, inc2L:WORD, inc2R:WORD, len2:WORD
+   ARG buff:WORD, x1R:WORD, y1:WORD, inc1R:WORD, len1:WORD, x2L:WORD, x2R:WORD, y2:WORD, inc2L:WORD, inc2R:WORD, len2:WORD
    push bp
-	mov bp, sp
+   mov bp, sp
    push di
    push si
 
@@ -27,10 +27,10 @@ _poly_intersect PROC
    neg ax
    mov dh, al
 
-   mov ah, BYTE [len2] ; adjust len2
+   mov ah, BYTE PTR [len2] ; adjust len2
    add ah, cl
 
-   mov al, BYTE [len1]
+   mov al, BYTE PTR [len1]
    sub al, ah
 
    jg poly_intersect_force_prologue1
@@ -96,7 +96,7 @@ poly_intersect_skip_adjust1:
    sub cx, di
    mov dh, cl
 
-   mov ah, BYTE [len2]
+   mov ah, BYTE PTR [len2]
    sub al, ah
    jg poly_intersect_force_prologue2
    add ah, al
@@ -163,7 +163,7 @@ poly_intersect_inc1_check:
 
    sub dh, ah         ; sub inc1R
 
-   jns poly_intesect_inc2_start
+   jns poly_intersect_inc2_start
 
    mov BYTE PTR [bx], ah         ; write out inc1R
 
@@ -189,17 +189,14 @@ poly_intersect_inc2_loop:
 
    mov ah, BYTE PTR [si]
    sub dl, ah         ; sub inc1R
-   jns loop_intersect_inc1_start1
+   jns poly_intersect_inc1_start1
    
    add dh, BYTE PTR [bp] ; add inc2R
    sub dh, ah         ; sub inc1R
-   js loop_intersect_inc1_start2
+   js poly_intersect_inc1_start2
    
    mov BYTE PTR [bx], al         ; write out inc2L
    loop poly_intersect_inc2_loop
-
-
-
 
 
 prologue:
