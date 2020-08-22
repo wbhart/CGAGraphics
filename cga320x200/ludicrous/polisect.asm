@@ -71,7 +71,7 @@ poly_intersect_adjust1:
 
    mov dx, [len1]        ; adjust len1
 
-   je poly_intersect_skip_adjust1
+   jcxz poly_intersect_skip_adjust1
 
    sub dx, cx
 
@@ -131,7 +131,7 @@ poly_intersect_inc1_start1:
    sub dh, ah                    ; sub inc1R
 
 poly_intersect_inc1_start2:
-   add al, dl
+   sub al, dl
    mov BYTE PTR [bx], al         ; write out shift to poly1
 
    dec cx
@@ -206,8 +206,7 @@ prologue:
    pop cx              ; pop iterations
    xor ch, ch
 
-   cmp cx, 0
-   je poly_intersect_done
+   jcxz poly_intersect_done
 
 poly_intersect_prologue_loop:
    inc si               ; move to next inc
