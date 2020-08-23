@@ -13,6 +13,15 @@
                DW 6400, 6480, 6560, 6640, 6720, 6800, 6880, 6960, 7040, 7120
                DW 7200, 7280, 7360, 7440, 7520, 7600, 7680, 7760, 7840, 7920
 
+   mask DW 0ffc0h, 0fff0h, 0fffch, 0ffffh
+        DW DUP 252 (?)
+        DW 03fc0h, 03ff0h, 03ffch, 03fffh
+        DW DUP 252 (?)
+        DW 0fc0h, 0ff0h, 0ffch, 0fffh
+        DW DUP 252 (?)
+        DW 03c0h, 03f0h, 03fch, 03ffh
+        
+
    PUBLIC _cga_poly_fill
 _cga_poly_fill PROC
    ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, colour:BYTE
@@ -63,13 +72,10 @@ poly_fill_short_loop:
    cmp ax, dx           ; lines of non-positive length are skipped
    ja poly_fill_skip_line
 
-   mov cl, al           ; set cl to 2*(x0 mod 4)
-   and cl, 3
-   shl cl, 1
-
+   mov bh, al           ; set bh to 2*(x0 mod 4)
    mov bl, dl           ; set bl to 2*(x1 mod 4)
-   and bl, 3
-   shl bl, 1
+   and bx, 0303h
+   shl bx, 1
 
    shr ax, 1            ; add x0/4 to offset
    shr ax, 1
@@ -79,12 +85,14 @@ poly_fill_short_loop:
    shr dx, 1
    sub dx, ax
 
-   mov bh, 0ffh         ; prepare left mask in bh
-   shr bh, cl
+   mov bx, [bx+mask]     ; left mask in bh, right mask in bl
 
-   mov cl, bl           ; prepare right mask in bl
-   mov bl, 0c0h
-   sar bl, cl
+;   mov bh, 0ffh         ; prepare left mask in bh
+;   shr bh, cl
+
+;   mov cl, bl           ; prepare right mask in bl
+;   mov bl, 0c0h
+;   sar bl, cl
 
    mov al, ch           ; copy colour in al and ah
    mov ah, ch
@@ -146,13 +154,10 @@ poly_fill_long_loop:
    cmp ax, dx           ; lines of non-positive length are skipped
    ja poly_fill_skip_line
 
-   mov cl, al           ; set cl to 2*(x0 mod 4)
-   and cl, 3
-   shl cl, 1
-
+   mov bh, al           ; set bh to 2*(x0 mod 4)
    mov bl, dl           ; set bl to 2*(x1 mod 4)
-   and bl, 3
-   shl bl, 1
+   and bx, 0303h
+   shl bx, 1
 
    shr ax, 1            ; add x0/4 to offset
    shr ax, 1
@@ -162,12 +167,7 @@ poly_fill_long_loop:
    shr dx, 1
    sub dx, ax
 
-   mov bh, 0ffh         ; prepare left mask in bh
-   shr bh, cl
-
-   mov cl, bl           ; prepare right mask in bl
-   mov bl, 0c0h
-   sar bl, cl
+   mov bx, [bx+mask]     ; left mask in bh, right mask in bl
 
    mov al, ch           ; put colour into al and ah
    mov ah, ch
