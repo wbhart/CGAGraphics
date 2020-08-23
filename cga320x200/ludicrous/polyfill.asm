@@ -49,6 +49,13 @@ poly_fill_even_y:
    shl bx, 1
    add di, [bx+line_offset]
 
+   mov si, [inc1]       ; get addresses of increments buffers
+   mov ax, [inc2]
+   sub ax, si
+   
+   mov WORD_PTR cs:[poly_fill_patch1 + 2], ax
+   mov WORD_PTR cs:[poly_fill_patch2 + 2], ax
+   
    mov ax, [x1]
    mov cx, [x2]
    dec cx               ; rightmost pixel is not drawn
@@ -56,15 +63,12 @@ poly_fill_even_y:
    mov dl, BYTE PTR [len] ; get number of horizontal lines
                         ; last line is not drawn
 
-   mov si, [inc1]       ; get addresses of increments buffers
-   mov bp, [inc2]
 
    inc si               ; skip first increments
-   inc bp
 
    push ax
    push cx
-   push di
+   mov bp, di
 
 poly_fill_short_loop:
    cmp ax, cx           ; lines of non-positive length are skipped
@@ -105,7 +109,7 @@ poly_fill_skip_line:
    ror dh, 1
    ror dh, 1
 
-   pop di
+   mov di, bp
    sub di, 8112         ; increment y
    sbb ax, ax
    and ax, 16304
@@ -116,7 +120,8 @@ poly_fill_skip_line:
 
    mov bx, ax
 
-   mov al, BYTE PTR [bp]
+poly_fill_patch1:
+   mov al, BYTE PTR [si+200]
    cbw
    add cx, ax
    mov al, BYTE PTR [si]
@@ -124,16 +129,14 @@ poly_fill_skip_line:
    add ax, bx
 
    inc si
-   inc bp
 
    push ax
    push cx
-   push di
+   mov bp, di
 
    dec dl
    jnz poly_fill_short_loop
 
-   pop di
    pop cx
    pop ax
 
@@ -196,7 +199,7 @@ poly_fill_even_iter:
    ror dh, 1
    ror dh, 1
 
-   pop di
+   mov di, bp
    sub di, 8112         ; increment y
    sbb ax, ax
    and ax, 16304
@@ -207,7 +210,8 @@ poly_fill_even_iter:
 
    mov bx, ax           ; get next increments
 
-   mov al, BYTE PTR [bp]
+poly_fill_patch2:
+   mov al, BYTE PTR [si+200]
    cbw
    add cx, ax
    mov al, BYTE PTR [si]
@@ -215,16 +219,14 @@ poly_fill_even_iter:
    add ax, bx
 
    inc si
-   inc bp
 
    push ax
    push cx
-   push di
+   mov bp, di
 
    dec dl
    jnz poly_fill_long_loop
    
-   pop di
    pop cx
    pop ax
 
