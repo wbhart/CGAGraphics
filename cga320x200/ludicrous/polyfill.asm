@@ -14,11 +14,11 @@
                DW 7200, 7280, 7360, 7440, 7520, 7600, 7680, 7760, 7840, 7920
 
    mask DW 0ffc0h, 0fff0h, 0fffch, 0ffffh
-        DW DUP 252 (?)
+        DW 252 DUP (?)
         DW 03fc0h, 03ff0h, 03ffch, 03fffh
-        DW DUP 252 (?)
+        DW 252 DUP (?)
         DW 0fc0h, 0ff0h, 0ffch, 0fffh
-        DW DUP 252 (?)
+        DW 252 DUP (?)
         DW 03c0h, 03f0h, 03fch, 03ffh
         
 
