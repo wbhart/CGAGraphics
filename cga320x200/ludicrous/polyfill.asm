@@ -29,15 +29,15 @@ _cga_poly_fill PROC
 
    mov ch, [colour]     ; put solid colour in ch
 
-   xor dx, dx
    mov bx, [y]          ; set dx to offset of CGA bank (odd/even)
 	shr bx, 1
    jnc poly_fill_even_y
-   mov dx, 8192
+   add di, 8192
    ror ch, 1            ; adjust colour pattern for odd line
    ror ch, 1
 poly_fill_even_y:
 
+   shl bx, 1
    add di, [bx+line_offset]
 
    mov si, [inc1]       ; get addresses of increments buffers
