@@ -2,6 +2,17 @@
    .MODEL small
    .CODE
 
+   line_offset DW 0 80 160 240 320 400 480 560 640 720
+               DW 800 880 960 1040 1120 1200 1280 1360 1440 1520
+               DW 1600 1680 1760 1840 1920 2000 2080 2160 2240 2320
+               DW 2400 2480 2560 2640 2720 2800 2880 2960 3040 3120
+               DW 3200 3280 3360 3440 3520 3600 3680 3760 3840 3920
+               DW 4000 4080 4160 4240 4320 4400 4480 4560 4640 4720
+               DW 4800 4880 4960 5040 5120 5200 5280 5360 5440 5520
+               DW 5600 5680 5760 5840 5920 6000 6080 6160 6240 6320
+               DW 6400 6480 6560 6640 6720 6800 6880 6960 7040 7120
+               DW 7200 7280 7360 7440 7520 7600 7680 7760 7840 7920
+
    PUBLIC _cga_poly_fill
 _cga_draw_poly_fill PROC
    ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, colour:BYTE
@@ -17,31 +28,17 @@ _cga_draw_poly_fill PROC
    les di, buff         ; get buffer address in es:di
 
    mov ch, [colour]     ; put solid colour in ch
-   mov al, ch
-   shl al, 1
-   shl al, 1
-   shl al, 1
-   shl al, 1
-   add ch, al
 
    xor dx, dx
-   mov ax, [y]          ; set dx to offset of CGA bank (odd/even)
-	shr ax, 1
+   mov bx, [y]          ; set dx to offset of CGA bank (odd/even)
+	shr bx, 1
    jnc poly_fill_even_y
    mov dx, 8192
    ror ch, 1            ; adjust colour pattern for odd line
    ror ch, 1
 poly_fill_even_y:
 
-   shl ax, 1            ; set di to offset address of line y
-   shl ax, 1
-   shl ax, 1
-   shl ax, 1
-   add dx, ax
-   shl ax, 1
-   shl ax, 1
-   add dx, ax
-	add di, dx
+   add di, [bx+line_offset]
 
    mov si, [inc1]       ; get addresses of increments buffers
    mov ax, [inc2]
