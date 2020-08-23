@@ -111,7 +111,7 @@ poly_fill_skip_line:
    and ax, 16304
    add di, ax
 
-   pop dx
+   pop cx
    pop ax
 
    mov bx, ax
