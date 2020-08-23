@@ -85,13 +85,13 @@
 
    PUBLIC _cga_poly_fill
 _cga_poly_fill PROC
-   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, colour:BYTE
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE
    ; fill a polygon with top point at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i].
    ; Negative and zero spans are ignored. Rightmost pixels and the
    ; final span, at line y + len, are omitted.
    push bp
-	mov bp, sp
+   mov bp, sp
    push di
    push si
 
@@ -100,7 +100,7 @@ _cga_poly_fill PROC
    mov dl, [colour]     ; put solid colour in dl
 
    mov bx, [y]          ; adjust offset of CGA bank (odd/even)
-	shr bx, 1
+   shr bx, 1
    jnc poly_fill_even_y
    add di, 8192
    ror dl, 1            ; adjust colour pattern for odd line
@@ -121,16 +121,14 @@ poly_fill_even_y:
    mov cx, [x2]
    dec cx               ; rightmost pixel is not drawn
 
-   mov bx, cx           ; adjust so diffs are in range
-   sub bx, 128
-   jb poly_fill_no_adjust
+
+   mov bx, [minx]       ; adjust so diffs are in range
    and bl, 0fch
    sub ax, bx
    sub cx, bx
    shr bx, 1
    shr bx, 1
    add di, bx
-poly_fill_no_adjust:
 
    mov ah, cl
    mov cs:[diffs], ax
@@ -148,14 +146,14 @@ poly_fill_patch1:
    add ah, [si+200]
    mov cs:[diffs], ax
 
-   shl ax, 1            ; get masks and offsets
+   shl ax, 1             ; get masks and offsets
    mov bl, ah
    mov cx, [bx+masks2]
    mov bl, al
    mov ax, [bx+masks1]
 
    sub cl, al           ; get diff of offsets
-   jle poly_fill_short
+   jbe poly_fill_short
 poly_fill_long:
 
    mov bl, al           ; bx = low offset
@@ -220,16 +218,16 @@ poly_fill_patch2:
    add ah, [si+200]
    mov cs:[diffs], ax
 
-   shl ax, 1            ; get masks and offsets
+   shl ax, 1             ; get masks and offsets
    mov bl, ah
    mov cx, [bx+masks2]
    mov bl, al
    mov ax, [bx+masks1]
 
    sub cl, al           ; get diff of offsets
-   jg poly_fill_long
+   ja poly_fill_long
 poly_fill_short:
-   jl poly_fill_short_skip
+   jb poly_fill_short_skip
 
    mov bl, al           ; bx = low offset
 
