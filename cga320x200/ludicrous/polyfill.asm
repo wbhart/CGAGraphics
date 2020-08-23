@@ -13,13 +13,13 @@
                DW 6400, 6480, 6560, 6640, 6720, 6800, 6880, 6960, 7040, 7120
                DW 7200, 7280, 7360, 7440, 7520, 7600, 7680, 7760, 7840, 7920
 
-   mask DW 0ffc0h, 0fff0h, 0fffch, 0ffffh
-        DW 252 DUP (?)
-        DW 03fc0h, 03ff0h, 03ffch, 03fffh
-        DW 252 DUP (?)
-        DW 0fc0h, 0ff0h, 0ffch, 0fffh
-        DW 252 DUP (?)
-        DW 03c0h, 03f0h, 03fch, 03ffh
+   masks DW 0ffc0h, 0fff0h, 0fffch, 0ffffh
+         DW 252 DUP (?)
+         DW 03fc0h, 03ff0h, 03ffch, 03fffh
+         DW 252 DUP (?)
+         DW 0fc0h, 0ff0h, 0ffch, 0fffh
+         DW 252 DUP (?)
+         DW 03c0h, 03f0h, 03fch, 03ffh
         
 
    PUBLIC _cga_poly_fill
@@ -85,7 +85,7 @@ poly_fill_short_loop:
    shr dx, 1
    sub dx, ax
 
-   mov bx, [bx+mask]     ; left mask in bh, right mask in bl
+   mov bx, [bx+masks]     ; left mask in bh, right mask in bl
 
 ;   mov bh, 0ffh         ; prepare left mask in bh
 ;   shr bh, cl
@@ -167,7 +167,7 @@ poly_fill_long_loop:
    shr dx, 1
    sub dx, ax
 
-   mov bx, [bx+mask]     ; left mask in bh, right mask in bl
+   mov bx, [bx+masks]     ; left mask in bh, right mask in bl
 
    mov al, ch           ; put colour into al and ah
    mov ah, ch
