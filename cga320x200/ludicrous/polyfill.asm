@@ -14,7 +14,7 @@
                DW 7200 7280 7360 7440 7520 7600 7680 7760 7840 7920
 
    PUBLIC _cga_poly_fill
-_cga_draw_poly_fill PROC
+_cga_poly_fill PROC
    ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, colour:BYTE
    ; fill a polygon with top point at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i].
