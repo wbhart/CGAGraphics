@@ -86,7 +86,7 @@
    PUBLIC _cga_poly_fill
 _cga_poly_fill PROC
    ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE
-   ; fill a polygon with top point at (x1, y) and (x2, y) with
+   ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i].
    ; Negative and zero spans are ignored. Rightmost pixels and the
    ; final span, at line y + len, are omitted.
@@ -266,5 +266,165 @@ poly_fill_short_skip:
    pop bp
    ret
 _cga_poly_fill ENDP
+
+   PUBLIC _cga_poly_blank_left
+_cga_poly_blank_left PROC
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE
+   ; fill a polygon with top points at (x1, y) and (x2, y) with
+   ; increments in the x direction in inc1[i] and inc2[i] with zeros,
+   ; not being too particular about the left side (for performance
+   ; reasons, i.e. fill to the next byte boundary).
+   ; Negative and zero spans are ignored. Rightmost pixels and the
+   ; final span, at line y + len, are omitted.
+   push bp
+   mov bp, sp
+   push di
+   push si
+
+   les di, buff         ; get buffer address in es:di
+
+   xor dl, dl           ; fill with black = colour 0
+
+   mov bx, [y]          ; adjust offset of CGA bank (odd/even)
+   shr bx, 1
+   jnc poly_blank_left_even_y
+   add di, 8192
+poly_blank_left_even_y:
+
+   shl bx, 1            ; adjust offset for line y
+   add di, [bx+line_offset]
+
+   mov si, [inc1]       ; get addresses of increments buffers
+   mov ax, [inc2]
+   sub ax, si
+   
+   mov WORD PTR cs:[poly_blank_left_patch1 + 2], ax
+   mov WORD PTR cs:[poly_blank_left_patch2 + 2], ax
+   
+   mov ax, [x1]
+   mov cx, [x2]
+   dec cx               ; rightmost pixel is not drawn
+
+
+   mov bx, [minx]       ; adjust so diffs are in range
+   and bl, 0fch
+   sub ax, bx
+   sub cx, bx
+   shr bx, 1
+   shr bx, 1
+   add di, bx
+
+   mov ah, cl           ; put starting points in diffs global
+   mov cs:[diffs], ax
+
+   mov dh, BYTE PTR [len] ; get number of horizontal lines
+                        ; last line is not drawn
+
+   xor bh, bh           ; routine expects bh = 0 throughout
+
+poly_blank_left_long_loop:
+   inc si
+   mov ax, cs:[diffs]   ; update diffs
+   add al, [si]
+poly_blank_left_patch1:
+   add ah, [si+200]
+   mov cs:[diffs], ax
+
+   shl ax, 1             ; get right mask and offset and compute left offset
+   mov bl, ah
+   mov cx, [bx+masks2]
+   shr al, 1
+   shr al, 1
+
+   sub cl, al           ; get diff of offsets
+   jbe poly_blank_left_short
+poly_blank_left_long:
+
+   mov bl, al           ; bx = low offset
+
+   mov al, ch           ; hi mask in al
+   xor ch, ch           ; cx = diff of offsets
+
+   not al
+
+   add di, bx
+   add di, cx           ; switch to high offset
+   and al, es:[di]      ; high pixel byte
+
+   mov es:[di], al      ; put pixel bytes back
+   sub di, cx
+
+   xor ax, ax           ; zeros to be written
+
+   mov bp, cx           ; save diff of offsets
+
+   shr cx, 1            ; write out full byte and words
+   jnc poly_blank_left_long_even
+   stosb
+poly_blank_left_long_even:
+   rep stosw
+
+   sub di, bp           ; restore di
+   sub di, bx
+
+   sub di, 8112         ; increment y
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
+
+   dec dh
+   jnz poly_blank_left_long_loop
+
+   pop si
+   pop di
+   pop bp
+   ret
+
+poly_blank_left_short_loop:
+   inc si
+   mov ax, cs:[diffs]   ; update diffs
+   add al, [si]
+poly_blank_left_patch2:
+   add ah, [si+200]
+   mov cs:[diffs], ax
+
+   shl ax, 1             ; get right mask and offset and compute left offset
+   mov bl, ah
+   mov cx, [bx+masks2]
+   shr al, 1
+   shr al, 1
+
+   sub cl, al           ; get diff of offsets
+   ja poly_blank_left_long
+poly_blank_left_short:
+   jb poly_blank_left_short_skip
+
+   mov bl, al           ; bx = low offset
+
+   mov al, ch           ; hi mask in al
+   not al
+
+   add di, bx
+   and al, es:[di]      ; high pixel byte
+
+   mov es:[di], al      ; put pixel bytes back
+
+   sub di, bx
+
+poly_blank_left_short_skip:
+
+   sub di, 8112         ; increment y
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
+
+   dec dh
+   jnz poly_blank_left_short_loop
+
+   pop si
+   pop di
+   pop bp
+   ret
+_cga_poly_blank_left ENDP
 
    END
