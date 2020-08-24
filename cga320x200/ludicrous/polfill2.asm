@@ -13,38 +13,38 @@
                DW 6400, 6480, 6560, 6640, 6720, 6800, 6880, 6960, 7040, 7120
                DW 7200, 7280, 7360, 7440, 7520, 7600, 7680, 7760, 7840, 7920
 
-   masks1 DW 0ff00h, 0cf00h, 0f00h, 0300h, 0ff01h, 0cf01h, 0f01h, 0301h
-          DW 0ff02h, 0cf02h, 0f02h, 0302h, 0ff03h, 0cf03h, 0f03h, 0303h
-          DW 0ff04h, 0cf04h, 0f04h, 0304h, 0ff05h, 0cf05h, 0f05h, 0305h
-          DW 0ff06h, 0cf06h, 0f06h, 0306h, 0ff07h, 0cf07h, 0f07h, 0307h
-          DW 0ff08h, 0cf08h, 0f08h, 0308h, 0ff09h, 0cf09h, 0f09h, 0309h
-          DW 0ff0ah, 0cf0ah, 0f0ah, 030ah, 0ff0bh, 0cf0bh, 0f0bh, 030bh
-          DW 0ff0ch, 0cf0ch, 0f0ch, 030ch, 0ff0dh, 0cf0dh, 0f0dh, 030dh
-          DW 0ff0eh, 0cf0eh, 0f0eh, 030eh, 0ff0fh, 0cf0fh, 0f0fh, 030fh
-          DW 0ff10h, 0cf10h, 0f10h, 0310h, 0ff11h, 0cf11h, 0f11h, 0311h
-          DW 0ff12h, 0cf12h, 0f12h, 0312h, 0ff13h, 0cf13h, 0f13h, 0313h
-          DW 0ff14h, 0cf14h, 0f14h, 0314h, 0ff15h, 0cf15h, 0f15h, 0315h
-          DW 0ff16h, 0cf16h, 0f16h, 0316h, 0ff17h, 0cf17h, 0f17h, 0317h
-          DW 0ff18h, 0cf18h, 0f18h, 0318h, 0ff19h, 0cf19h, 0f19h, 0319h
-          DW 0ff1ah, 0cf1ah, 0f1ah, 031ah, 0ff1bh, 0cf1bh, 0f1bh, 031bh
-          DW 0ff1ch, 0cf1ch, 0f1ch, 031ch, 0ff1dh, 0cf1dh, 0f1dh, 031dh
-          DW 0ff1eh, 0cf1eh, 0f1eh, 031eh, 0ff1fh, 0cf1fh, 0f1fh, 031fh
-          DW 0ff20h, 0cf20h, 0f20h, 0320h, 0ff21h, 0cf21h, 0f21h, 0321h
-          DW 0ff22h, 0cf22h, 0f22h, 0322h, 0ff23h, 0cf23h, 0f23h, 0323h
-          DW 0ff24h, 0cf24h, 0f24h, 0324h, 0ff25h, 0cf25h, 0f25h, 0325h
-          DW 0ff26h, 0cf26h, 0f26h, 0326h, 0ff27h, 0cf27h, 0f27h, 0327h
-          DW 0ff28h, 0cf28h, 0f28h, 0328h, 0ff29h, 0cf29h, 0f29h, 0329h
-          DW 0ff2ah, 0cf2ah, 0f2ah, 032ah, 0ff2bh, 0cf2bh, 0f2bh, 032bh
-          DW 0ff2ch, 0cf2ch, 0f2ch, 032ch, 0ff2dh, 0cf2dh, 0f2dh, 032dh
-          DW 0ff2eh, 0cf2eh, 0f2eh, 032eh, 0ff2fh, 0cf2fh, 0f2fh, 032fh
-          DW 0ff30h, 0cf30h, 0f30h, 0330h, 0ff31h, 0cf31h, 0f31h, 0331h
-          DW 0ff32h, 0cf32h, 0f32h, 0332h, 0ff33h, 0cf33h, 0f33h, 0333h
-          DW 0ff34h, 0cf34h, 0f34h, 0334h, 0ff35h, 0cf35h, 0f35h, 0335h
-          DW 0ff36h, 0cf36h, 0f36h, 0336h, 0ff37h, 0cf37h, 0f37h, 0337h
-          DW 0ff38h, 0cf38h, 0f38h, 0338h, 0ff39h, 0cf39h, 0f39h, 0339h
-          DW 0ff3ah, 0cf3ah, 0f3ah, 033ah, 0ff3bh, 0cf3bh, 0f3bh, 033bh
-          DW 0ff3ch, 0cf3ch, 0f3ch, 033ch, 0ff3dh, 0cf3dh, 0f3dh, 033dh
-          DW 0ff3eh, 0cf3eh, 0f3eh, 033eh, 0ff3fh, 0cf3fh, 0f3fh, 033fh
+   masks1 DW 0ff00h, 03f00h, 0f00h, 0300h, 0ff01h, 03f01h, 0f01h, 0301h
+          DW 0ff02h, 03f02h, 0f02h, 0302h, 0ff03h, 03f03h, 0f03h, 0303h
+          DW 0ff04h, 03f04h, 0f04h, 0304h, 0ff05h, 03f05h, 0f05h, 0305h
+          DW 0ff06h, 03f06h, 0f06h, 0306h, 0ff07h, 03f07h, 0f07h, 0307h
+          DW 0ff08h, 03f08h, 0f08h, 0308h, 0ff09h, 03f09h, 0f09h, 0309h
+          DW 0ff0ah, 03f0ah, 0f0ah, 030ah, 0ff0bh, 03f0bh, 0f0bh, 030bh
+          DW 0ff0ch, 03f0ch, 0f0ch, 030ch, 0ff0dh, 03f0dh, 0f0dh, 030dh
+          DW 0ff0eh, 03f0eh, 0f0eh, 030eh, 0ff0fh, 03f0fh, 0f0fh, 030fh
+          DW 0ff10h, 03f10h, 0f10h, 0310h, 0ff11h, 03f11h, 0f11h, 0311h
+          DW 0ff12h, 03f12h, 0f12h, 0312h, 0ff13h, 03f13h, 0f13h, 0313h
+          DW 0ff14h, 03f14h, 0f14h, 0314h, 0ff15h, 03f15h, 0f15h, 0315h
+          DW 0ff16h, 03f16h, 0f16h, 0316h, 0ff17h, 03f17h, 0f17h, 0317h
+          DW 0ff18h, 03f18h, 0f18h, 0318h, 0ff19h, 03f19h, 0f19h, 0319h
+          DW 0ff1ah, 03f1ah, 0f1ah, 031ah, 0ff1bh, 03f1bh, 0f1bh, 031bh
+          DW 0ff1ch, 03f1ch, 0f1ch, 031ch, 0ff1dh, 03f1dh, 0f1dh, 031dh
+          DW 0ff1eh, 03f1eh, 0f1eh, 031eh, 0ff1fh, 03f1fh, 0f1fh, 031fh
+          DW 0ff20h, 03f20h, 0f20h, 0320h, 0ff21h, 03f21h, 0f21h, 0321h
+          DW 0ff22h, 03f22h, 0f22h, 0322h, 0ff23h, 03f23h, 0f23h, 0323h
+          DW 0ff24h, 03f24h, 0f24h, 0324h, 0ff25h, 03f25h, 0f25h, 0325h
+          DW 0ff26h, 03f26h, 0f26h, 0326h, 0ff27h, 03f27h, 0f27h, 0327h
+          DW 0ff28h, 03f28h, 0f28h, 0328h, 0ff29h, 03f29h, 0f29h, 0329h
+          DW 0ff2ah, 03f2ah, 0f2ah, 032ah, 0ff2bh, 03f2bh, 0f2bh, 032bh
+          DW 0ff2ch, 03f2ch, 0f2ch, 032ch, 0ff2dh, 03f2dh, 0f2dh, 032dh
+          DW 0ff2eh, 03f2eh, 0f2eh, 032eh, 0ff2fh, 03f2fh, 0f2fh, 032fh
+          DW 0ff30h, 03f30h, 0f30h, 0330h, 0ff31h, 03f31h, 0f31h, 0331h
+          DW 0ff32h, 03f32h, 0f32h, 0332h, 0ff33h, 03f33h, 0f33h, 0333h
+          DW 0ff34h, 03f34h, 0f34h, 0334h, 0ff35h, 03f35h, 0f35h, 0335h
+          DW 0ff36h, 03f36h, 0f36h, 0336h, 0ff37h, 03f37h, 0f37h, 0337h
+          DW 0ff38h, 03f38h, 0f38h, 0338h, 0ff39h, 03f39h, 0f39h, 0339h
+          DW 0ff3ah, 03f3ah, 0f3ah, 033ah, 0ff3bh, 03f3bh, 0f3bh, 033bh
+          DW 0ff3ch, 03f3ch, 0f3ch, 033ch, 0ff3dh, 03f3dh, 0f3dh, 033dh
+          DW 0ff3eh, 03f3eh, 0f3eh, 033eh, 0ff3fh, 03f3fh, 0f3fh, 033fh
 
    masks2 DW 0c000h, 0f000h, 0fc00h, 0ff00h, 0c001h, 0f001h, 0fc01h, 0ff01h
           DW 0c002h, 0f002h, 0fc02h, 0ff02h, 0c003h, 0f003h, 0fc03h, 0ff03h
