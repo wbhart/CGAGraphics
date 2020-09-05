@@ -285,7 +285,7 @@ _cga_poly_fill ENDP
 
    PUBLIC _cga_poly_fill_left
 _cga_poly_fill_left PROC
-   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE, retlr BYTE
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE, retlr:BYTE
    ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i]. Blank pixels to the
    ; left of the polygon in any bytes written there.
