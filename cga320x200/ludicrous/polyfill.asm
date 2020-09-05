@@ -458,7 +458,8 @@ _cga_poly_blank_left PROC
    ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i] with zeros,
    ; not being too particular about the left side (for performance
-   ; reasons, i.e. fill to the next byte boundary).
+   ; reasons, i.e. fill to the next byte boundary) and only writing the
+   ; rightmost byte if it is up against a byte boundary.
    ; Negative and zero spans are ignored. Rightmost pixels and the
    ; final span, at line y + len, are omitted.
    push bp
@@ -486,8 +487,8 @@ poly_blank_left_even_y:
    
    mov ax, [x1]
    mov cx, [x2]
-   dec cx               ; rightmost pixel is not drawn
-
+                        ; rightmost pixel is not drawn
+                        ; but we adjust for this elsewhere
 
    mov bx, [minx]       ; adjust so diffs are in range
    and bl, 0fch
@@ -513,29 +514,19 @@ poly_blank_left_patch1:
    add ah, [si+200]
    mov cs:[diffs], ax
 
-   shl ax, 1             ; get right mask and offset and compute left offset
-   mov bl, ah
-   mov cx, [bx+masks2]
+   shr ah, 1            ; compute offsets
+   shr ah, 1
+   mov cl, ah
    shr al, 1
    shr al, 1
 
-   sub cl, al           ; get diff of offsets
-   jbe poly_blank_left_short
+   sub cl, al           ; get diff of offsets, don't draw right byte
+   jb poly_blank_left_short
 poly_blank_left_long:
 
    mov bl, al           ; bx = low offset
 
-   mov al, ch           ; hi mask in al
-   xor ch, ch           ; cx = diff of offsets
-
-   not al
-
    add di, bx
-   add di, cx           ; switch to high offset
-   and al, es:[di]      ; high pixel byte
-
-   mov es:[di], al      ; put pixel bytes back
-   sub di, cx
 
    xor ax, ax           ; zeros to be written
 
@@ -571,30 +562,14 @@ poly_blank_left_patch2:
    add ah, [si+200]
    mov cs:[diffs], ax
 
-   shl ax, 1             ; get right mask and offset and compute left offset
-   mov bl, ah
-   mov cx, [bx+masks2]
+   shr al, 1            ; compute offsets
    shr al, 1
-   shr al, 1
+   shr ah, 1
+   shr ah, 1
+   mov cl, ah
 
-   sub cl, al           ; get diff of offsets
-   ja poly_blank_left_long
-poly_blank_left_short:
-   jb poly_blank_left_short_skip
-
-   mov bl, al           ; bx = low offset
-
-   mov al, ch           ; hi mask in al
-   not al
-
-   add di, bx
-   and al, es:[di]      ; high pixel byte
-
-   mov es:[di], al      ; put pixel bytes back
-
-   sub di, bx
-
-poly_blank_left_short_skip:
+   sub cl, al           ; get diff of offsets, don't draw right byte
+   jae poly_blank_left_long
 
    sub di, 8112         ; increment y
    sbb ax, ax
