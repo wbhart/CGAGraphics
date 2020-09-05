@@ -85,7 +85,7 @@
 
    PUBLIC _cga_poly_fill
 _cga_poly_fill PROC
-   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE, retlr:BYTE
    ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i].
    ; Negative and zero spans are ignored. Rightmost pixels and the
@@ -137,6 +137,8 @@ poly_fill_even_y:
                          ; last line is not drawn
 
    xor bh, bh
+
+   push bp
 
 poly_fill_long_loop:
    inc si
@@ -205,6 +207,13 @@ poly_fill_long_even:
    dec dh
    jnz poly_fill_long_loop
 
+   pop bp
+   cmp [retlr], 0
+   mov ax, cs:[diffs]
+   je poly_fill_long_l
+   xchg al, ah
+poly_fill_long_l:
+
    pop si
    pop di
    pop bp
@@ -261,6 +270,13 @@ poly_fill_short_skip:
    dec dh
    jnz poly_fill_short_loop
 
+   pop bp
+   cmp [retlr], 0
+   mov ax, cs:[diffs]
+   je poly_fill_short_l
+   xchg al, ah
+poly_fill_short_l:
+
    pop si
    pop di
    pop bp
@@ -269,7 +285,7 @@ _cga_poly_fill ENDP
 
    PUBLIC _cga_poly_fill_left
 _cga_poly_fill_left PROC
-   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE, retlr BYTE
    ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i]. Blank pixels to the
    ; left of the polygon in any bytes written there.
@@ -322,6 +338,8 @@ poly_fill_left_even_y:
                          ; last line is not drawn
 
    xor bh, bh
+
+   push bp
 
 poly_fill_left_long_loop:
    inc si
@@ -390,6 +408,13 @@ poly_fill_left_long_even:
    dec dh
    jnz poly_fill_left_long_loop
 
+   pop bp
+   cmp [retlr], 0
+   mov ax, cs:[diffs]
+   je poly_fill_left_long_l
+   xchg al, ah
+poly_fill_left_long_l:
+
    pop si
    pop di
    pop bp
@@ -445,6 +470,13 @@ poly_fill_left_short_skip:
 
    dec dh
    jnz poly_fill_left_short_loop
+
+   pop bp
+   cmp [retlr], 0
+   mov ax, cs:[diffs]
+   je poly_fill_left_short_l
+   xchg al, ah
+poly_fill_left_short_l:
 
    pop si
    pop di
