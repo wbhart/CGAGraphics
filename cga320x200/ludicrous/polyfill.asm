@@ -417,8 +417,8 @@ poly_fill_left_short:
    mov bl, al           ; bx = low offset
 
    mov al, ch           ; bp = masks, bph = lo mask, bpl = hi mask
-   and al, ah
    mov bp, ax
+   and al, ah
 
    and al, dl
    not bp
@@ -570,6 +570,7 @@ poly_blank_left_patch2:
 
    sub cl, al           ; get diff of offsets, don't draw right byte
    jae poly_blank_left_long
+poly_blank_left_short:
 
    sub di, 8112         ; increment y
    sbb ax, ax
