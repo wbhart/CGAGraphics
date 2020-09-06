@@ -484,6 +484,206 @@ poly_fill_left_short_l:
    ret
 _cga_poly_fill_left ENDP
 
+   PUBLIC _cga_poly_fill_right
+_cga_poly_fill_right PROC
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE, retlr:BYTE
+   ; fill a polygon with top points at (x1, y) and (x2, y) with
+   ; increments in the x direction in inc1[i] and inc2[i].
+   ; Negative and zero spans are ignored. Rightmost pixels and the
+   ; final span, at line y + len, are omitted.
+   push bp
+   mov bp, sp
+   push di
+   push si
+
+   les di, buff         ; get buffer address in es:di
+
+   mov dl, [colour]     ; put solid colour in dl
+
+   mov bx, [y]          ; adjust offset of CGA bank (odd/even)
+   shr bx, 1
+   jnc poly_fill_right_even_y
+   add di, 8192
+   ror dl, 1            ; adjust colour pattern for odd line
+   ror dl, 1
+poly_fill_right_even_y:
+
+   shl bx, 1            ; adjust offset for line y
+   add di, [bx+line_offset]
+
+   mov si, [inc1]       ; get addresses of increments buffers
+   mov ax, [inc2]
+   sub ax, si
+   
+   mov WORD PTR cs:[poly_fill_right_patch1 + 2], ax
+   mov WORD PTR cs:[poly_fill_right_patch2 + 2], ax
+   
+   mov ax, [x1]
+   mov cx, [x2]
+   dec cx               ; rightmost pixel is not drawn
+
+
+   mov bx, [minx]       ; adjust so diffs are in range
+   and bl, 0fch
+   sub ax, bx
+   sub cx, bx
+   shr bx, 1
+   shr bx, 1
+   add di, bx
+
+   mov ah, cl
+   mov cs:[diffs], ax
+
+   mov dh, BYTE PTR [len] ; get number of horizontal lines
+                         ; last line is not drawn
+
+   xor bh, bh
+
+   push bp
+
+poly_fill_right_long_loop:
+   inc si
+   mov ax, cs:[diffs]   ; update diffs
+   add al, [si]
+poly_fill_right_patch1:
+   add ah, [si+200]
+   mov cs:[diffs], ax
+
+   shl ax, 1             ; get masks and offsets
+   mov bl, ah
+   mov cx, [bx+masks2]
+   mov bl, al
+   mov ax, [bx+masks1]
+
+   sub cl, al           ; get diff of offsets
+   jbe poly_fill_right_short
+poly_fill_right_long:
+
+   mov bl, al           ; bx = low offset
+
+   mov al, ch           ; bp = masks, bph = lo mask, bpl = hi mask
+   xor ch, ch           ; cx = diff of offsets
+   mov bp, ax
+
+   and al, dl           ; mask pixels and put colour in
+   and ah, dl
+
+   not bp
+   xchg ax, bp
+
+   add di, bx
+   and ah, es:[di]      ; low pixel byte
+   add di, cx           ; switch to high offset
+   xor al, al           ; blank high pixels
+
+   or ax, bp
+
+   mov es:[di], al      ; put pixel bytes back
+   sub di, cx
+   mov es:[di], ah
+
+   mov al, dl           ; prepare colour and iterations
+   mov ah, dl
+   inc di
+   mov bp, cx
+   dec cx
+
+   shr cx, 1            ; write out full byte and words
+   jnc poly_fill_right_long_even
+   stosb
+poly_fill_right_long_even:
+   rep stosw
+
+   sub di, bp           ; restore di
+   sub di, bx
+
+   sub di, 8112         ; increment y
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
+
+   ror dl, 1            ; rotate colour
+   ror dl, 1
+
+   dec dh
+   jnz poly_fill_right_long_loop
+
+   pop bp
+   cmp [retlr], 0
+   mov ax, cs:[diffs]
+   je poly_fill_right_long_l
+   xchg al, ah
+poly_fill_right_long_l:
+
+   pop si
+   pop di
+   pop bp
+   ret
+
+poly_fill_right_short_loop:
+   inc si
+   mov ax, cs:[diffs]   ; update diffs
+   add al, [si]
+poly_fill_right_patch2:
+   add ah, [si+200]
+   mov cs:[diffs], ax
+
+   shl ax, 1             ; get masks and offsets
+   mov bl, ah
+   mov cx, [bx+masks2]
+   mov bl, al
+   mov ax, [bx+masks1]
+
+   sub cl, al           ; get diff of offsets
+   ja poly_fill_right_long
+poly_fill_right_short:
+   jb poly_fill_right_short_skip
+
+   mov bl, al           ; bx = low offset
+
+   mov al, ch           ; bp = masks, bph = lo mask, bpl = hi mask
+   mov bp, ax
+   and ah, al
+
+   and ah, dl
+   not bp
+   xchg ax, bp
+
+   add di, bx
+   and ah, es:[di]      ; high pixel byte
+
+   or ax, bp
+
+   mov es:[di], ah      ; put pixel bytes back
+
+   sub di, bx
+
+poly_fill_right_short_skip:
+
+   sub di, 8112         ; increment y
+   sbb ax, ax
+   and ax, 16304
+   add di, ax
+
+   ror dl, 1            ; rotate colour
+   ror dl, 1
+
+   dec dh
+   jnz poly_fill_right_short_loop
+
+   pop bp
+   cmp [retlr], 0
+   mov ax, cs:[diffs]
+   je poly_fill_right_short_l
+   xchg al, ah
+poly_fill_right_short_l:
+
+   pop si
+   pop di
+   pop bp
+   ret
+_cga_poly_fill_right ENDP
+
    PUBLIC _cga_poly_blank_left
 _cga_poly_blank_left PROC
    ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE
@@ -600,7 +800,7 @@ poly_blank_left_patch2:
    shr ah, 1
    mov cl, ah
 
-   sub cl, al           ; get diff of offsets, don't draw right byte
+   sub cl, al           ; get diff of offsets
    jae poly_blank_left_long
 poly_blank_left_short:
 
@@ -620,11 +820,12 @@ _cga_poly_blank_left ENDP
 
    PUBLIC _cga_poly_blank_right
 _cga_poly_blank_right PROC
-   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD
+   ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE
    ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i] with zeros,
-   ; not being too particular about the left side (for performance
-   ; reasons, i.e. fill to the next byte boundary).
+   ; not being too particular about the right side (for performance
+   ; reasons, i.e. fill to the next byte boundary) and only writing the
+   ; leftmost byte if it is up against a byte boundary.
    ; Negative and zero spans are ignored. Rightmost pixels and the
    ; final span, at line y + len, are omitted.
    push bp
@@ -633,8 +834,6 @@ _cga_poly_blank_right PROC
    push si
 
    les di, buff         ; get buffer address in es:di
-
-   mov dl, [colour]     ; put solid colour in dl
 
    mov bx, [y]          ; adjust offset of CGA bank (odd/even)
    shr bx, 1
@@ -653,9 +852,9 @@ poly_blank_right_even_y:
    mov WORD PTR cs:[poly_blank_right_patch2 + 2], ax
    
    mov ax, [x1]
+   dec ax               ; leftmost byte not drawn unless up against byte boundary
    mov cx, [x2]
    dec cx               ; rightmost pixel is not drawn
-
 
    mov bx, [minx]       ; adjust so diffs are in range
    and bl, 0fch
@@ -681,32 +880,24 @@ poly_blank_right_patch1:
    add ah, [si+200]
    mov cs:[diffs], ax
 
-   mov cl, ah           ; get left mask and offset and compute right offset
-   shl ax, 1 
-   shr cl, 1
-   shr cl, 1
-   mov bl, al
-   mov ax, [bx+masks1]
+   shr ah, 1            ; compute offsets
+   shr ah, 1
+   mov cl, ah
+   shr al, 1
+   shr al, 1
 
    sub cl, al           ; get diff of offsets
-   jbe poly_blank_right_short
+   jb poly_blank_right_short
 poly_blank_right_long:
 
    mov bl, al           ; bx = low offset
 
-   xor ch, ch           ; cx = diff of offsets
-
-   not ah
-
+   inc bx               ; don't draw left byte
    add di, bx
-   and ah, es:[di]      ; low pixel byte
 
-   mov es:[di], ah      ; put pixel bytes back
+   xor ax, ax           ; zeros to be written
 
-   xor ax, ax           ; prepare colour and iterations
-   inc di
-   mov bp, cx
-   dec cx
+   mov bp, cx           ; save diff of offsets
 
    shr cx, 1            ; write out full byte and words
    jnc poly_blank_right_long_even
@@ -738,30 +929,15 @@ poly_blank_right_patch2:
    add ah, [si+200]
    mov cs:[diffs], ax
 
-   mov cl, ah           ; get left mask and offset and compute right offset
-   shl ax, 1 
-   shr cl, 1
-   shr cl, 1
-   mov bl, al
-   mov ax, [bx+masks1]
+   shr al, 1            ; compute offsets
+   shr al, 1
+   shr ah, 1
+   shr ah, 1
+   mov cl, ah
 
    sub cl, al           ; get diff of offsets
-   ja poly_blank_right_long
+   jae poly_blank_right_long
 poly_blank_right_short:
-   jb poly_blank_right_short_skip
-
-   mov bl, al           ; bx = low offset
-
-   not ah
-
-   add di, bx
-   and ah, es:[di]      ; high pixel byte
-
-   mov es:[di], ah      ; put pixel bytes back
-
-   sub di, bx
-
-poly_blank_right_short_skip:
 
    sub di, 8112         ; increment y
    sbb ax, ax
