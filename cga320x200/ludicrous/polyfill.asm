@@ -669,9 +669,9 @@ poly_blank_right_even_y:
    mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
-                         ; last line is not drawn
+                        ; last line is not drawn
 
-   xor bh, bh            ; routine expects bh = 0 throughout
+   xor bh, bh           ; routine expects bh = 0 throughout
 
 poly_blank_right_long_loop:
    inc si
@@ -681,8 +681,8 @@ poly_blank_right_patch1:
    add ah, [si+200]
    mov cs:[diffs], ax
 
-   shl ax, 1             ; get left mask and offset and compute right offset
-   mov cl, ah
+   mov cl, ah           ; get left mask and offset and compute right offset
+   shl ax, 1 
    shr cl, 1
    shr cl, 1
    mov bl, al
@@ -738,8 +738,8 @@ poly_blank_right_patch2:
    add ah, [si+200]
    mov cs:[diffs], ax
 
-   shl ax, 1             ; get left mask and offset and compute right offset
-   mov cl, ah
+   mov cl, ah           ; get left mask and offset and compute right offset
+   shl ax, 1 
    shr cl, 1
    shr cl, 1
    mov bl, al
