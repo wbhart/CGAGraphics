@@ -834,13 +834,10 @@ poly_fill_both_short:
 
    mov bl, al           ; bx = low offset
 
-   mov al, ch           ; bp = masks, bph = lo mask, bpl = hi mask
-   mov bp, ax
-   and al, ah
+   and ah, ch
+   and ah, dl
 
-   and al, dl
-
-   mov es:[di+bx], al   ; put pixels onto screen
+   mov es:[di+bx], ah   ; put pixels onto screen
 
 poly_fill_both_short_skip:
 
