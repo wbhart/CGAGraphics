@@ -89,7 +89,7 @@ _cga_poly_fill PROC
    ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i].
    ; Negative and zero spans are ignored. Rightmost pixels and the
-   ; final span, at line y + len, are omitted.
+   ; first span, at line y, are omitted.
    push bp
    mov bp, sp
    push di
@@ -134,7 +134,7 @@ poly_fill_even_y:
    mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
-                         ; last line is not drawn
+                         ; first line is not drawn
 
    xor bh, bh
 
@@ -177,8 +177,9 @@ poly_fill_long:
 
    or ax, bp
 
-   mov es:[di], al      ; put pixel bytes back
-   sub di, cx
+   stosb                ; put pixel bytes back
+   stc
+   sbb di, cx
    mov es:[di], ah
 
    mov al, dl           ; prepare colour and iterations
@@ -253,9 +254,10 @@ poly_fill_short:
 
    or ax, bp
 
-   mov es:[di], al      ; put pixel bytes back
+   stosb                ; put pixel bytes back
 
-   sub di, bx
+   stc
+   sbb di, bx
 
 poly_fill_short_skip:
 
@@ -290,7 +292,7 @@ _cga_poly_fill_left PROC
    ; increments in the x direction in inc1[i] and inc2[i]. Blank pixels to the
    ; left of the polygon in any bytes written there.
    ; Negative and zero spans are ignored. Rightmost pixels and the
-   ; final span, at line y + len, are omitted.
+   ; first span, at line y, are omitted.
    push bp
    mov bp, sp
    push di
@@ -335,7 +337,7 @@ poly_fill_left_even_y:
    mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
-                         ; last line is not drawn
+                         ; first line is not drawn
 
    xor bh, bh
 
@@ -378,8 +380,10 @@ poly_fill_left_long:
 
    or ax, bp
 
-   mov es:[di], al      ; put pixel bytes back
-   sub di, cx
+   stosb                ; put pixel bytes back
+
+   stc
+   sbb di, cx
    mov es:[di], ah
 
    mov al, dl           ; prepare colour and iterations
@@ -454,9 +458,10 @@ poly_fill_left_short:
 
    or ax, bp
 
-   mov es:[di], al      ; put pixel bytes back
+   stosb                ; put pixel bytes back
 
-   sub di, bx
+   stc
+   sbb di, bx
 
 poly_fill_left_short_skip:
 
@@ -490,7 +495,7 @@ _cga_poly_fill_right PROC
    ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i].
    ; Negative and zero spans are ignored. Rightmost pixels and the
-   ; final span, at line y + len, are omitted.
+   ; first span, at line y, are omitted.
    push bp
    mov bp, sp
    push di
@@ -535,7 +540,7 @@ poly_fill_right_even_y:
    mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
-                         ; last line is not drawn
+                         ; first line is not drawn
 
    xor bh, bh
 
@@ -578,8 +583,10 @@ poly_fill_right_long:
 
    or ax, bp
 
-   mov es:[di], al      ; put pixel bytes back
-   sub di, cx
+   stosb                ; put pixel bytes back
+   
+   stc
+   sbb di, cx
    mov es:[di], ah
 
    mov al, dl           ; prepare colour and iterations
@@ -691,7 +698,7 @@ _cga_poly_fill_both PROC
    ; increments in the x direction in inc1[i] and inc2[i]. Blank pixels to the
    ; left and right of the polygon in any bytes written there.
    ; Negative and zero spans are ignored. Rightmost pixels and the
-   ; final span, at line y + len, are omitted.
+   ; first span, at line y, are omitted.
    push bp
    mov bp, sp
    push di
@@ -736,7 +743,7 @@ poly_fill_both_even_y:
    mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
-                         ; last line is not drawn
+                         ; first line is not drawn
 
    xor bh, bh
 
@@ -771,8 +778,10 @@ poly_fill_both_long:
    add di, bx
    add di, cx           ; switch to high offset
 
-   mov es:[di], al      ; put pixel bytes on screen
-   sub di, cx
+   stosb                ; put pixel bytes on screen
+   
+   stc
+   sbb di, cx
    mov es:[di], ah
 
    mov al, dl           ; prepare colour and iterations
@@ -874,7 +883,7 @@ _cga_poly_blank_left PROC
    ; reasons, i.e. fill to the next byte boundary) and only writing the
    ; rightmost byte if it is up against a byte boundary.
    ; Negative and zero spans are ignored. Rightmost pixels and the
-   ; final span, at line y + len, are omitted.
+   ; first span, at line y, are omitted.
    push bp
    mov bp, sp
    push di
@@ -915,7 +924,7 @@ poly_blank_left_even_y:
    mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
-                        ; last line is not drawn
+                        ; first line is not drawn
 
    xor bh, bh           ; routine expects bh = 0 throughout
 
@@ -1008,7 +1017,7 @@ _cga_poly_blank_right PROC
    ; reasons, i.e. fill to the next byte boundary) and only writing the
    ; leftmost byte if it is up against a byte boundary.
    ; Negative and zero spans are ignored. Rightmost pixels and the
-   ; final span, at line y + len, are omitted.
+   ; first span, at line y, are omitted.
    push bp
    mov bp, sp
    push di
@@ -1049,7 +1058,7 @@ poly_blank_right_even_y:
    mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
-                        ; last line is not drawn
+                        ; first line is not drawn
 
    xor bh, bh           ; routine expects bh = 0 throughout
 
