@@ -213,6 +213,7 @@ poly_fill_long_even:
    mov ax, cs:[diffs]
    je poly_fill_long_l
    xchg al, ah
+   inc al               ; compensate for the dec cx at the beginning
 poly_fill_long_l:
 
    pop si
@@ -277,6 +278,7 @@ poly_fill_short_skip:
    mov ax, cs:[diffs]
    je poly_fill_short_l
    xchg al, ah
+   inc al               ; compensate for the dec cx at the beginning
 poly_fill_short_l:
 
    pop si
@@ -417,6 +419,7 @@ poly_fill_left_long_even:
    mov ax, cs:[diffs]
    je poly_fill_left_long_l
    xchg al, ah
+   inc al               ; compensate for the dec cx at the beginning
 poly_fill_left_long_l:
 
    pop si
@@ -481,6 +484,7 @@ poly_fill_left_short_skip:
    mov ax, cs:[diffs]
    je poly_fill_left_short_l
    xchg al, ah
+   inc al               ; compensate for the dec cx at the beginning
 poly_fill_left_short_l:
 
    pop si
@@ -493,7 +497,8 @@ _cga_poly_fill_left ENDP
 _cga_poly_fill_right PROC
    ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE, retlr:BYTE
    ; fill a polygon with top points at (x1, y) and (x2, y) with
-   ; increments in the x direction in inc1[i] and inc2[i].
+   ; increments in the x direction in inc1[i] and inc2[i]. Blank pixels to the
+   ; left of the polygon in any bytes written there.
    ; Negative and zero spans are ignored. Rightmost pixels and the
    ; first span, at line y, are omitted.
    push bp
@@ -620,6 +625,7 @@ poly_fill_right_long_even:
    mov ax, cs:[diffs]
    je poly_fill_right_long_l
    xchg al, ah
+   inc al               ; compensate for the dec cx at the beginning
 poly_fill_right_long_l:
 
    pop si
@@ -683,6 +689,7 @@ poly_fill_right_short_skip:
    mov ax, cs:[diffs]
    je poly_fill_right_short_l
    xchg al, ah
+   inc al               ; compensate for the dec cx at the beginning
 poly_fill_right_short_l:
 
    pop si
@@ -815,6 +822,7 @@ poly_fill_both_long_even:
    mov ax, cs:[diffs]
    je poly_fill_both_long_l
    xchg al, ah
+   inc al               ; compensate for the dec cx at the beginning
 poly_fill_both_long_l:
 
    pop si
@@ -866,6 +874,7 @@ poly_fill_both_short_skip:
    mov ax, cs:[diffs]
    je poly_fill_both_short_l
    xchg al, ah
+   inc al               ; compensate for the dec cx at the beginning
 poly_fill_both_short_l:
 
    pop si
