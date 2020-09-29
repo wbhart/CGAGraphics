@@ -131,7 +131,6 @@ poly_fill_even_y:
    add di, bx
 
    mov ah, cl
-   mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                          ; first line is not drawn
@@ -139,53 +138,62 @@ poly_fill_even_y:
    xor bh, bh
 
    push bp
+   mov bp, ax
 
 poly_fill_long_loop:
    inc si
-   mov ax, cs:[diffs]   ; update diffs
+   mov ax, bp   ; update diffs
    add al, [si]
 poly_fill_patch1:
    add ah, [si+200]
-   mov cs:[diffs], ax
+   mov bp, ax
 
+   xor bh, bh
    shl ax, 1             ; get masks and offsets
    mov bl, ah
    mov cx, [bx+masks2]
    mov bl, al
-   mov ax, [bx+masks1]
+   mov bx, [bx+masks1]
 
-   sub cl, al           ; get diff of offsets
+   sub cl, bl           ; get diff of offsets
    jbe poly_fill_short
 poly_fill_long:
 
-   mov bl, al           ; bx = low offset
+   xchg bl, ch
+   mov ax, bx
+   and bl, dl
+   and bh, dl
 
-   mov al, ch           ; bp = masks, bph = lo mask, bpl = hi mask
-   xor ch, ch           ; cx = diff of offsets
-   mov bp, ax
+   xchg bx, di
+   not ax
 
-   and al, dl           ; mask pixels and put colour in
-   and ah, dl
+   add bl, ch
+   adc bh, 0
 
-   not bp
-   xchg ax, bp
+   and ah, es:[bx]      ; low pixel byte
 
-   add di, bx
-   and ah, es:[di]      ; low pixel byte
-   add di, cx           ; switch to high offset
-   and al, es:[di]      ; high pixel byte
+   add bl, cl           ; switch to high offset
+   adc bh, 0
+   
+   and al, es:[bx]      ; high pixel byte
 
-   or ax, bp
+   or ax, di
 
-   stosb                ; put pixel bytes back
-   stc
-   sbb di, cx
-   mov es:[di], ah
+   mov es:[bx], al      ; put pixel bytes back
+
+   sub bl, cl
+   sbb bh, 0
+
+   mov es:[bx], ah
+
+   mov di, bx
+   sub bl, ch
+   sbb bh, 0
+   xor ch, ch
 
    mov al, dl           ; prepare colour and iterations
    mov ah, dl
    inc di
-   mov bp, cx
    dec cx
 
    shr cx, 1            ; write out full byte and words
@@ -194,8 +202,7 @@ poly_fill_long:
 poly_fill_long_even:
    rep stosw
 
-   sub di, bp           ; restore di
-   sub di, bx
+   mov di, bx           ; restore di
 
    sub di, 8112         ; increment y
    sbb ax, ax
@@ -208,57 +215,42 @@ poly_fill_long_even:
    dec dh
    jnz poly_fill_long_loop
 
-   pop bp
-   cmp [retlr], 0
-   mov ax, cs:[diffs]
-   je poly_fill_long_l
-   xchg al, ah
-   inc al               ; compensate for the dec cx at the beginning
-poly_fill_long_l:
-
-   pop si
-   pop di
-   pop bp
-   ret
+   jmp poly_fill_end
 
 poly_fill_short_loop:
    inc si
-   mov ax, cs:[diffs]   ; update diffs
+   mov ax, bp   ; update diffs
    add al, [si]
 poly_fill_patch2:
    add ah, [si+200]
-   mov cs:[diffs], ax
+   mov bp, ax
 
+   xor bh, bh
    shl ax, 1             ; get masks and offsets
    mov bl, ah
    mov cx, [bx+masks2]
    mov bl, al
-   mov ax, [bx+masks1]
+   mov bx, [bx+masks1]
 
-   sub cl, al           ; get diff of offsets
+   sub cl, bl           ; get diff of offsets
    ja poly_fill_long
 poly_fill_short:
    jb poly_fill_short_skip
 
-   mov bl, al           ; bx = low offset
+   and bh, ch
+   mov ah, bh
+   mov al, ah
+   not al
+   and ah, dl
 
-   mov al, ch           ; bp = masks, bph = lo mask, bpl = hi mask
-   and al, ah
-   mov bp, ax
+   xor bh, bh
+   add bx, di
 
-   and al, dl
-   not bp
-   xchg ax, bp
+   and al, es:[bx]      ; high pixel byte
 
-   add di, bx
-   and al, es:[di]      ; high pixel byte
+   or al, ah
 
-   or ax, bp
-
-   stosb                ; put pixel bytes back
-
-   stc
-   sbb di, bx
+   mov es:[bx], al                ; put pixel bytes back
 
 poly_fill_short_skip:
 
@@ -273,9 +265,10 @@ poly_fill_short_skip:
    dec dh
    jnz poly_fill_short_loop
 
+poly_fill_end:
+   mov ax, bp
    pop bp
    cmp [retlr], 0
-   mov ax, cs:[diffs]
    je poly_fill_short_l
    xchg al, ah
    inc al               ; compensate for the dec cx at the beginning
