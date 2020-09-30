@@ -377,9 +377,9 @@ poly_fill_left_long:
    sub bl, cl           ; switch to low offset
    sbb bh, 0
 
-   mov es:[bx], al
-
    mov di, bx
+   
+   stosb
 
    sub ch, cl
 
@@ -390,7 +390,6 @@ poly_fill_left_long:
 
    mov al, dl           ; prepare colour and iterations
    mov ah, dl
-   inc di
    dec cx
 
    shr cx, 1            ; write out full byte and words
@@ -575,9 +574,9 @@ poly_fill_right_long:
    add bl, cl           ; switch to high offset
    adc bh, 0
 
-   mov es:[bx], al
-
    mov di, bx
+
+   stosb
 
    add ch, cl
 
@@ -588,7 +587,6 @@ poly_fill_right_long:
 
    mov al, dl           ; prepare colour and iterations
    mov ah, dl
-   dec di
    dec di
    dec cx
 
@@ -771,9 +769,9 @@ poly_fill_both_long:
    sub bl, cl           ; switch to low offset
    sbb bh, 0
 
-   mov es:[bx], al
-
    mov di, bx
+
+   stosb
 
    sub ch, cl
 
@@ -784,7 +782,6 @@ poly_fill_both_long:
 
    mov al, dl           ; prepare colour and iterations
    mov ah, dl
-   inc di
    dec cx
 
    shr cx, 1            ; write out full byte and words
