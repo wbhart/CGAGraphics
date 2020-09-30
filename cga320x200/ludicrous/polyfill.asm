@@ -434,9 +434,9 @@ poly_fill_left_patch2:
 poly_fill_left_short:
    ja poly_fill_left_short_skip
 
+   mov al, bh
    and bh, ch
    mov ah, bh
-   mov al, ah
    not al
    and ah, dl
 
@@ -482,7 +482,7 @@ _cga_poly_fill_right PROC
    ARG buff:DWORD, x1:WORD, x2:WORD, y:WORD, inc1:WORD, inc2:WORD, len:WORD, minx:WORD, colour:BYTE, retlr:BYTE
    ; fill a polygon with top points at (x1, y) and (x2, y) with
    ; increments in the x direction in inc1[i] and inc2[i]. Blank pixels to the
-   ; left of the polygon in any bytes written there.
+   ; right of the polygon in any bytes written there.
    ; Negative and zero spans are ignored. Rightmost pixels and the
    ; first span, at line y, are omitted.
    push bp
@@ -526,72 +526,80 @@ poly_fill_right_even_y:
    add di, bx
 
    mov ah, cl
-   mov cs:[diffs], ax
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                          ; first line is not drawn
 
-   xor bh, bh
-
    push bp
+   mov bp, ax
+   std
 
 poly_fill_right_long_loop:
    inc si
-   mov ax, cs:[diffs]   ; update diffs
+   mov ax, bp   ; update diffs
    add al, [si]
 poly_fill_right_patch1:
    add ah, [si+200]
-   mov cs:[diffs], ax
+   mov bp, ax
 
+   xor bh, bh
    shl ax, 1             ; get masks and offsets
    mov bl, ah
    mov cx, [bx+masks2]
    mov bl, al
-   mov ax, [bx+masks1]
+   mov bx, [bx+masks1]
 
-   sub cl, al           ; get diff of offsets
+   sub cl, bl           ; get diff of offsets
    jbe poly_fill_right_short
 poly_fill_right_long:
-
-   mov bl, al           ; bx = low offset
-
-   mov al, ch           ; bp = masks, bph = lo mask, bpl = hi mask
-   xor ch, ch           ; cx = diff of offsets
-   mov bp, ax
-
-   and al, dl           ; mask pixels and put colour in
-   and ah, dl
-
-   not bp
-   xchg ax, bp
-
-   add di, bx
-   and ah, es:[di]      ; low pixel byte
-   add di, cx           ; switch to high offset
-   xor al, al           ; blank high pixels
-
-   or ax, bp
-
-   stosb                ; put pixel bytes back
    
-   stc
-   sbb di, cx
-   mov es:[di], ah
+   xchg bl, ch
+   mov ax, bx
+   and bl, dl
+   and bh, dl
+
+   xchg bx, di
+   not ax
+
+   add bl, ch           ; switch to low offset
+   adc bh, 0
+
+   and ah, es:[bx]      ; low pixel byte
+   
+   xor al, al
+   
+   or ax, di
+
+   mov es:[bx], ah      ; put pixel bytes back
+
+   add bl, cl           ; switch to high offset
+   adc bh, 0
+
+   mov es:[bx], al
+
+   mov di, bx
+
+   add ch, cl
+
+   sub bl, ch           ; restore di
+   sbb bh, 0   
+
+   xor ch, ch
 
    mov al, dl           ; prepare colour and iterations
    mov ah, dl
-   inc di
-   mov bp, cx
+   dec di
+   dec di
    dec cx
 
    shr cx, 1            ; write out full byte and words
+   rep stosw
    jnc poly_fill_right_long_even
+   inc di
    stosb
 poly_fill_right_long_even:
-   rep stosw
 
-   sub di, bp           ; restore di
-   sub di, bx
+   mov di, bx           ; restore di
 
    sub di, 8112         ; increment y
    sbb ax, ax
@@ -604,56 +612,42 @@ poly_fill_right_long_even:
    dec dh
    jnz poly_fill_right_long_loop
 
-   pop bp
-   cmp [retlr], 0
-   mov ax, cs:[diffs]
-   je poly_fill_right_long_l
-   xchg al, ah
-   inc al               ; compensate for the dec cx at the beginning
-poly_fill_right_long_l:
-
-   pop si
-   pop di
-   pop bp
-   ret
+   jmp poly_fill_right_end
 
 poly_fill_right_short_loop:
    inc si
-   mov ax, cs:[diffs]   ; update diffs
+   mov ax, bp   ; update diffs
    add al, [si]
 poly_fill_right_patch2:
    add ah, [si+200]
-   mov cs:[diffs], ax
+   mov bp, ax
 
+   xor bh, bh
    shl ax, 1             ; get masks and offsets
    mov bl, ah
    mov cx, [bx+masks2]
    mov bl, al
-   mov ax, [bx+masks1]
+   mov bx, [bx+masks1]
 
-   sub cl, al           ; get diff of offsets
+   sub cl, bl           ; get diff of offsets
    ja poly_fill_right_long
 poly_fill_right_short:
    jb poly_fill_right_short_skip
 
-   mov bl, al           ; bx = low offset
-
-   mov al, ch           ; bp = masks, bph = lo mask, bpl = hi mask
-   mov bp, ax
-   and ah, al
-
+   mov al, bh
+   and bh, ch
+   mov ah, bh
+   not al
    and ah, dl
-   not bp
-   xchg ax, bp
 
-   add di, bx
-   and ah, es:[di]      ; high pixel byte
+   xor bh, bh
+   add bx, di
 
-   or ax, bp
+   and al, es:[bx]      ; low pixel byte
 
-   mov es:[di], ah      ; put pixel bytes back
+   or al, ah
 
-   sub di, bx
+   mov es:[bx], al      ; put pixel bytes back
 
 poly_fill_right_short_skip:
 
@@ -668,13 +662,16 @@ poly_fill_right_short_skip:
    dec dh
    jnz poly_fill_right_short_loop
 
+poly_fill_right_end:
+   mov ax, bp
    pop bp
    cmp [retlr], 0
-   mov ax, cs:[diffs]
    je poly_fill_right_short_l
    xchg al, ah
    inc al               ; compensate for the dec cx at the beginning
 poly_fill_right_short_l:
+
+   cld
 
    pop si
    pop di
