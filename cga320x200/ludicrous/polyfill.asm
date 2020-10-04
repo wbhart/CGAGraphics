@@ -908,39 +908,38 @@ poly_blank_left_even_y:
    shr bx, 1
    add di, bx
 
-   mov ah, cl           ; put starting points in diffs global
-   mov cs:[diffs], ax
+   mov ah, cl           ; put starting points in diffs
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                         ; first line is not drawn
 
    xor bh, bh           ; routine expects bh = 0 throughout
 
+   mov bp, ax
+
 poly_blank_left_long_loop:
    inc si
-   mov ax, cs:[diffs]   ; update diffs
-   add al, [si]
+   mov bx, bp   ; update diffs
+   add bl, [si]
 poly_blank_left_patch1:
-   add ah, [si+200]
-   mov cs:[diffs], ax
+   add bh, [si+200]
+   mov bp, bx
 
-   shr ah, 1            ; compute offsets
-   shr ah, 1
-   mov cl, ah
-   shr al, 1
-   shr al, 1
+   shr bx, 1            ; compute offsets
+   shr bx, 1
+   mov cl, bh
+   and bl, 03fh
 
-   sub cl, al           ; get diff of offsets, don't draw right byte
-   jb poly_blank_left_short
+   sub cl, bl           ; get diff of offsets, don't draw right byte
+   jbe poly_blank_left_short
 poly_blank_left_long:
 
-   mov bl, al           ; bx = low offset
+   xor bh, bh           ; bx = low offset
 
-   add di, bx
+   add bx, di
+   xchg di, bx
 
    xor ax, ax           ; zeros to be written
-
-   mov bp, cx           ; save diff of offsets
 
    shr cx, 1            ; write out full byte and words
    jnc poly_blank_left_long_even
@@ -948,8 +947,7 @@ poly_blank_left_long:
 poly_blank_left_long_even:
    rep stosw
 
-   sub di, bp           ; restore di
-   sub di, bx
+   mov di, bx
 
    sub di, 8112         ; increment y
    sbb ax, ax
@@ -966,20 +964,19 @@ poly_blank_left_long_even:
 
 poly_blank_left_short_loop:
    inc si
-   mov ax, cs:[diffs]   ; update diffs
-   add al, [si]
+   mov bx, bp          ; update diffs
+   add bl, [si]
 poly_blank_left_patch2:
-   add ah, [si+200]
-   mov cs:[diffs], ax
+   add bh, [si+200]
+   mov bp, bx
 
-   shr al, 1            ; compute offsets
-   shr al, 1
-   shr ah, 1
-   shr ah, 1
-   mov cl, ah
+   shr bx, 1            ; compute offsets
+   shr bx, 1
+   and bl, 03fh
+   mov cl, bh
 
-   sub cl, al           ; get diff of offsets
-   jae poly_blank_left_long
+   sub cl, bl           ; get diff of offsets
+   ja poly_blank_left_long
 poly_blank_left_short:
 
    sub di, 8112         ; increment y
@@ -1030,7 +1027,7 @@ poly_blank_right_even_y:
    mov WORD PTR cs:[poly_blank_right_patch2 + 2], ax
    
    mov ax, [x1]
-   dec ax               ; leftmost byte not drawn unless up against byte boundary
+   add ax, 3            ; leftmost byte not drawn unless up against byte boundary
    mov cx, [x2]
    dec cx               ; rightmost pixel is not drawn
 
@@ -1042,40 +1039,38 @@ poly_blank_right_even_y:
    shr bx, 1
    add di, bx
 
-   mov ah, cl           ; put starting points in diffs global
-   mov cs:[diffs], ax
+   mov ah, cl           ; put starting points in diffs
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                         ; first line is not drawn
 
    xor bh, bh           ; routine expects bh = 0 throughout
 
+   mov bp, ax
+
 poly_blank_right_long_loop:
    inc si
-   mov ax, cs:[diffs]   ; update diffs
-   add al, [si]
+   mov bx, bp   ; update diffs
+   add bl, [si]
 poly_blank_right_patch1:
-   add ah, [si+200]
-   mov cs:[diffs], ax
+   add bh, [si+200]
+   mov bp, bx
 
-   shr ah, 1            ; compute offsets
-   shr ah, 1
-   mov cl, ah
-   shr al, 1
-   shr al, 1
+   shr bx, 1            ; compute offsets
+   shr bx, 1
+   mov cl, bh
+   and bl, 03fh
 
-   sub cl, al           ; get diff of offsets
-   jb poly_blank_right_short
+   sub cl, bl           ; get diff of offsets
+   jbe poly_blank_right_short
 poly_blank_right_long:
 
-   mov bl, al           ; bx = low offset
+   xor bh, bh           ; bx = low offset
 
-   inc bx               ; don't draw left byte
-   add di, bx
+   add bx, di
+   xchg bx, di
 
    xor ax, ax           ; zeros to be written
-
-   mov bp, cx           ; save diff of offsets
 
    shr cx, 1            ; write out full byte and words
    jnc poly_blank_right_long_even
@@ -1083,8 +1078,7 @@ poly_blank_right_long:
 poly_blank_right_long_even:
    rep stosw
 
-   sub di, bp           ; restore di
-   sub di, bx
+   mov di, bx
 
    sub di, 8112         ; increment y
    sbb ax, ax
@@ -1101,20 +1095,19 @@ poly_blank_right_long_even:
 
 poly_blank_right_short_loop:
    inc si
-   mov ax, cs:[diffs]   ; update diffs
-   add al, [si]
+   mov bx, bp           ; update diffs
+   add bl, [si]
 poly_blank_right_patch2:
-   add ah, [si+200]
-   mov cs:[diffs], ax
+   add bh, [si+200]
+   mov bp, bx
 
-   shr al, 1            ; compute offsets
-   shr al, 1
-   shr ah, 1
-   shr ah, 1
-   mov cl, ah
+   shr bx, 1            ; compute offsets
+   shr bx, 1
+   and bl, 03fh
+   mov cl, bh
 
-   sub cl, al           ; get diff of offsets
-   jae poly_blank_right_long
+   sub cl, bl           ; get diff of offsets
+   ja poly_blank_right_long
 poly_blank_right_short:
 
    sub di, 8112         ; increment y
