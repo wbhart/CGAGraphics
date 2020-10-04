@@ -195,17 +195,16 @@ poly_fill_long:
    dec cx
 
    shr cx, 1            ; write out full byte and words
-   jnc poly_fill_long_even
-   stosb
-poly_fill_long_even:
    rep stosw
+   adc cx, cx
+   rep stosb
 
    mov di, bx           ; restore di
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
+   jnc poly_fill_long_incy
+   add di, 16304
+poly_fill_long_incy:
 
    ror dl, 1            ; rotate colour
    ror dl, 1
@@ -253,9 +252,9 @@ poly_fill_short:
 poly_fill_short_skip:
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
+   jnc poly_fill_short_incy
+   add di, 16304
+poly_fill_short_incy:
 
    ror dl, 1            ; rotate colour
    ror dl, 1
@@ -393,17 +392,16 @@ poly_fill_left_long:
    dec cx
 
    shr cx, 1            ; write out full byte and words
-   jnc poly_fill_left_long_even
-   stosb
-poly_fill_left_long_even:
    rep stosw
+   adc cx, cx
+   rep stosb
 
    mov di, bx           ; restore di
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
+   jnc poly_fill_left_long_incy
+   add di, 16304
+poly_fill_left_long_incy:
 
    ror dl, 1            ; rotate colour
    ror dl, 1
@@ -451,9 +449,9 @@ poly_fill_left_short:
 poly_fill_left_short_skip:
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
+   jnc poly_fill_left_short_incy
+   add di, 16304
+poly_fill_left_short_incy:
 
    ror dl, 1            ; rotate colour
    ror dl, 1
@@ -600,9 +598,9 @@ poly_fill_right_long_even:
    mov di, bx           ; restore di
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
+   jnc poly_fill_right_long_incy
+   add di, 16304
+poly_fill_right_long_incy:
 
    ror dl, 1            ; rotate colour
    ror dl, 1
@@ -650,9 +648,9 @@ poly_fill_right_short:
 poly_fill_right_short_skip:
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
+   jnc poly_fill_right_short_incy
+   add di, 16304
+poly_fill_right_short_incy:
 
    ror dl, 1            ; rotate colour
    ror dl, 1
@@ -785,17 +783,16 @@ poly_fill_both_long:
    dec cx
 
    shr cx, 1            ; write out full byte and words
-   jnc poly_fill_both_long_even
-   stosb
-poly_fill_both_long_even:
    rep stosw
+   adc cx, cx
+   rep stosb
 
    mov di, bx           ; restore di
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
+   jnc poly_fill_both_long_incy
+   add di, 16304
+poly_fill_both_long_incy:
 
    ror dl, 1            ; rotate colour
    ror dl, 1
@@ -837,9 +834,9 @@ poly_fill_both_short:
 poly_fill_both_short_skip:
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
+   jnc poly_fill_both_short_incy
+   add di, 16304
+poly_fill_both_short_incy:
 
    ror dl, 1            ; rotate colour
    ror dl, 1
@@ -879,21 +876,14 @@ _cga_poly_blank_left PROC
 
    les di, buff         ; get buffer address in es:di
 
-   mov bx, [y]          ; adjust offset of CGA bank (odd/even)
-   shr bx, 1
-   jnc poly_blank_left_even_y
-   add di, 8192
-poly_blank_left_even_y:
-
-   shl bx, 1            ; adjust offset for line y
-   add di, [bx+line_offset]
-
    mov si, [inc1]       ; get addresses of increments buffers
    mov ax, [inc2]
    sub ax, si
    
    mov WORD PTR cs:[poly_blank_left_patch1 + 2], ax
    mov WORD PTR cs:[poly_blank_left_patch2 + 2], ax
+   mov WORD PTR cs:[poly_blank_left_patch1_odd + 2], ax
+   mov WORD PTR cs:[poly_blank_left_patch2_odd + 2], ax
    
    mov ax, [x1]
    mov cx, [x2]
@@ -912,6 +902,23 @@ poly_blank_left_even_y:
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                         ; first line is not drawn
+
+   mov bx, [y]          ; adjust offset of CGA bank (odd/even)
+   shr bx, 1
+   jnc poly_blank_left_even_y
+   add di, 8192
+   
+   shl bx, 1            ; adjust offset for line y
+   add di, [bx+line_offset]
+
+   xor bh, bh           ; routine expects bh = 0 throughout
+
+   mov bp, ax
+   jmp poly_blank_left_long_loop_odd
+poly_blank_left_even_y:
+
+   shl bx, 1            ; adjust offset for line y
+   add di, [bx+line_offset]
 
    xor bh, bh           ; routine expects bh = 0 throughout
 
@@ -942,26 +949,57 @@ poly_blank_left_long:
    xor ax, ax           ; zeros to be written
 
    shr cx, 1            ; write out full byte and words
-   jnc poly_blank_left_long_even
-   stosb
-poly_blank_left_long_even:
    rep stosw
+   adc cx, cx
+   rep stosb
+
+   mov di, bx
+
+   add di, 8192         ; increment y
+
+   dec dh
+   jnz poly_blank_left_long_loop_odd
+
+   jmp poly_blank_left_end
+
+poly_blank_left_long_loop_odd:
+   inc si
+   mov bx, bp   ; update diffs
+   add bl, [si]
+poly_blank_left_patch1_odd:
+   add bh, [si+200]
+   mov bp, bx
+
+   shr bx, 1            ; compute offsets
+   shr bx, 1
+   mov cl, bh
+   and bl, 03fh
+
+   sub cl, bl           ; get diff of offsets, don't draw right byte
+   jbe poly_blank_left_short_odd
+poly_blank_left_long_odd:
+
+   xor bh, bh           ; bx = low offset
+
+   add bx, di
+   xchg di, bx
+
+   xor ax, ax           ; zeros to be written
+
+   shr cx, 1            ; write out full byte and words
+   rep stosw
+   adc cx, cx
+   rep stosb
 
    mov di, bx
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
 
    dec dh
    jnz poly_blank_left_long_loop
 
-   pop si
-   pop di
-   pop bp
-   ret
-
+   jmp poly_blank_left_end
+   
 poly_blank_left_short_loop:
    inc si
    mov bx, bp          ; update diffs
@@ -979,14 +1017,36 @@ poly_blank_left_patch2:
    ja poly_blank_left_long
 poly_blank_left_short:
 
+   add di, 8192         ; increment y
+
+   dec dh
+   jnz poly_blank_left_short_loop_odd
+
+   jmp poly_blank_left_end
+
+poly_blank_left_short_loop_odd:
+   inc si
+   mov bx, bp          ; update diffs
+   add bl, [si]
+poly_blank_left_patch2_odd:
+   add bh, [si+200]
+   mov bp, bx
+
+   shr bx, 1            ; compute offsets
+   shr bx, 1
+   and bl, 03fh
+   mov cl, bh
+
+   sub cl, bl           ; get diff of offsets
+   ja poly_blank_left_long_odd
+poly_blank_left_short_odd:
+
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
 
    dec dh
    jnz poly_blank_left_short_loop
 
+poly_blank_left_end:
    pop si
    pop di
    pop bp
@@ -1010,21 +1070,14 @@ _cga_poly_blank_right PROC
 
    les di, buff         ; get buffer address in es:di
 
-   mov bx, [y]          ; adjust offset of CGA bank (odd/even)
-   shr bx, 1
-   jnc poly_blank_right_even_y
-   add di, 8192
-poly_blank_right_even_y:
-
-   shl bx, 1            ; adjust offset for line y
-   add di, [bx+line_offset]
-
    mov si, [inc1]       ; get addresses of increments buffers
    mov ax, [inc2]
    sub ax, si
    
    mov WORD PTR cs:[poly_blank_right_patch1 + 2], ax
    mov WORD PTR cs:[poly_blank_right_patch2 + 2], ax
+   mov WORD PTR cs:[poly_blank_right_patch1_odd + 2], ax
+   mov WORD PTR cs:[poly_blank_right_patch2_odd + 2], ax
    
    mov ax, [x1]
    add ax, 3            ; leftmost byte not drawn unless up against byte boundary
@@ -1043,6 +1096,23 @@ poly_blank_right_even_y:
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                         ; first line is not drawn
+
+   mov bx, [y]          ; adjust offset of CGA bank (odd/even)
+   shr bx, 1
+   jnc poly_blank_right_even_y
+   add di, 8192
+
+   shl bx, 1            ; adjust offset for line y
+   add di, [bx+line_offset]
+
+   xor bh, bh           ; routine expects bh = 0 throughout
+
+   mov bp, ax
+   jmp poly_blank_right_long_loop_odd
+poly_blank_right_even_y:
+
+   shl bx, 1            ; adjust offset for line y
+   add di, [bx+line_offset]
 
    xor bh, bh           ; routine expects bh = 0 throughout
 
@@ -1073,25 +1143,56 @@ poly_blank_right_long:
    xor ax, ax           ; zeros to be written
 
    shr cx, 1            ; write out full byte and words
-   jnc poly_blank_right_long_even
-   stosb
-poly_blank_right_long_even:
    rep stosw
+   adc cx, cx
+   rep stosb
+
+   mov di, bx
+
+   add di, 8192         ; increment y
+
+   dec dh
+   jnz poly_blank_right_long_loop_odd
+
+   jmp poly_blank_right_end
+
+poly_blank_right_long_loop_odd:
+   inc si
+   mov bx, bp   ; update diffs
+   add bl, [si]
+poly_blank_right_patch1_odd:
+   add bh, [si+200]
+   mov bp, bx
+
+   shr bx, 1            ; compute offsets
+   shr bx, 1
+   mov cl, bh
+   and bl, 03fh
+
+   sub cl, bl           ; get diff of offsets
+   jbe poly_blank_right_short_odd
+poly_blank_right_long_odd:
+
+   xor bh, bh           ; bx = low offset
+
+   add bx, di
+   xchg bx, di
+
+   xor ax, ax           ; zeros to be written
+
+   shr cx, 1            ; write out full byte and words
+   rep stosw
+   adc cx, cx
+   rep stosb
 
    mov di, bx
 
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
 
    dec dh
    jnz poly_blank_right_long_loop
 
-   pop si
-   pop di
-   pop bp
-   ret
+   jmp poly_blank_right_end
 
 poly_blank_right_short_loop:
    inc si
@@ -1110,14 +1211,36 @@ poly_blank_right_patch2:
    ja poly_blank_right_long
 poly_blank_right_short:
 
+   add di, 8192         ; increment y
+
+   dec dh
+   jnz poly_blank_right_short_loop_odd
+
+   jmp poly_blank_right_end
+
+poly_blank_right_short_loop_odd:
+   inc si
+   mov bx, bp           ; update diffs
+   add bl, [si]
+poly_blank_right_patch2_odd:
+   add bh, [si+200]
+   mov bp, bx
+
+   shr bx, 1            ; compute offsets
+   shr bx, 1
+   and bl, 03fh
+   mov cl, bh
+
+   sub cl, bl           ; get diff of offsets
+   ja poly_blank_right_long_odd
+poly_blank_right_short_odd:
+
    sub di, 8112         ; increment y
-   sbb ax, ax
-   and ax, 16304
-   add di, ax
 
    dec dh
    jnz poly_blank_right_short_loop
 
+poly_blank_right_end:
    pop si
    pop di
    pop bp
