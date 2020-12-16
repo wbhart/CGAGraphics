@@ -339,15 +339,16 @@ poly_fill_fast_even_y:
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                          ; first line is not drawn
 
-   xor cx, cx           ; routine expects cx = 0 throughout
-   xor al, al           ; routine expects al = 0 throughout
-   
    cmp dh, 0
    jne poly_fill_fast_lines_ne0
    jmp poly_fill_fast_end
 poly_fill_fast_lines_ne0:
+
    mov bp, ax
 
+   xor cx, cx           ; routine expects cx = 0 throughout
+   xor al, al           ; routine expects al = 0 throughout
+   
 poly_fill_fast_long_loop:
    inc si
    mov bx, bp   ; update diffs
