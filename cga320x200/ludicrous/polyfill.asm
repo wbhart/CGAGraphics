@@ -129,19 +129,14 @@ poly_fill_even_y:
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl
 
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                          ; first line is not drawn
-
-   cmp dh, 0
-   jne poly_fill_lines_ne0
-   jmp poly_fill_end
-poly_fill_lines_ne0:
 
    cmp dh, 0
    jne poly_fill_lines_ne0
@@ -335,8 +330,8 @@ poly_fill_fast_even_y:
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl
@@ -344,6 +339,9 @@ poly_fill_fast_even_y:
    mov dh, BYTE PTR [len] ; get number of horizontal lines
                          ; first line is not drawn
 
+   xor cx, cx           ; routine expects cx = 0 throughout
+   xor al, al           ; routine expects al = 0 throughout
+   
    cmp dh, 0
    jne poly_fill_fast_lines_ne0
    jmp poly_fill_fast_end
@@ -352,48 +350,39 @@ poly_fill_fast_lines_ne0:
 
 poly_fill_fast_long_loop:
    inc si
-   mov ax, bp   ; update diffs
-   add al, [si]
+   mov bx, bp   ; update diffs
+   add bl, [si]
 poly_fill_fast_patch1:
-   add ah, [si+200]
-   mov bp, ax
+   add bh, [si+200]
+   mov bp, bx
 
-   xor bh, bh
-   mov cl, ah
-   shl ax, 1             ; get masks and offsets
+   xchg cl, bh
+   shl bx, 1             ; get masks and offsets
    shr cl, 1
    shr cl, 1
-   mov bl, al
    mov bx, [bx+masks1]
 
    sub cl, bl           ; get diff of offsets
    jbe poly_fill_fast_short
 poly_fill_fast_long:
 
-   xchg bl, ch
-   mov ax, bx
-   and bh, dl
+   xchg al, bh
+   mov ah, al
+   and ah, dl
 
-   xchg bx, di
-   not ax
+   add bx, di
+   not al
 
-   add bl, ch
-   adc bh, 0
+   and al, es:[bx]      ; low pixel byte
 
-   and ah, es:[bx]      ; low pixel byte
+   or al, ah
 
-   or ax, di
+   xchg di, bx
 
-   mov es:[bx], ah
-
-   mov di, bx
-   sub bl, ch
-   sbb bh, 0
-   xor ch, ch
+   stosb
 
    mov al, dl           ; prepare colour and iterations
    mov ah, dl
-   inc di
 
    shr cx, 1            ; write out full byte and words
    rep stosw
@@ -401,6 +390,8 @@ poly_fill_fast_long:
    rep stosb
 
    mov di, bx           ; restore di
+
+   xor al, al
 
    sub di, 8112         ; increment y
    jnc poly_fill_fast_long_incy
@@ -417,18 +408,16 @@ poly_fill_fast_long_incy:
 
 poly_fill_fast_short_loop:
    inc si
-   mov ax, bp   ; update diffs
-   add al, [si]
+   mov bx, bp   ; update diffs
+   add bl, [si]
 poly_fill_fast_patch2:
-   add ah, [si+200]
-   mov bp, ax
+   add bh, [si+200]
+   mov bp, bx
 
-   xor bh, bh
-   mov cl, ah
-   shl ax, 1             ; get masks and offsets
+   xchg cl, bh
+   shl bx, 1             ; get masks and offsets
    shr cl, 1
    shr cl, 1
-   mov bl, al
    mov bx, [bx+masks1]
 
    sub cl, bl           ; get diff of offsets
@@ -436,12 +425,11 @@ poly_fill_fast_patch2:
 poly_fill_fast_short:
    jb poly_fill_fast_short_skip
 
-   mov ah, bh
-   mov al, ah
+   xchg al, bh
+   mov ah, al
    not al
    and ah, dl
 
-   xor bh, bh
    add bx, di
 
    and al, es:[bx]      ; high pixel byte
@@ -450,7 +438,9 @@ poly_fill_fast_short:
 
    mov es:[bx], al      ; put pixel bytes back
 
+   xor al, al   
 poly_fill_fast_short_skip:
+   xor cx, cx
 
    sub di, 8112         ; increment y
    jnc poly_fill_fast_short_incy
@@ -516,8 +506,8 @@ poly_fill_left_even_y:
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl
@@ -719,8 +709,8 @@ poly_fill_right_even_y:
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl
@@ -926,8 +916,8 @@ poly_fill_both_even_y:
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl
@@ -1107,8 +1097,8 @@ _cga_poly_blank_left PROC
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl           ; put starting points in diffs
@@ -1307,8 +1297,8 @@ _cga_poly_blank_right PROC
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl           ; put starting points in diffs
@@ -1505,8 +1495,8 @@ _cga_poly_blank_fast_right PROC
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl           ; put starting points in diffs
@@ -1743,8 +1733,8 @@ _cga_poly_blank_fast_left PROC
    and bx, 0fffch
    sub ax, bx
    sub cx, bx
-   shr bx, 1
-   shr bx, 1
+   sar bx, 1
+   sar bx, 1
    add di, bx
 
    mov ah, cl           ; put starting points in diffs
