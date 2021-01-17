@@ -1,0 +1,11 @@
+sprtcomp.exe: sprtcomp.c sprite.obj graphics.obj page.obj
+	tcc -B -G -O -Z sprtcomp sprite.obj graphics.obj page.obj
+
+sprite.obj: sprite.c sprite.h
+	tcc -B -G -O -Z -c sprite.c
+
+graphics.obj: graphics.c graphics.h
+	tcc -B -G -O -Z -c graphics.c
+
+page.obj: page.c page.h
+	tcc -B -G -O -Z -c page.c
