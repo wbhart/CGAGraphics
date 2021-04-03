@@ -30,10 +30,13 @@ typedef struct
 
 typedef raster_ctx_s raster_ctx_t[1];
 
+int visible[9];
 int ammo_used[5];
 int ammo_unused[5];
 int num_used;
 int frame;
+int tone;
+int noise;
 
 unsigned char keystate[0x60];
 unsigned char extstate[0x60];
@@ -88,6 +91,70 @@ void unhook_kb_int()
    } 
 }
 
+void set_freq(int n)
+{
+   int count = n == 0 ? 0 : 1.19318e6 / n;
+   char b;
+
+   if (count == 0)
+   {
+      b = inp(0x61) & 0xfc;
+      outp(0x61, b);
+   } else
+   {
+      b = inp(0x61) | 0x03;
+      outp(0x61, b);
+
+      outp(0x43, 0xb6);
+      
+      b = (char) count;
+      outp(0x42, b);
+
+      b = (char) (count >> 8);
+      outp(0x42, b);
+   }
+}
+
+void interrupt (*old_int8)();
+
+void interrupt new_int8()
+{
+   if (tone != 0)
+   {
+      set_freq(2000);
+      tone--;
+   } else if (noise != 0)
+   {
+      set_freq(random(5000) + 5000);
+      noise--;
+   } else
+      set_freq(0);
+
+   /* End interrupt */
+   outp(0x20, 0x20);
+}
+
+void hook_int8()
+{
+   unsigned char i;
+
+   outp(0x43, 0x34);   
+   outp(0x40, 174);
+   outp(0x40, 77);
+
+   old_int8 = getvect(0x08);
+   setvect(0x8, new_int8);
+}
+
+void unhook_int8()
+{
+   if (old_int8 != NULL)
+   {
+      setvect(0x08, old_int8);
+      old_int8 = NULL;
+   } 
+}
+
 sprite_s * raster_ctx_init(raster_ctx_t screen, int max_sprites)
 {
    unsigned char far * video = MK_FP(0xb800, 0x0000);
@@ -120,7 +187,10 @@ void screen_draw_sprites(raster_ctx_t screen)
       sprite_save_bg(screen->sprites + i, screen->page);
 
    for (i = 0; i < screen->num_sprites; i++)
-      sprite_composite(screen->page, screen->sprites + i);
+   {
+      if (visible[i])
+         sprite_composite(screen->page, screen->sprites + i);
+   }
 }
 
 void screen_flip(raster_ctx_t screen)
@@ -133,6 +203,29 @@ void screen_flip(raster_ctx_t screen)
 
    for (i = 0; i < screen->num_sprites; i++)
       sprite_restore_bg(screen->page, screen->sprites + i);
+}
+
+void collision_detect(sprite_s * sprites)
+{
+   int enemy, missile;
+
+   for (enemy = 1; enemy <= 3; enemy++)
+   {
+      for (missile = 4; missile <= 8; missile++)
+      {
+         sprite_s * e = sprites + enemy;
+         sprite_s * m = sprites + missile;
+
+         if (visible[enemy] && visible[missile] &&
+             (e->y >= m->y) &&
+             (m->x >= e->x && m->x + m->xsize <= e->x + e->xsize))
+         {
+            visible[enemy] = 0;
+            visible[missile] = 0;
+            noise = 20;
+         }
+      }
+   }   
 }
 
 void runloop(raster_ctx_t screen)
@@ -154,7 +247,7 @@ void runloop(raster_ctx_t screen)
          xoff = 2; /* right arrow */
       else if (keystate[0x4b]) /* left arrow */
          xoff = -2; 
-      else if (keystate[0x1d]) /* space */
+      else if (keystate[0x1d]) /* left ctrl */
       {
          if (((frame & 3) == 0) && num_used != 5)
          {
@@ -166,9 +259,13 @@ void runloop(raster_ctx_t screen)
             s = sprites + num;
             sprite_move(s, x - s->x, y - s->y);
             num_used += 1;
+            tone = 6;
+            visible[num] = 1;
          }
       } else if (keystate[0x01]) /* Esc */
          running = 0;
+
+      collision_detect(sprites);
 
       sprite_move(sprites + 0, xoff, yoff);
       for (i = 1; i <= 3; i++)
@@ -176,6 +273,7 @@ void runloop(raster_ctx_t screen)
          sprite_move(sprites + i, 0, 1);
          if ((sprites + i)->y >= 200)
          {
+            visible[i] = 1;
             (sprites + i)->x = random(304);
             (sprites + i)->y = -20;
          }
@@ -188,6 +286,7 @@ void runloop(raster_ctx_t screen)
           sprite_s * s = sprites + ammo_used[i];
           if (s->y < -1)
           {
+             visible[ammo_used[i]] = 0;
              ammo_unused[k] = ammo_used[i];
              k++;
           } else
@@ -236,11 +335,23 @@ int main(void)
    
    screen_set_num_sprites(screen, 9);
 
+   for (i = 0; i < 9; i++)
+      visible[i] = 1;
+
    frame = 0;
 
+   set_freq(1000);
+   delay(500);
+   set_freq(0);
+
+   tone = 0;
+   noise = 0;
+
+   hook_int8();
    hook_kb_int();
    runloop(screen);
    unhook_kb_int();
+   unhook_int8();
 
    sprite_clear_ship(sprites + 0);
    sprite_clear_enemy1(sprites + 1);
