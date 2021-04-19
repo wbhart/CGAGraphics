@@ -1,0 +1,8 @@
+plasma.exe: vga.obj plasma.obj
+	tlink c:\tc\lib\c0s.obj vga.obj plasma.obj,plasma.exe,,c:\tc\lib\cs.lib+c:\tc\lib\maths.lib
+
+vga.obj: vga.asm
+	tasm /ml vga.asm
+
+plasma.obj: plasma.c
+	tcc -c plasma.c
