@@ -1,0 +1,5 @@
+cgademo2.exe: cgademo2.c cga.obj
+	tcc -G -O -Z cgademo2 cga.obj
+
+cga.obj: cga.asm
+	tasm /mx cga

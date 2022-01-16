@@ -1,36 +1,6 @@
 #include <stdio.h>
 #include <alloc.h>
-
-#define DWORD unsigned long 
-#define WORD unsigned int
-#define BYTE unsigned char
-#define LONG long
-
-#define BUFF_SIZE 4096
-
-typedef struct bitmap_file_header
-{
-   WORD  file_type;
-   DWORD size;
-   WORD  reserved1;
-   WORD  reserved2;
-   DWORD offset_bits;
-} bitmap_file_header;
-
-typedef struct bitmap_info_header
-{
-   DWORD size;
-   LONG  width;   
-   LONG  height;
-   WORD  planes;
-   WORD  bit_count;
-   DWORD compression;
-   DWORD size_image;
-   LONG  x_pixels_per_meter;
-   LONG  y_pixels_per_meter;
-   DWORD colors_used;
-   DWORD colours_important;
-} bitmap_info_header;
+#include "bmp.h"
 
 unsigned char far * load_bmp(char * filename, bitmap_info_header * info)
 {
@@ -49,7 +19,14 @@ unsigned char far * load_bmp(char * filename, bitmap_info_header * info)
       return NULL;
    }
 
-   fread(&header, sizeof(bitmap_file_header), 1, fptr);
+   items_read = fread(&header, sizeof(bitmap_file_header), 1, fptr);
+
+   if (items_read != 1)
+   {
+      printf("Unable to read file header\n");
+      fclose(fptr);
+      return NULL;
+   }
 
    if (header.file_type != 0x4d42)
    {
@@ -58,7 +35,14 @@ unsigned char far * load_bmp(char * filename, bitmap_info_header * info)
       return NULL;
    }
 
-   fread(info, sizeof(bitmap_info_header), 1, fptr);
+   items_read = fread(info, sizeof(bitmap_info_header), 1, fptr);
+
+   if (items_read != 1)
+   {
+      printf("Unable to read image header\n");
+      fclose(fptr);
+      return NULL;
+   }
 
    fseek(fptr, header.offset_bits, SEEK_SET);
    
@@ -104,27 +88,13 @@ unsigned char far * load_bmp(char * filename, bitmap_info_header * info)
          bitmap[bytes_read] = buff[i];
    }
 
-   for (i = 0; i < info->size_image; i += 3)
-   {
-      tmp_rgb = bitmap[i];
-      bitmap[i] = bitmap[i + 2];
-      bitmap[i + 2] = tmp_rgb;
-   }
-
    fclose(fptr);
    free(buff);
 
    return bitmap;
 }
 
-int main(void)
+void free_bmp(unsigned char far * bitmap)
 {
-   bitmap_info_header info;
-   unsigned char far * bitmap;
-
-   bitmap = load_bmp("teton.bmp", &info);
-
    farfree(bitmap);
-
-   return 0;
 }
